@@ -17,6 +17,9 @@ private:
 
     uint8_t led_values[16];
     float servo_angles[16];
+
+    int _servo_min_angle_pulses;
+    int _servo_max_angle_pulses;
     
 protected: 
     static void _bind_methods();
@@ -74,6 +77,12 @@ public:
 
     // Getters and setters for servo values.
 
+    void set_servo_min_angle_pulses( const int min_angle_pulses );
+    int  get_servo_min_angle_pulses() const;
+
+    void set_servo_max_angle_pulses( const int max_angle_pulses );
+    int  get_servo_max_angle_pulses() const;
+
     void set_servo_euler_angle( const int servo_index, const float new_euler_angle );
     void set_servo0_euler_angle( const float new_euler_angle );
     void set_servo1_euler_angle( const float new_euler_angle );
@@ -81,6 +90,16 @@ public:
     void set_servo3_euler_angle( const float new_euler_angle );
     void set_servo4_euler_angle( const float new_euler_angle );
     void set_servo5_euler_angle( const float new_euler_angle );
+    void set_servo6_euler_angle( const float new_euler_angle );
+    void set_servo7_euler_angle( const float new_euler_angle );
+    void set_servo8_euler_angle( const float new_euler_angle );
+    void set_servo9_euler_angle( const float new_euler_angle );
+    void set_servo10_euler_angle( const float new_euler_angle );
+    void set_servo11_euler_angle( const float new_euler_angle );
+    void set_servo12_euler_angle( const float new_euler_angle );
+    void set_servo13_euler_angle( const float new_euler_angle );
+    void set_servo14_euler_angle( const float new_euler_angle );
+    void set_servo15_euler_angle( const float new_euler_angle );
 
     float get_servo_euler_angle( const int servo_index ) const;
     float get_servo0_euler_angle() const;
@@ -89,6 +108,16 @@ public:
     float get_servo3_euler_angle() const;
     float get_servo4_euler_angle() const;
     float get_servo5_euler_angle() const;
+    float get_servo6_euler_angle() const;
+    float get_servo7_euler_angle() const;
+    float get_servo8_euler_angle() const;
+    float get_servo9_euler_angle() const;
+    float get_servo10_euler_angle() const;
+    float get_servo11_euler_angle() const;
+    float get_servo12_euler_angle() const;
+    float get_servo13_euler_angle() const;
+    float get_servo14_euler_angle() const;
+    float get_servo15_euler_angle() const;
 
     // Getters and setters for led values.
     int get_led0_value();
