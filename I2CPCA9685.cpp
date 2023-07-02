@@ -38,7 +38,7 @@ void I2CPCA9685::_bind_methods() {
     /**/
 
     // Initialization function.
-    ClassDB::bind_method(D_METHOD("initialize_PCA9685"), &I2CPCA9685::initialize_pca9685);
+    //ClassDB::bind_method(D_METHOD("initialize_device"), &I2CPCA9685::initialize_device);
 
     // Initialization timeout helper.
     ClassDB::bind_method(D_METHOD("on_timer_finished_finalize_initialize"), &I2CPCA9685::on_timer_finished_finalize_initialize);   
@@ -184,9 +184,15 @@ int  I2CPCA9685::get_pwm_frequency_hz() const {
 }
 
 
-void I2CPCA9685::initialize_pca9685() {
+void I2CPCA9685::_initialize_device() {
     // Only initialize once.
     if( _is_pca9685_initialized ) return;
+    if(Engine::get_singleton()->is_editor_hint()) return;
+
+    open_device();
+    ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "PCA9685 initialization failed because the device file is not opened.");
+    
+
     _is_pca9685_initialized = true;
 
     // Read the current MODE1 register value.

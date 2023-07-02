@@ -33,7 +33,7 @@ private:
     SPIBus* _spi_buses; //
 
     void _setup_board();
-    
+    void _initialize_child_devices();
 protected:
     static void _bind_methods();
 
@@ -51,6 +51,7 @@ public:
 
 
     // Godot virtuals.
+    void _ready();
     void _process(double delta);
     void _physics_process(double delta);
 

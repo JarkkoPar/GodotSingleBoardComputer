@@ -61,7 +61,7 @@ public:
     // Device handling.
     //uint8_t get_register_value( uint8_t pca9685_register );
     //void set_register_value( uint8_t pca9685_register, uint8_t mode );
-    void initialize_pca9685();
+    virtual void _initialize_device() override;
     void on_timer_finished_finalize_initialize();
     //void set_slot_value( uint8_t slot_index, uint8_t value );
 

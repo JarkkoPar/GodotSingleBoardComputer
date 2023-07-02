@@ -3,6 +3,9 @@
 
 
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/classes/engine.hpp>
+#include "SBCDevice.h"
+
 
 using namespace godot;
 
@@ -12,6 +15,10 @@ void SingleBoardComputer::_bind_methods() {
 
     ClassDB::bind_method(D_METHOD("set_board_id", "new_board_id"), &SingleBoardComputer::set_board_id);
 	ClassDB::bind_method(D_METHOD("get_board_id"), &SingleBoardComputer::get_board_id);
+
+    ClassDB::bind_method(D_METHOD("_setup_board"), &SingleBoardComputer::_setup_board);
+    ClassDB::bind_method(D_METHOD("_initialize_child_devices"), &SingleBoardComputer::_initialize_child_devices);
+
 
 
     // Add the general group.
@@ -101,7 +108,13 @@ void SingleBoardComputer::_notification(int p_what) {
 	}
 }
 
+void SingleBoardComputer::_ready() {
+    _setup_board();
+    if(Engine::get_singleton()->is_editor_hint()) return; // Don't initialize the childs in the editor.
 
+    // Initialize the childs.
+    _initialize_child_devices();
+}
 
 void SingleBoardComputer::_process(double delta ) {
 
@@ -128,7 +141,7 @@ PackedStringArray SingleBoardComputer::get_configuration_warnings() const {
 
 void SingleBoardComputer::_setup_board(){
     // Fail if the board_id is 0 - undefined
-    ERR_FAIL_COND(_board_id == 0);
+    ERR_FAIL_COND_MSG(_board_id == 0, "The board ID has not been set.");
 
     // Create based on the board id.
     switch(_board_id) {
@@ -196,5 +209,18 @@ void SingleBoardComputer::_setup_board(){
             // And the SPI buses.
             // todo: code when I have an SPI device
         } break;
+    }
+}
+
+
+
+void SingleBoardComputer::_initialize_child_devices() {
+    
+    for( int i = 0; i < get_child_count(); ++i ) {
+        // If the child is of base initializable sbc device, then initialize 
+        // the device.
+        SBCDevice* child_device = static_cast<SBCDevice*>(get_child(i));
+        if( child_device == nullptr ) continue;
+        child_device->initialize_device();
     }
 }

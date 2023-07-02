@@ -1,7 +1,8 @@
 #ifndef I2C_RAWDEVICE_H_INCLUDED
 #define I2C_RAWDEVICE_H_INCLUDED 
 
-#include <godot_cpp/classes/node.hpp>
+#include "SBCDevice.h"
+//#include <godot_cpp/classes/node.hpp>
 //#include <godot_cpp/classes/poolbytearray.hpp>
 
 
@@ -9,8 +10,8 @@ namespace godot {
 
 // This is a "raw" i2c device node, which allows a more low-level
 // communication interface with any i2c device.
-class I2CRawDevice : public Node {
-    GDCLASS(I2CRawDevice, Node)
+class I2CRawDevice : public SBCDevice {
+    GDCLASS(I2CRawDevice, SBCDevice)
 
 private:
     
@@ -45,6 +46,8 @@ public:
     int  get_i2c_device_address() const;
 
     // Device handling.
+    virtual void _initialize_device() override;
+
     void open_device();
     void close_device();
 

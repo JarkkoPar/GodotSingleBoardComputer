@@ -2,6 +2,7 @@
 
 // Classes to include in to the gdextension module.
 #include "SingleBoardComputer.h"
+#include "SBCDevice.h"
 #include "I2CRawDevice.h"
 #include "I2CPCA9685.h"
 
@@ -20,6 +21,7 @@ void initialize_singleboardcomputer_module(ModuleInitializationLevel p_level) {
 
     // Add the classes here.
     ClassDB::register_class<SingleBoardComputer>();
+    ClassDB::register_class<SBCDevice>();
     ClassDB::register_class<I2CRawDevice>();
     ClassDB::register_class<I2CPCA9685>();
 }
