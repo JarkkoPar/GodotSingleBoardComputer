@@ -16,6 +16,7 @@ private:
     bool _is_pca9685_initialized;
 
     uint8_t led_values[16];
+    float servo_angles[16];
     
 protected: 
     static void _bind_methods();
@@ -69,6 +70,26 @@ public:
     void sleep_pca9685();
     void restart_pca9685();
 
+    void set_led_pulse_range( int led_index, int on_index, int off_index );
+
+    // Getters and setters for servo values.
+
+    void set_servo_euler_angle( const int servo_index, const float new_euler_angle );
+    void set_servo0_euler_angle( const float new_euler_angle );
+    void set_servo1_euler_angle( const float new_euler_angle );
+    void set_servo2_euler_angle( const float new_euler_angle );
+    void set_servo3_euler_angle( const float new_euler_angle );
+    void set_servo4_euler_angle( const float new_euler_angle );
+    void set_servo5_euler_angle( const float new_euler_angle );
+
+    float get_servo_euler_angle( const int servo_index ) const;
+    float get_servo0_euler_angle() const;
+    float get_servo1_euler_angle() const;
+    float get_servo2_euler_angle() const;
+    float get_servo3_euler_angle() const;
+    float get_servo4_euler_angle() const;
+    float get_servo5_euler_angle() const;
+
     // Getters and setters for led values.
     int get_led0_value();
     int get_led1_value();
@@ -87,6 +108,7 @@ public:
     int get_led14_value();
     int get_led15_value();
 
+    void set_led_value( int led_index, int new_led_value );
     void set_led0_value(int new_led_value);
     void set_led1_value(int new_led_value);
     void set_led2_value(int new_led_value);

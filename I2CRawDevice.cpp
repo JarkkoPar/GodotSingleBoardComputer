@@ -211,4 +211,33 @@ void I2CRawDevice::write_byte_to_device_register( int i2c_device_register, int v
 
 }
 
+void I2CRawDevice::write_byte_array_to_device_register( int i2c_device_register, PackedByteArray bytes ) {
+    // todo: code
+}
+
+void I2CRawDevice::_write_byte_array_to_device_register( uint8_t i2c_device_register, const uint8_t* bytes ) {
+    ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "Write device register failed because the device file is not opened. Did you forget to call open_device()?");
+
+    //uint8_t output_buffer[2] = {(uint8_t)i2c_device_register, (uint8_t)value};
+    int num_bytes = *(&bytes + 1) - bytes;
+    uint8_t* output_buffer = new uint8_t[num_bytes + 1];
+    output_buffer[0] = i2c_device_register; // The first element is the register.
+    memcpy(&output_buffer[1], bytes, num_bytes); // Then the rest are the bytes.
+
+    struct i2c_msg messages[1];
+    struct i2c_rdwr_ioctl_data message_set[1];
+
+    messages[0].addr = _i2c_device_address;
+    messages[0].flags = 0;
+    messages[0].len = num_bytes + 1;
+    messages[0].buf = output_buffer;
+
+    message_set[0].msgs = messages;
+    message_set[0].nmsgs = 1;
+    
+    ERR_FAIL_COND_MSG(ioctl(_i2c_device_fd, I2C_RDWR, &message_set) < 0, "Write byte to i2c device register failed.");
+
+}
+
+
 //WARN_PRINT("ObjectDB instances leaked at exit (run with --verbose for details).");

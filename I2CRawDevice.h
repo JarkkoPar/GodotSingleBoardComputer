@@ -59,6 +59,8 @@ public:
     
     int read_byte_from_device_register( int i2c_device_register );
     void    write_byte_to_device_register( int i2c_device_register, int value );
+    void    write_byte_array_to_device_register( int i2c_device_register, PackedByteArray bytes );
+    void    _write_byte_array_to_device_register( uint8_t i2c_device_register, const uint8_t* bytes );
 };
 
 }
