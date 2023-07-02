@@ -10,8 +10,8 @@ I2CPCA9685::I2CPCA9685() {
     _pwm_frequency_hz = 50; 
     _is_pca9685_initialized = false;
 
-    _servo_min_angle_pulses = 150;
-    _servo_max_angle_pulses = 650;
+    _servo_min_angle_pulses = 205; //150;
+    _servo_max_angle_pulses = 410; //650;
 
     for( int i = 0; i < 16; ++i ) {
         servo_angles[i] = 0.0f;
@@ -53,11 +53,6 @@ void I2CPCA9685::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_pwm_frequency_hz"), &I2CPCA9685::set_pwm_frequency_hz);
     ClassDB::bind_method(D_METHOD("get_pwm_frequency_hz"), &I2CPCA9685::get_pwm_frequency_hz);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "PWM Frequency Hz", PROPERTY_HINT_RANGE, "1,1000"), "set_pwm_frequency_hz", "get_pwm_frequency_hz");
-
-    ClassDB::bind_method(D_METHOD("set_servo_min_angle_pulses"), &I2CPCA9685::set_servo_min_angle_pulses);
-    ClassDB::bind_method(D_METHOD("get_servo_min_angle_pulses"), &I2CPCA9685::get_servo_min_angle_pulses);
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "PWM Frequency Hz", PROPERTY_HINT_RANGE, "0,4095"), "set_servo_min_angle_pulses", "get_servo_min_angle_pulses");
-
 
     // The servo values.
     ClassDB::bind_method(D_METHOD("set_servo_euler_angle", "servo_index", "new_euler_angle"), &I2CPCA9685::set_servo_euler_angle);
