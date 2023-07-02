@@ -77,67 +77,67 @@ void I2CPCA9685::_bind_methods() {
 
     ClassDB::bind_method(D_METHOD("set_servo0_euler_angle", "new_euler_angle"), &I2CPCA9685::set_servo0_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo0_euler_angle"), &I2CPCA9685::get_servo0_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 0", PROPERTY_HINT_NONE, ""), "set_servo0_euler_angle", "get_servo0_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 0", PROPERTY_HINT_RANGE, "-90.0,90.0"), "set_servo0_euler_angle", "get_servo0_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo1_euler_angle", "new_euler_angle"), &I2CPCA9685::set_servo1_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo1_euler_angle"), &I2CPCA9685::get_servo1_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 1", PROPERTY_HINT_NONE, ""), "set_servo1_euler_angle", "get_servo1_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 1", PROPERTY_HINT_RANGE, "-90.0,90.0"), "set_servo1_euler_angle", "get_servo1_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo2_euler_angle", "new_euler_angle"), &I2CPCA9685::set_servo2_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo2_euler_angle"), &I2CPCA9685::get_servo2_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 2", PROPERTY_HINT_NONE, ""), "set_servo2_euler_angle", "get_servo2_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 2", PROPERTY_HINT_RANGE, "-90.0,90.0"), "set_servo2_euler_angle", "get_servo2_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo3_euler_angle", "new_euler_angle"), &I2CPCA9685::set_servo3_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo3_euler_angle"), &I2CPCA9685::get_servo3_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 3", PROPERTY_HINT_NONE, ""), "set_servo3_euler_angle", "get_servo3_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 3", PROPERTY_HINT_RANGE, "-90.0,90.0"), "set_servo3_euler_angle", "get_servo3_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo4_euler_angle", "new_euler_angle"), &I2CPCA9685::set_servo4_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo4_euler_angle"), &I2CPCA9685::get_servo4_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 4", PROPERTY_HINT_NONE, ""), "set_servo4_euler_angle", "get_servo4_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 4", PROPERTY_HINT_RANGE, "-90.0,90.0"), "set_servo4_euler_angle", "get_servo4_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo5_euler_angle", "new_euler_angle"), &I2CPCA9685::set_servo5_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo5_euler_angle"), &I2CPCA9685::get_servo5_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 5", PROPERTY_HINT_NONE, ""), "set_servo5_euler_angle", "get_servo5_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 5", PROPERTY_HINT_RANGE, "-90.0,90.0"), "set_servo5_euler_angle", "get_servo5_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo6_euler_angle", "new_euler_angle"), &I2CPCA9685::set_servo6_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo6_euler_angle"), &I2CPCA9685::get_servo6_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 6", PROPERTY_HINT_NONE, ""), "set_servo6_euler_angle", "get_servo6_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 6", PROPERTY_HINT_RANGE, "-90.0,90.0"), "set_servo6_euler_angle", "get_servo6_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo7_euler_angle", "new_euler_angle"), &I2CPCA9685::set_servo7_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo7_euler_angle"), &I2CPCA9685::get_servo7_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 7", PROPERTY_HINT_NONE, ""), "set_servo7_euler_angle", "get_servo7_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 7", PROPERTY_HINT_RANGE, "-90.0,90.0"), "set_servo7_euler_angle", "get_servo7_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo8_euler_angle", "new_euler_angle"), &I2CPCA9685::set_servo8_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo8_euler_angle"), &I2CPCA9685::get_servo8_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 8", PROPERTY_HINT_NONE, ""), "set_servo8_euler_angle", "get_servo8_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 8", PROPERTY_HINT_RANGE, "-90.0,90.0"), "set_servo8_euler_angle", "get_servo8_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo9_euler_angle", "new_euler_angle"), &I2CPCA9685::set_servo9_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo9_euler_angle"), &I2CPCA9685::get_servo9_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 9", PROPERTY_HINT_NONE, ""), "set_servo9_euler_angle", "get_servo9_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 9", PROPERTY_HINT_RANGE, "-90.0,90.0"), "set_servo9_euler_angle", "get_servo9_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo10_euler_angle", "new_euler_angle"), &I2CPCA9685::set_servo9_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo10_euler_angle"), &I2CPCA9685::get_servo9_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 10", PROPERTY_HINT_NONE, ""), "set_servo10_euler_angle", "get_servo10_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 10", PROPERTY_HINT_RANGE, "-90.0,90.0"), "set_servo10_euler_angle", "get_servo10_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo11_euler_angle", "new_euler_angle"), &I2CPCA9685::set_servo11_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo11_euler_angle"), &I2CPCA9685::get_servo11_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 11", PROPERTY_HINT_NONE, ""), "set_servo11_euler_angle", "get_servo11_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 11", PROPERTY_HINT_RANGE, "-90.0,90.0"), "set_servo11_euler_angle", "get_servo11_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo12_euler_angle", "new_euler_angle"), &I2CPCA9685::set_servo12_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo12_euler_angle"), &I2CPCA9685::get_servo12_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 12", PROPERTY_HINT_NONE, ""), "set_servo12_euler_angle", "get_servo12_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 12", PROPERTY_HINT_RANGE, "-90.0,90.0"), "set_servo12_euler_angle", "get_servo12_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo13_euler_angle", "new_euler_angle"), &I2CPCA9685::set_servo13_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo13_euler_angle"), &I2CPCA9685::get_servo13_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 13", PROPERTY_HINT_NONE, ""), "set_servo13_euler_angle", "get_servo13_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 13", PROPERTY_HINT_RANGE, "-90.0,90.0"), "set_servo13_euler_angle", "get_servo13_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo14_euler_angle", "new_euler_angle"), &I2CPCA9685::set_servo14_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo14_euler_angle"), &I2CPCA9685::get_servo14_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 14", PROPERTY_HINT_NONE, ""), "set_servo14_euler_angle", "get_servo14_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 14", PROPERTY_HINT_RANGE, "-90.0,90.0"), "set_servo14_euler_angle", "get_servo14_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo15_euler_angle", "new_euler_angle"), &I2CPCA9685::set_servo15_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo15_euler_angle"), &I2CPCA9685::get_servo15_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 15", PROPERTY_HINT_NONE, ""), "set_servo15_euler_angle", "get_servo15_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 15", PROPERTY_HINT_RANGE, "-90.0,90.0"), "set_servo15_euler_angle", "get_servo15_euler_angle");
 
 
 
@@ -424,6 +424,36 @@ void I2CPCA9685::set_servo4_euler_angle( const float new_euler_angle ) {
 void I2CPCA9685::set_servo5_euler_angle( const float new_euler_angle ) {
     set_servo_euler_angle(5, new_euler_angle);
 }
+void I2CPCA9685::set_servo6_euler_angle( const float new_euler_angle ) {
+    set_servo_euler_angle(6, new_euler_angle);
+}
+void I2CPCA9685::set_servo7_euler_angle( const float new_euler_angle ) {
+    set_servo_euler_angle(7, new_euler_angle);
+}
+void I2CPCA9685::set_servo8_euler_angle( const float new_euler_angle ) {
+    set_servo_euler_angle(8, new_euler_angle);
+}
+void I2CPCA9685::set_servo9_euler_angle( const float new_euler_angle ) {
+    set_servo_euler_angle(9, new_euler_angle);
+}
+void I2CPCA9685::set_servo10_euler_angle( const float new_euler_angle ) {
+    set_servo_euler_angle(10, new_euler_angle);
+}
+void I2CPCA9685::set_servo11_euler_angle( const float new_euler_angle ) {
+    set_servo_euler_angle(11, new_euler_angle);
+}
+void I2CPCA9685::set_servo12_euler_angle( const float new_euler_angle ) {
+    set_servo_euler_angle(12, new_euler_angle);
+}
+void I2CPCA9685::set_servo13_euler_angle( const float new_euler_angle ) {
+    set_servo_euler_angle(13, new_euler_angle);
+}
+void I2CPCA9685::set_servo14_euler_angle( const float new_euler_angle ) {
+    set_servo_euler_angle(14, new_euler_angle);
+}
+void I2CPCA9685::set_servo15_euler_angle( const float new_euler_angle ) {
+    set_servo_euler_angle(15, new_euler_angle);
+}
 
 
 float I2CPCA9685::get_servo_euler_angle( const int servo_index ) const {
@@ -455,6 +485,48 @@ float I2CPCA9685::get_servo4_euler_angle() const {
 float I2CPCA9685::get_servo5_euler_angle() const {
     return servo_angles[5];
 }
+
+float I2CPCA9685::get_servo6_euler_angle() const {
+    return servo_angles[6];
+}
+
+float I2CPCA9685::get_servo7_euler_angle() const {
+    return servo_angles[7];
+}
+
+float I2CPCA9685::get_servo8_euler_angle() const {
+    return servo_angles[8];
+}
+
+float I2CPCA9685::get_servo9_euler_angle() const {
+    return servo_angles[9];
+}
+
+float I2CPCA9685::get_servo10_euler_angle() const {
+    return servo_angles[10];
+}
+
+float I2CPCA9685::get_servo11_euler_angle() const {
+    return servo_angles[11];
+}
+
+float I2CPCA9685::get_servo12_euler_angle() const {
+    return servo_angles[12];
+}
+
+float I2CPCA9685::get_servo13_euler_angle() const {
+    return servo_angles[13];
+}
+
+float I2CPCA9685::get_servo14_euler_angle() const {
+    return servo_angles[14];
+}
+
+float I2CPCA9685::get_servo15_euler_angle() const {
+    return servo_angles[15];
+}
+
+
 
 // Getters and setters for leds.
 
