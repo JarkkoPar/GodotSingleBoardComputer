@@ -7,7 +7,8 @@
 using namespace godot;
 
 I2CPCA9685::I2CPCA9685() {
-    _pwm_frequency = 40; 
+    _pwm_frequency_hz = 50; 
+    _is_pca9685_initialized = false;
 }
 
 
@@ -42,9 +43,9 @@ void I2CPCA9685::_bind_methods() {
     // Initialization timeout helper.
     ClassDB::bind_method(D_METHOD("on_timer_finished_finalize_initialize"), &I2CPCA9685::on_timer_finished_finalize_initialize);   
 
-    ClassDB::bind_method(D_METHOD("set_pwm_frequency"), &I2CPCA9685::set_pwm_frequency);
-    ClassDB::bind_method(D_METHOD("get_pwm_frequency"), &I2CPCA9685::get_pwm_frequency);
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "PWM Frequency", PROPERTY_HINT_RANGE, "40,1000"), "set_pwm_frequency", "get_pwm_frequency");
+    ClassDB::bind_method(D_METHOD("set_pwm_frequency_hz"), &I2CPCA9685::set_pwm_frequency_hz);
+    ClassDB::bind_method(D_METHOD("get_pwm_frequency_hz"), &I2CPCA9685::get_pwm_frequency_hz);
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "PWM Frequency Hz", PROPERTY_HINT_RANGE, "40,1000"), "set_pwm_frequency_hz", "get_pwm_frequency_hz");
 
     // The led values.
     ADD_GROUP("LEDs", "");
@@ -151,18 +152,19 @@ void I2CPCA9685::_notification(int p_what) {
 
 
 
-void I2CPCA9685::set_pwm_frequency( int frequency_hz ) {
-    _pwm_frequency = frequency_hz;
-    if( _pwm_frequency > 1000 ) {
-        _pwm_frequency = 1000;
+void I2CPCA9685::set_pwm_frequency_hz( int new_frequency_hz ) {
+    _pwm_frequency_hz = new_frequency_hz;
+    if( _pwm_frequency_hz > 1000 ) {
+        _pwm_frequency_hz = 1000;
     }
-    if( _pwm_frequency < 40 ) {
-        _pwm_frequency = 40;
+    if( _pwm_frequency_hz < 40 ) {
+        _pwm_frequency_hz = 40;
     }
-    if (Engine::get_singleton()->is_editor_hint()) return;
+    if(Engine::get_singleton()->is_editor_hint()) return;
+    if( _i2c_device_fd < 0 ) return; // Device not opened so cannot do this yet. Will be set on init in any case.
 
     // Send to the device if not in editor.
-    int prescaling = (int)(25000000.0f / (4096 * _pwm_frequency) - 0.5f);
+    int prescaling = (int)(25000000.0f / (4096 * _pwm_frequency_hz) - 0.5f);
 
     uint8_t current_state = read_byte_from_device_register(PCA9685Registers::MODE1);
     uint8_t sleep = current_state | PCA9685Mode::SLEEP;
@@ -177,18 +179,22 @@ void I2CPCA9685::set_pwm_frequency( int frequency_hz ) {
     write_byte_to_device_register(PCA9685Registers::MODE1, restart );
 }
 
-int  I2CPCA9685::get_pwm_frequency() const {
-    return _pwm_frequency;
+int  I2CPCA9685::get_pwm_frequency_hz() const {
+    return _pwm_frequency_hz;
 }
 
 
 void I2CPCA9685::initialize_pca9685() {
+    // Only initialize once.
+    if( _is_pca9685_initialized ) return;
+    _is_pca9685_initialized = true;
+
     // Read the current MODE1 register value.
     uint8_t current_state = read_byte_from_device_register(PCA9685Registers::MODE1);
 
 
     // First set the PWM Frequency as set on the node.
-    uint8_t prescale_value = (int)(25000000.0f / (4096.0f * (float)(_pwm_frequency)) - 0.5f);
+    uint8_t prescale_value = (int)(25000000.0f / (4096.0f * (float)(_pwm_frequency_hz)) - 0.5f);
     // Device must sleep to change the setting.
     current_state |= PCA9685Mode::SLEEP;
     write_byte_to_device_register( PCA9685Registers::MODE1, PCA9685Mode::SLEEP);

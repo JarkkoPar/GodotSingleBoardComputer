@@ -12,7 +12,8 @@ class I2CPCA9685 : public I2CRawDevice {
     GDCLASS(I2CPCA9685, I2CRawDevice)
 
 private:
-    int _pwm_frequency; 
+    int _pwm_frequency_hz; 
+    bool _is_pca9685_initialized;
 
     uint8_t led_values[16];
     
@@ -53,8 +54,8 @@ public:
     void _notification(int p_what);
 
     // Getters and setters.
-    void set_pwm_frequency( int frequency_hz );
-    int  get_pwm_frequency() const;    
+    void set_pwm_frequency_hz( int new_frequency_hz );
+    int  get_pwm_frequency_hz() const;    
 
     
     // Device handling.

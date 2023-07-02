@@ -13,6 +13,9 @@ class I2CRawDevice : public Node {
     GDCLASS(I2CRawDevice, Node)
 
 private:
+    
+protected: 
+    
     int _i2c_device_fd;
     int _i2c_device_id;
     int _i2c_device_address; 
@@ -21,7 +24,6 @@ private:
     PackedByteArray _i2c_godot_read_buffer;
     PackedByteArray _i2c_godot_write_buffer;
 
-protected: 
     static void _bind_methods();
 
 public:
