@@ -252,7 +252,7 @@ void I2CPCA9685::update_servo_min_max_angle_pulse_counts() {
     _servo_pulses_between_min_max_angles = _servo_max_angle_pulses - _servo_min_angle_pulses;
 
     // Also update the update frame delays.
-    _pca9685_update_frame_delay = (double)one_over_hz;
+    _pca9685_update_frame_delay = 1.0 / (double)_pwm_frequency_hz;
     _pca9685_update_wait_time = 0.0;
 }
 
