@@ -12,16 +12,20 @@ class I2CPCA9685 : public I2CRawDevice {
 
 private:
     int _pwm_frequency_hz; 
+    int _pwm_prescale_value;
+    double _pwm_oscillator_frequency;
     bool _is_pca9685_initialized;
     double _pca9685_update_frame_delay;
     double _pca9685_update_wait_time;
 
     uint8_t led_values[16];
     float servo_angles[16];
+    double servo_min_angle_ms[16];
+    double servo_max_angle_ms[16];
 
-    int _servo_min_angle_pulses;
-    int _servo_max_angle_pulses;
-    int _servo_pulses_between_min_max_angles;
+    int _servo_min_angle_pulses[16];
+    int _servo_max_angle_pulses[16];
+    int _servo_pulses_between_min_max_angles[16];
     
 protected: 
     static void _bind_methods();
