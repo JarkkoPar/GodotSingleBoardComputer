@@ -6,8 +6,7 @@
 
 namespace godot {
 
-// This is a "raw" i2c device node, which allows a more low-level
-// communication interface with any i2c device.
+// This is a control node for the PCA9685 servo driver.
 class I2CPCA9685 : public I2CRawDevice {
     GDCLASS(I2CPCA9685, I2CRawDevice)
 
@@ -20,6 +19,7 @@ private:
 
     int _servo_min_angle_pulses;
     int _servo_max_angle_pulses;
+    int _servo_pulses_between_min_max_angles;
     
 protected: 
     static void _bind_methods();
@@ -57,6 +57,8 @@ public:
 
     void _notification(int p_what);
 
+    void update_servo_min_max_angle_pulse_counts();
+
     // Getters and setters.
     void set_pwm_frequency_hz( int new_frequency_hz );
     int  get_pwm_frequency_hz() const;    
@@ -77,11 +79,11 @@ public:
 
     // Getters and setters for servo values.
 
-    void set_servo_min_angle_pulses( const int min_angle_pulses );
-    int  get_servo_min_angle_pulses() const;
+    //void set_servo_min_angle_pulses( const int min_angle_pulses );
+    //int  get_servo_min_angle_pulses() const;
 
-    void set_servo_max_angle_pulses( const int max_angle_pulses );
-    int  get_servo_max_angle_pulses() const;
+    //void set_servo_max_angle_pulses( const int max_angle_pulses );
+    //int  get_servo_max_angle_pulses() const;
 
     void set_servo_euler_angle( const int servo_index, const float new_euler_angle );
     void set_servo0_euler_angle( const float new_euler_angle );

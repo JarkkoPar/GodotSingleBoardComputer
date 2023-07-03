@@ -8,10 +8,12 @@ using namespace godot;
 
 I2CPCA9685::I2CPCA9685() {
     _pwm_frequency_hz = 50; 
+    update_servo_min_max_angle_pulse_counts();
     _is_pca9685_initialized = false;
 
-    _servo_min_angle_pulses = 205; //150;
-    _servo_max_angle_pulses = 410; //650;
+    //_servo_min_angle_pulses = 205; //150;
+    //_servo_max_angle_pulses = 410; //650;
+    //_servo_pulses_between_min_max_angles = _servo_max_angle_pulses - _servo_min_angle_pulses;
 
     for( int i = 0; i < 16; ++i ) {
         servo_angles[i] = 0.0f;
@@ -26,27 +28,8 @@ I2CPCA9685::~I2CPCA9685() {
 
 
 void I2CPCA9685::_bind_methods() {
-    /**
-    // Device ID on the SCB.
-    ClassDB::bind_method(D_METHOD("set_i2c_device_index", "device_index"), &I2CRawDevice::set_i2c_device_index);
-	ClassDB::bind_method(D_METHOD("get_i2c_device_index"), &I2CRawDevice::get_i2c_device_index);
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "I2C Device", PROPERTY_HINT_NONE, ""), "set_i2c_device_index", "get_i2c_device_index");
-
-    // Address.
-    ClassDB::bind_method(D_METHOD("set_i2c_device_address", "device_address"), &I2CRawDevice::set_i2c_device_address);
-	ClassDB::bind_method(D_METHOD("get_i2c_device_address"), &I2CRawDevice::get_i2c_device_address);
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "I2C Device Address", PROPERTY_HINT_NONE, ""), "set_i2c_device_address", "get_i2c_device_address");
-
-    // Read and write methods.
-    ClassDB::bind_method(D_METHOD("open_device"), &I2CRawDevice::open_device);
-    ClassDB::bind_method(D_METHOD("close_device"), &I2CRawDevice::close_device);
-    ClassDB::bind_method(D_METHOD("read_bytes_from_device", "num_bytes"), &I2CRawDevice::read_bytes_from_device);
-    ClassDB::bind_method(D_METHOD("write_bytes_to_device", "bytes_to_write"), &I2CRawDevice::write_bytes_to_device);
-    /**/
-
-    // Initialization function.
-    //ClassDB::bind_method(D_METHOD("initialize_device"), &I2CPCA9685::initialize_device);
-
+    
+    
     // Initialization timeout helper.
     ClassDB::bind_method(D_METHOD("on_timer_finished_finalize_initialize"), &I2CPCA9685::on_timer_finished_finalize_initialize);   
 
@@ -60,7 +43,7 @@ void I2CPCA9685::_bind_methods() {
 
 
     ADD_GROUP("Servos", "");
-
+    /**
     ClassDB::bind_method(D_METHOD("set_servo_min_angle_pulses"), &I2CPCA9685::set_servo_min_angle_pulses);
     ClassDB::bind_method(D_METHOD("get_servo_min_angle_pulses"), &I2CPCA9685::get_servo_min_angle_pulses);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "Pulses for min angle", PROPERTY_HINT_RANGE, "0,4095"), "set_servo_min_angle_pulses", "get_servo_min_angle_pulses");
@@ -68,7 +51,7 @@ void I2CPCA9685::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_servo_max_angle_pulses"), &I2CPCA9685::set_servo_max_angle_pulses);
     ClassDB::bind_method(D_METHOD("get_servo_max_angle_pulses"), &I2CPCA9685::get_servo_max_angle_pulses);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "Pulses for max angle", PROPERTY_HINT_RANGE, "0,4095"), "set_servo_max_angle_pulses", "get_servo_max_angle_pulses");
-
+    /**/
 
     ClassDB::bind_method(D_METHOD("set_servo0_euler_angle", "new_euler_angle"), &I2CPCA9685::set_servo0_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo0_euler_angle"), &I2CPCA9685::get_servo0_euler_angle);
@@ -240,20 +223,28 @@ void I2CPCA9685::_notification(int p_what) {
 }
 
 
+void I2CPCA9685::update_servo_min_max_angle_pulse_counts() {
+    float one_over_hz = 1000.0f / (float)_pwm_frequency_hz;
+    float ms_to_pulses_multiplier = 4096.0f * one_over_hz;
+    _servo_min_angle_pulses = (int)(ms_to_pulses_multiplier);
+    _servo_max_angle_pulses = (int)(2.0f * ms_to_pulses_multiplier);
+    _servo_pulses_between_min_max_angles = _servo_max_angle_pulses - _servo_min_angle_pulses;
+}
 
 void I2CPCA9685::set_pwm_frequency_hz( int new_frequency_hz ) {
     _pwm_frequency_hz = new_frequency_hz;
     if( _pwm_frequency_hz > 1000 ) {
         _pwm_frequency_hz = 1000;
     }
-    if( _pwm_frequency_hz < 40 ) {
-        _pwm_frequency_hz = 40;
+    if( _pwm_frequency_hz < 1 ) {
+        _pwm_frequency_hz = 1;
     }
     if(Engine::get_singleton()->is_editor_hint()) return;
     if( _i2c_device_fd < 0 ) return; // Device not opened so cannot do this yet. Will be set on init in any case.
 
     // Send to the device if not in editor.
-    int prescaling = (int)(25000000.0f / (4096 * _pwm_frequency_hz) - 0.5f);
+    int prescaling = (int)(25000000.0f / (4096.0f * (float)_pwm_frequency_hz) - 0.5f);
+    update_servo_min_max_angle_pulse_counts();
 
     uint8_t current_state = read_byte_from_device_register(PCA9685Registers::MODE1);
     uint8_t sleep = current_state | PCA9685Mode::SLEEP;
@@ -290,6 +281,8 @@ void I2CPCA9685::_initialize_device() {
 
     // First set the PWM Frequency as set on the node.
     uint8_t prescale_value = (int)(25000000.0f / (4096.0f * (float)(_pwm_frequency_hz)) - 0.5f);
+    update_servo_min_max_angle_pulse_counts();
+
     // Device must sleep to change the setting.
     current_state |= PCA9685Mode::SLEEP;
     write_byte_to_device_register( PCA9685Registers::MODE1, PCA9685Mode::SLEEP);
@@ -355,7 +348,7 @@ void I2CPCA9685::set_led_pulse_range( int led_index, int on_index, int off_index
 }
 
 // Getters and setters for servos.
-
+/**
 void I2CPCA9685::set_servo_min_angle_pulses( const int min_angle_pulses ) {
     _servo_min_angle_pulses = min_angle_pulses;
 }
@@ -371,7 +364,7 @@ void I2CPCA9685::set_servo_max_angle_pulses( const int max_angle_pulses ) {
 int  I2CPCA9685::get_servo_max_angle_pulses() const {
     return _servo_max_angle_pulses;
 }
-
+/**/
 
 
 void I2CPCA9685::set_servo_euler_angle( const int servo_index, const float new_euler_angle ) {
@@ -390,12 +383,12 @@ void I2CPCA9685::set_servo_euler_angle( const int servo_index, const float new_e
     }
     angle += 90.0f;
     angle /= 180.0f;
-    int servo_pulse_range = _servo_max_angle_pulses - _servo_min_angle_pulses;
+    //int servo_pulse_range = _servo_max_angle_pulses - _servo_min_angle_pulses;
 
-    int off_index = (int)((float)servo_pulse_range * angle);
-    if( off_index > _servo_max_angle_pulses ) {
-        off_index = _servo_max_angle_pulses;
-    }
+    int off_index = (int)((float)_servo_pulses_between_min_max_angles * angle);
+    //if( off_index > _servo_max_angle_pulses ) {
+    //    off_index = _servo_max_angle_pulses;
+    //}
 
     set_led_pulse_range( servo_index, 0, _servo_min_angle_pulses + off_index );
 }
