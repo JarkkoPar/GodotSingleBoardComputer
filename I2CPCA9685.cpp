@@ -369,8 +369,8 @@ void I2CPCA9685::_process(double delta) {
             angle = 90.0f;
         }
         angle += 90.0f;
-        angle *= angle_multiplier;
-        int off_index = (int)((float)_servo_pulses_between_min_max_angles[i] * angle);
+        float tween = angle * angle_multiplier;
+        int off_index = (int)((float)_servo_pulses_between_min_max_angles[i] * tween);
         if( off_index < 0 ) {
             off_index = 0;
         }
@@ -392,11 +392,15 @@ void I2CPCA9685::_notification(int p_what) {
 
 void I2CPCA9685::update_servo_min_max_angle_pulse_counts() {
     double duty_cycle_ms = 1000.0 / (double)_pwm_frequency_hz;
-    double pulses_per_ms = 4096.0 / duty_cycle_ms;
+    double time_per_pulse = duty_cycle_ms / 4096.0;
+    //double pulses_per_ms = 4096.0 / duty_cycle_ms;
 
     for( int i = 0; i < 16; ++i ) {
-        _servo_min_angle_pulses[i] = (int)(servo_min_angle_ms[i] * pulses_per_ms);
-        _servo_max_angle_pulses[i] = (int)(servo_max_angle_ms[i] * pulses_per_ms);
+        _servo_min_angle_pulses[i] = (int)(servo_min_angle_ms[i] / time_per_pulse);
+        _servo_max_angle_pulses[i] = (int)(servo_max_angle_ms[i] / time_per_pulse);
+        
+        //_servo_min_angle_pulses[i] = (int)(servo_min_angle_ms[i] * pulses_per_ms);
+        //_servo_max_angle_pulses[i] = (int)(servo_max_angle_ms[i] * pulses_per_ms);
         _servo_pulses_between_min_max_angles[i] = _servo_max_angle_pulses[i] - _servo_min_angle_pulses[i];
     }
     
@@ -484,11 +488,11 @@ void I2CPCA9685::_initialize_device() {
 }
 
 void I2CPCA9685::on_timer_finished_finalize_initialize() {
-    uint8_t current_state = read_byte_from_device_register(PCA9685Registers::MODE1);
-    current_state &= ~(PCA9685Mode::SLEEP); // Clear the sleep-bit.
-    write_byte_to_device_register( PCA9685Registers::MODE1, current_state);
+    //uint8_t current_state = read_byte_from_device_register(PCA9685Registers::MODE1);
+    //current_state &= ~(PCA9685Mode::SLEEP); // Clear the sleep-bit.
+    //write_byte_to_device_register( PCA9685Registers::MODE1, current_state);
     //ERR_FAIL_COND_MSG(true, "Delayed initialization done.");
-
+    wake_pca9685();
 }
 
 
@@ -521,9 +525,9 @@ void I2CPCA9685::set_led_pulse_range( int led_index, int on_index, int off_index
     uint8_t uoff_index = (uint8_t)off_index;
 
     write_byte_to_device_register(PCA9685Registers::LED0_ON_L + uled_index, uon_index & 0xFF );
-    write_byte_to_device_register(PCA9685Registers::LED0_ON_H + uled_index, (uon_index >> 8) & 0x0F );
+    write_byte_to_device_register(PCA9685Registers::LED0_ON_H + uled_index, (uon_index >> 8));// & 0x0F );
     write_byte_to_device_register(PCA9685Registers::LED0_OFF_L + uled_index, uoff_index & 0xFF );
-    write_byte_to_device_register(PCA9685Registers::LED0_OFF_H + uled_index, (uoff_index >> 8) & 0x0F );
+    write_byte_to_device_register(PCA9685Registers::LED0_OFF_H + uled_index, (uoff_index >> 8));// & 0x0F );
     
 }
 
