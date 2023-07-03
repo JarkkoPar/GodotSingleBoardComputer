@@ -437,7 +437,7 @@ void I2CPCA9685::set_pwm_frequency_hz( int new_frequency_hz ) {
 
     write_byte_to_device_register(PCA9685Registers::MODE1, sleep);
     OS::get_singleton()->delay_msec(50);
-    write_byte_to_device_register(PCA9685Registers::PRESCALE, _pwm_prescale_value ); //prescaling);
+    write_byte_to_device_register(PCA9685Registers::PRESCALE, (uint8_t)_pwm_prescale_value ); //prescaling);
     OS::get_singleton()->delay_msec(50);
     write_byte_to_device_register(PCA9685Registers::MODE1, restart );
     OS::get_singleton()->delay_msec(50);
