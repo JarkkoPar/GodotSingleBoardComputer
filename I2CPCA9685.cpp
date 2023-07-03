@@ -10,11 +10,7 @@ I2CPCA9685::I2CPCA9685() {
     _pwm_frequency_hz = 50; 
     update_servo_min_max_angle_pulse_counts();
     _is_pca9685_initialized = false;
-
-    //_servo_min_angle_pulses = 205; //150;
-    //_servo_max_angle_pulses = 410; //650;
-    //_servo_pulses_between_min_max_angles = _servo_max_angle_pulses - _servo_min_angle_pulses;
-
+    
     for( int i = 0; i < 16; ++i ) {
         servo_angles[i] = 0.0f;
     }
@@ -209,7 +205,32 @@ void I2CPCA9685::_bind_methods() {
 
 
 void I2CPCA9685::_process(double delta) {
+    if( !_is_pca9685_initialized ) return;
+    if(Engine::get_singleton()->is_editor_hint()) return;
 
+    // We update at the same hz as the servo's are running
+    _pca9685_update_wait_time -= delta;
+    if( _pca9685_update_wait_time > 0.0 ) return;
+
+    // Time to update the servo values.
+    _pca9685_update_wait_time = _pca9685_update_frame_delay;
+
+    for( int i = 0; i < 16; ++i ) {
+        
+        // Degrees go between -90.0 and 90.0, so scale
+        // to 0..1 first.
+        float angle = servo_angles[i];
+        if( angle < -90.0f ) { 
+            angle = -90.0f; 
+        }else if( angle > 90.0f ) {
+            angle = 90.0f;
+        }
+        angle += 90.0f;
+        angle /= 180.0f;
+        int off_index = (int)((float)_servo_pulses_between_min_max_angles * angle);
+
+        set_led_pulse_range( i, 0, _servo_min_angle_pulses + off_index );
+    }
 }
 
 
@@ -229,6 +250,10 @@ void I2CPCA9685::update_servo_min_max_angle_pulse_counts() {
     _servo_min_angle_pulses = (int)(ms_to_pulses_multiplier);
     _servo_max_angle_pulses = (int)(2.0f * ms_to_pulses_multiplier);
     _servo_pulses_between_min_max_angles = _servo_max_angle_pulses - _servo_min_angle_pulses;
+
+    // Also update the update frame delays.
+    _pca9685_update_frame_delay = (double)one_over_hz;
+    _pca9685_update_wait_time = 0.0;
 }
 
 void I2CPCA9685::set_pwm_frequency_hz( int new_frequency_hz ) {
@@ -370,9 +395,10 @@ int  I2CPCA9685::get_servo_max_angle_pulses() const {
 void I2CPCA9685::set_servo_euler_angle( const int servo_index, const float new_euler_angle ) {
     ERR_FAIL_COND_MSG(servo_index < 0 || servo_index > 15, "set_servo_euler_angle: Servo index out of bounds.");
     servo_angles[servo_index] = new_euler_angle;
+    return;
     if(Engine::get_singleton()->is_editor_hint()) return;
 
-    
+    /**
     // Degrees go between -90.0 and 90.0, so scale
     // to 0..1 first.
     float angle = new_euler_angle;
@@ -391,6 +417,7 @@ void I2CPCA9685::set_servo_euler_angle( const int servo_index, const float new_e
     //}
 
     set_led_pulse_range( servo_index, 0, _servo_min_angle_pulses + off_index );
+    /**/
 }
 
 void I2CPCA9685::set_servo0_euler_angle( const float new_euler_angle ) {

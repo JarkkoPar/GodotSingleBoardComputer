@@ -13,6 +13,8 @@ class I2CPCA9685 : public I2CRawDevice {
 private:
     int _pwm_frequency_hz; 
     bool _is_pca9685_initialized;
+    double _pca9685_update_frame_delay;
+    double _pca9685_update_wait_time;
 
     uint8_t led_values[16];
     float servo_angles[16];
