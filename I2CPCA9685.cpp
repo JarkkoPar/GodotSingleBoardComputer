@@ -214,7 +214,7 @@ void I2CPCA9685::_process(double delta) {
 
     // Time to update the servo values.
     _pca9685_update_wait_time = _pca9685_update_frame_delay;
-
+    float angle_multiplier = 1.0f / 180.0f;
     for( int i = 0; i < 16; ++i ) {
         
         // Degrees go between -90.0 and 90.0, so scale
@@ -226,7 +226,7 @@ void I2CPCA9685::_process(double delta) {
             angle = 90.0f;
         }
         angle += 90.0f;
-        angle /= 180.0f;
+        angle *= angle_multiplier;
         int off_index = (int)((float)_servo_pulses_between_min_max_angles * angle);
 
         set_led_pulse_range( i, 0, _servo_min_angle_pulses + off_index );
@@ -246,7 +246,7 @@ void I2CPCA9685::_notification(int p_what) {
 
 void I2CPCA9685::update_servo_min_max_angle_pulse_counts() {
     float one_over_hz = 1000.0f / (float)_pwm_frequency_hz;
-    float ms_to_pulses_multiplier = 4096.0f * one_over_hz;
+    float ms_to_pulses_multiplier = 4096.0f / one_over_hz; //4096.0f * one_over_hz;
     _servo_min_angle_pulses = (int)(ms_to_pulses_multiplier);
     _servo_max_angle_pulses = (int)(2.0f * ms_to_pulses_multiplier);
     _servo_pulses_between_min_max_angles = _servo_max_angle_pulses - _servo_min_angle_pulses;
@@ -318,7 +318,7 @@ void I2CPCA9685::_initialize_device() {
     // initialization.
     Timer* waittimer = memnew(Timer);//::_new();
     add_child(waittimer);
-    waittimer->set_wait_time(1);
+    waittimer->set_wait_time(0.5);
     waittimer->set_one_shot(true);
     waittimer->connect("timeout", godot::Callable(this, "on_timer_finished_finalize_initialize"));
      // callable_mp(this, &I2CPCA9685::on_timer_finished_finalize_initialize ));
@@ -333,7 +333,7 @@ void I2CPCA9685::on_timer_finished_finalize_initialize() {
     uint8_t current_state = read_byte_from_device_register(PCA9685Registers::MODE1);
     current_state &= ~(PCA9685Mode::SLEEP); // Clear the sleep-bit.
     write_byte_to_device_register( PCA9685Registers::MODE1, current_state);
-    ERR_FAIL_COND_MSG(true, "Delayed initialization done.");
+    //ERR_FAIL_COND_MSG(true, "Delayed initialization done.");
 
 }
 
@@ -365,6 +365,7 @@ void I2CPCA9685::set_led_pulse_range( int led_index, int on_index, int off_index
     uint8_t uled_index = (uint8_t)led_index * 4;
     uint8_t uon_index = (uint8_t)on_index;
     uint8_t uoff_index = (uint8_t)off_index;
+
     write_byte_to_device_register(PCA9685Registers::LED0_ON_L + uled_index, uon_index & 0xFF );
     write_byte_to_device_register(PCA9685Registers::LED0_ON_H + uled_index, (uon_index >> 8) & 0x0F );
     write_byte_to_device_register(PCA9685Registers::LED0_OFF_L + uled_index, uoff_index & 0xFF );
@@ -395,6 +396,8 @@ int  I2CPCA9685::get_servo_max_angle_pulses() const {
 void I2CPCA9685::set_servo_euler_angle( const int servo_index, const float new_euler_angle ) {
     ERR_FAIL_COND_MSG(servo_index < 0 || servo_index > 15, "set_servo_euler_angle: Servo index out of bounds.");
     servo_angles[servo_index] = new_euler_angle;
+    
+    
     return;
     if(Engine::get_singleton()->is_editor_hint()) return;
 
