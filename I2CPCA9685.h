@@ -85,11 +85,74 @@ public:
 
     // Getters and setters for servo values.
 
-    //void set_servo_min_angle_pulses( const int min_angle_pulses );
-    //int  get_servo_min_angle_pulses() const;
+    void set_servo0_min_angle_ms( const double new_ms );
+    void set_servo1_min_angle_ms( const double new_ms );
+    void set_servo2_min_angle_ms( const double new_ms );
+    void set_servo3_min_angle_ms( const double new_ms );
+    void set_servo4_min_angle_ms( const double new_ms );
+    void set_servo5_min_angle_ms( const double new_ms );
+    void set_servo6_min_angle_ms( const double new_ms );
+    void set_servo7_min_angle_ms( const double new_ms );
+    void set_servo8_min_angle_ms( const double new_ms );
+    void set_servo9_min_angle_ms( const double new_ms );
+    void set_servo10_min_angle_ms( const double new_ms );
+    void set_servo11_min_angle_ms( const double new_ms );
+    void set_servo12_min_angle_ms( const double new_ms );
+    void set_servo13_min_angle_ms( const double new_ms );
+    void set_servo14_min_angle_ms( const double new_ms );
+    void set_servo15_min_angle_ms( const double new_ms );
 
-    //void set_servo_max_angle_pulses( const int max_angle_pulses );
-    //int  get_servo_max_angle_pulses() const;
+    double get_servo0_min_angle_ms() const;
+    double get_servo1_min_angle_ms() const;
+    double get_servo2_min_angle_ms() const;
+    double get_servo3_min_angle_ms() const;
+    double get_servo4_min_angle_ms() const;
+    double get_servo5_min_angle_ms() const;
+    double get_servo6_min_angle_ms() const;
+    double get_servo7_min_angle_ms() const;
+    double get_servo8_min_angle_ms() const;
+    double get_servo9_min_angle_ms() const;
+    double get_servo10_min_angle_ms() const;
+    double get_servo11_min_angle_ms() const;
+    double get_servo12_min_angle_ms() const;
+    double get_servo13_min_angle_ms() const;
+    double get_servo14_min_angle_ms() const;
+    double get_servo15_min_angle_ms() const;
+
+    void set_servo0_max_angle_ms( const double new_ms );
+    void set_servo1_max_angle_ms( const double new_ms );
+    void set_servo2_max_angle_ms( const double new_ms );
+    void set_servo3_max_angle_ms( const double new_ms );
+    void set_servo4_max_angle_ms( const double new_ms );
+    void set_servo5_max_angle_ms( const double new_ms );
+    void set_servo6_max_angle_ms( const double new_ms );
+    void set_servo7_max_angle_ms( const double new_ms );
+    void set_servo8_max_angle_ms( const double new_ms );
+    void set_servo9_max_angle_ms( const double new_ms );
+    void set_servo10_max_angle_ms( const double new_ms );
+    void set_servo11_max_angle_ms( const double new_ms );
+    void set_servo12_max_angle_ms( const double new_ms );
+    void set_servo13_max_angle_ms( const double new_ms );
+    void set_servo14_max_angle_ms( const double new_ms );
+    void set_servo15_max_angle_ms( const double new_ms );
+
+    double get_servo0_max_angle_ms() const;
+    double get_servo1_max_angle_ms() const;
+    double get_servo2_max_angle_ms() const;
+    double get_servo3_max_angle_ms() const;
+    double get_servo4_max_angle_ms() const;
+    double get_servo5_max_angle_ms() const;
+    double get_servo6_max_angle_ms() const;
+    double get_servo7_max_angle_ms() const;
+    double get_servo8_max_angle_ms() const;
+    double get_servo9_max_angle_ms() const;
+    double get_servo10_max_angle_ms() const;
+    double get_servo11_max_angle_ms() const;
+    double get_servo12_max_angle_ms() const;
+    double get_servo13_max_angle_ms() const;
+    double get_servo14_max_angle_ms() const;
+    double get_servo15_max_angle_ms() const;
+
 
     void set_servo_euler_angle( const int servo_index, const float new_euler_angle );
     void set_servo0_euler_angle( const float new_euler_angle );
