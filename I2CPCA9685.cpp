@@ -2,7 +2,7 @@
 
 #include <godot_cpp/classes/timer.hpp>
 #include <godot_cpp/classes/engine.hpp>
-
+#include <godot_cpp/classes/os.hpp>
 
 using namespace godot;
 
@@ -424,6 +424,7 @@ void I2CPCA9685::set_pwm_frequency_hz( int new_frequency_hz ) {
     }
     if(Engine::get_singleton()->is_editor_hint()) return;
     if( _i2c_device_fd < 0 ) return; // Device not opened so cannot do this yet. Will be set on init in any case.
+    if( !_is_pca9685_initialized ) return;
 
     // Send to the device if not in editor.
     //int prescaling = (int)(25000000.0f / (4096.0f * (float)_pwm_frequency_hz) - 0.5f);
@@ -435,11 +436,25 @@ void I2CPCA9685::set_pwm_frequency_hz( int new_frequency_hz ) {
     uint8_t restart = wake | 0x80;
 
     write_byte_to_device_register(PCA9685Registers::MODE1, sleep);
+    OS::get_singleton()->delay_msec(50);
     write_byte_to_device_register(PCA9685Registers::PRESCALE, _pwm_prescale_value ); //prescaling);
-    write_byte_to_device_register(PCA9685Registers::MODE1, wake);
-    // todo: delay at least 500 ms
-
+    OS::get_singleton()->delay_msec(50);
     write_byte_to_device_register(PCA9685Registers::MODE1, restart );
+    OS::get_singleton()->delay_msec(50);
+    write_byte_to_device_register(PCA9685Registers::MODE1, wake);
+    OS::get_singleton()->delay_msec(50);
+    // Use a timer to delay 500 ms before waking.
+    /**
+    Timer* waittimer = memnew(Timer);//::_new();
+    waittimer->set_name("wake_wait_timer");
+    add_child(waittimer);
+    waittimer->set_wait_time(0.5);
+    waittimer->set_one_shot(true);
+    waittimer->connect("timeout", godot::Callable(this, "on_timer_finished_finalize_initialize"));
+     // callable_mp(this, &I2CPCA9685::on_timer_finished_finalize_initialize ));
+    //"on_timer_finished_finalize_initialize");
+    /**/
+    
 }
 
 int  I2CPCA9685::get_pwm_frequency_hz() const {
@@ -459,19 +474,27 @@ void I2CPCA9685::_initialize_device() {
     _is_pca9685_initialized = true;
 
     // Read the current MODE1 register value.
-    uint8_t current_state = read_byte_from_device_register(PCA9685Registers::MODE1);
+    //uint8_t current_state = read_byte_from_device_register(PCA9685Registers::MODE1);
 
 
     // First set the PWM Frequency as set on the node.
     //uint8_t prescale_value = (int)(25000000.0f / (4096.0f * (float)(_pwm_frequency_hz)) - 0.5f);
-    update_servo_min_max_angle_pulse_counts();
+    //update_servo_min_max_angle_pulse_counts();
     
+    set_pwm_frequency_hz(_pwm_frequency_hz);
+
     // Device must sleep to change the setting.
+    /**
     current_state |= PCA9685Mode::SLEEP;
     write_byte_to_device_register( PCA9685Registers::MODE1, PCA9685Mode::SLEEP);
+    OS::get_singleton()->delay_msec(50);
     write_byte_to_device_register( PCA9685Registers::PRESCALE, (uint8_t)_pwm_prescale_value);
+    OS::get_singleton()->delay_msec(50);
     write_byte_to_device_register( PCA9685Registers::MODE1, PCA9685Mode::RESTART);
+    OS::get_singleton()->delay_msec(50);
     
+    OS::get_singleton()->delay_msec(50);
+    /**
     // Create a timer that will then finalize the 
     // initialization.
     Timer* waittimer = memnew(Timer);//::_new();
@@ -484,14 +507,17 @@ void I2CPCA9685::_initialize_device() {
     
     waittimer->start();
     //delay(1); 
-    
+    /**/
 }
 
 void I2CPCA9685::on_timer_finished_finalize_initialize() {
-    //uint8_t current_state = read_byte_from_device_register(PCA9685Registers::MODE1);
-    //current_state &= ~(PCA9685Mode::SLEEP); // Clear the sleep-bit.
-    //write_byte_to_device_register( PCA9685Registers::MODE1, current_state);
-    //ERR_FAIL_COND_MSG(true, "Delayed initialization done.");
+    // Remove the timer.
+    Timer* waittimer = static_cast<Timer*>(find_child("wake_wait_timer", false, true));
+    if( waittimer != nullptr ) {
+        waittimer->queue_free();
+        waittimer = nullptr;
+    }
+
     wake_pca9685();
 }
 
