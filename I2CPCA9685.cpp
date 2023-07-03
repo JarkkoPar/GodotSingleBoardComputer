@@ -8,11 +8,14 @@ using namespace godot;
 
 I2CPCA9685::I2CPCA9685() {
     _pwm_frequency_hz = 50; 
+    _pwm_oscillator_frequency = 25000000.0; // 25 MHz
     update_servo_min_max_angle_pulse_counts();
     _is_pca9685_initialized = false;
     
     for( int i = 0; i < 16; ++i ) {
         servo_angles[i] = 0.0f;
+        servo_min_angle_ms[i] = 1.0;
+        servo_max_angle_ms[i] = 2.0;
     }
 }
 
@@ -37,8 +40,14 @@ void I2CPCA9685::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_servo_euler_angle", "servo_index", "new_euler_angle"), &I2CPCA9685::set_servo_euler_angle);
     ClassDB::bind_method(D_METHOD("get_servo_euler_angle", "servo_index"), &I2CPCA9685::get_servo_euler_angle);
 
+    ADD_GROUP("Servo configuration", "");
+    /**
+    ClassDB::bind_method(D_METHOD("set_servo0_min_angle_ms", "new_min_angle_ms"), &I2CPCA9685::set_servo0_min_angle_ms);
+	ClassDB::bind_method(D_METHOD("get_servo0_min_angle_ms"), &I2CPCA9685::get_servo0_min_angle_ms);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 0", PROPERTY_HINT_NONE), "set_servo0_min_angle_ms", "get_servo0_min_angle_ms");
+    /**/
 
-    ADD_GROUP("Servos", "");
+    ADD_GROUP("Servo angles", "");
     /**
     ClassDB::bind_method(D_METHOD("set_servo_min_angle_pulses"), &I2CPCA9685::set_servo_min_angle_pulses);
     ClassDB::bind_method(D_METHOD("get_servo_min_angle_pulses"), &I2CPCA9685::get_servo_min_angle_pulses);
@@ -227,9 +236,12 @@ void I2CPCA9685::_process(double delta) {
         }
         angle += 90.0f;
         angle *= angle_multiplier;
-        int off_index = (int)((float)_servo_pulses_between_min_max_angles * angle);
+        int off_index = (int)((float)_servo_pulses_between_min_max_angles[i] * angle);
+        if( off_index < 0 ) {
+            off_index = 0;
+        }
 
-        set_led_pulse_range( i, 0, _servo_min_angle_pulses + off_index );
+        set_led_pulse_range( i, 0, _servo_min_angle_pulses[i] + off_index );
     }
 }
 
@@ -245,15 +257,23 @@ void I2CPCA9685::_notification(int p_what) {
 
 
 void I2CPCA9685::update_servo_min_max_angle_pulse_counts() {
-    float one_over_hz = 1000.0f / (float)_pwm_frequency_hz;
-    float ms_to_pulses_multiplier = 4096.0f / one_over_hz; //4096.0f * one_over_hz;
-    _servo_min_angle_pulses = (int)(ms_to_pulses_multiplier);
-    _servo_max_angle_pulses = (int)(2.0f * ms_to_pulses_multiplier);
-    _servo_pulses_between_min_max_angles = _servo_max_angle_pulses - _servo_min_angle_pulses;
+    double duty_cycle_ms = 1000.0 / (double)_pwm_frequency_hz;
+    double pulses_per_ms = 4096.0 / duty_cycle_ms;
 
+    for( int i = 0; i < 16; ++i ) {
+        _servo_min_angle_pulses[i] = (int)(servo_min_angle_ms[i] * pulses_per_ms);
+        _servo_max_angle_pulses[i] = (int)(servo_max_angle_ms[i] * pulses_per_ms);
+        _servo_pulses_between_min_max_angles[i] = _servo_max_angle_pulses[i] - _servo_min_angle_pulses[i];
+    }
+    
     // Also update the update frame delays.
     _pca9685_update_frame_delay = 1.0 / (double)_pwm_frequency_hz;
     _pca9685_update_wait_time = 0.0;
+
+    // And the prescale-value.
+    // With 50Hz frequency there will be 4096 * 50 pulses per second, so the 
+    // pre-scaling value comes to 25 000 000 / (4096 * 50) = 25 000 000 / 204 800 = 122.07 ~ 122 = 0x7A
+    _pwm_prescale_value = (int)(_pwm_oscillator_frequency / (4096.0 * (double)_pwm_frequency_hz));
 }
 
 void I2CPCA9685::set_pwm_frequency_hz( int new_frequency_hz ) {
@@ -268,7 +288,7 @@ void I2CPCA9685::set_pwm_frequency_hz( int new_frequency_hz ) {
     if( _i2c_device_fd < 0 ) return; // Device not opened so cannot do this yet. Will be set on init in any case.
 
     // Send to the device if not in editor.
-    int prescaling = (int)(25000000.0f / (4096.0f * (float)_pwm_frequency_hz) - 0.5f);
+    //int prescaling = (int)(25000000.0f / (4096.0f * (float)_pwm_frequency_hz) - 0.5f);
     update_servo_min_max_angle_pulse_counts();
 
     uint8_t current_state = read_byte_from_device_register(PCA9685Registers::MODE1);
@@ -277,7 +297,7 @@ void I2CPCA9685::set_pwm_frequency_hz( int new_frequency_hz ) {
     uint8_t restart = wake | 0x80;
 
     write_byte_to_device_register(PCA9685Registers::MODE1, sleep);
-    write_byte_to_device_register(PCA9685Registers::PRESCALE, prescaling);
+    write_byte_to_device_register(PCA9685Registers::PRESCALE, _pwm_prescale_value ); //prescaling);
     write_byte_to_device_register(PCA9685Registers::MODE1, wake);
     // todo: delay at least 500 ms
 
@@ -305,13 +325,13 @@ void I2CPCA9685::_initialize_device() {
 
 
     // First set the PWM Frequency as set on the node.
-    uint8_t prescale_value = (int)(25000000.0f / (4096.0f * (float)(_pwm_frequency_hz)) - 0.5f);
+    //uint8_t prescale_value = (int)(25000000.0f / (4096.0f * (float)(_pwm_frequency_hz)) - 0.5f);
     update_servo_min_max_angle_pulse_counts();
-
+    
     // Device must sleep to change the setting.
     current_state |= PCA9685Mode::SLEEP;
     write_byte_to_device_register( PCA9685Registers::MODE1, PCA9685Mode::SLEEP);
-    write_byte_to_device_register( PCA9685Registers::PRESCALE, prescale_value);
+    write_byte_to_device_register( PCA9685Registers::PRESCALE, (uint8_t)_pwm_prescale_value);
     write_byte_to_device_register( PCA9685Registers::MODE1, PCA9685Mode::RESTART);
     
     // Create a timer that will then finalize the 
