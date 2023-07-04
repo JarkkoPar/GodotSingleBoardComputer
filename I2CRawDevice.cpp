@@ -166,10 +166,10 @@ void I2CRawDevice::write_bytes_to_device( PackedByteArray bytes ) {
 }
 
 
-int I2CRawDevice::read_byte_from_device_register( int i2c_device_register ) {
+uint8_t I2CRawDevice::read_byte_from_device_register( uint8_t i2c_device_register ) {
     ERR_FAIL_COND_V_MSG(_i2c_device_fd < 0, 0, "Read device register failed because the device file is not opened. Did you forget to call open_device()?");
 
-    uint8_t output_buffer[1] = {(uint8_t)i2c_device_register}, input_buffer[1] = {0};
+    uint8_t output_buffer[1] = {i2c_device_register}, input_buffer[1] = {0};
     struct i2c_msg messages[2];
     struct i2c_rdwr_ioctl_data message_set[1];
 
@@ -191,10 +191,10 @@ int I2CRawDevice::read_byte_from_device_register( int i2c_device_register ) {
 }
 
 
-void I2CRawDevice::write_byte_to_device_register( int i2c_device_register, int value ) {
+void I2CRawDevice::write_byte_to_device_register( uint8_t i2c_device_register, uint8_t value ) {
     ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "Write device register failed because the device file is not opened. Did you forget to call open_device()?");
 
-    uint8_t output_buffer[2] = {(uint8_t)i2c_device_register, (uint8_t)value};
+    uint8_t output_buffer[2] = {i2c_device_register, value};
 
     struct i2c_msg messages[1];
     struct i2c_rdwr_ioctl_data message_set[1];
@@ -213,6 +213,7 @@ void I2CRawDevice::write_byte_to_device_register( int i2c_device_register, int v
 
 void I2CRawDevice::write_byte_array_to_device_register( int i2c_device_register, PackedByteArray bytes ) {
     // todo: code
+    ERR_FAIL_MSG("write_byte_array_to_device_register is not implemented yet.");
 }
 
 void I2CRawDevice::_write_byte_array_to_device_register( uint8_t i2c_device_register, const uint8_t* bytes ) {
