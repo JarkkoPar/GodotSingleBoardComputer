@@ -546,14 +546,14 @@ void I2CPCA9685::restart_pca9685() {
 // on-off indices are for pwm singal steps from 0 to 4095.
 void I2CPCA9685::set_led_pulse_range( int led_index, int on_index, int off_index ) {
     ERR_FAIL_COND_MSG(led_index < 0 || led_index > 15, "set_led_pulse_range: Led index out of bounds.");
-    uint8_t uled_index = (uint8_t)led_index * 4;
-    uint8_t uon_index = (uint8_t)on_index;
-    uint8_t uoff_index = (uint8_t)off_index;
+    int iled_index = led_index * 4;
+    uint16_t uon_index = (uint16_t)on_index;
+    uint16_t uoff_index = (uint16_t)off_index;
 
-    write_byte_to_device_register(PCA9685Registers::LED0_ON_L + uled_index, uon_index & 0xFF );
-    write_byte_to_device_register(PCA9685Registers::LED0_ON_H + uled_index, (uon_index >> 8));// & 0x0F );
-    write_byte_to_device_register(PCA9685Registers::LED0_OFF_L + uled_index, uoff_index & 0xFF );
-    write_byte_to_device_register(PCA9685Registers::LED0_OFF_H + uled_index, (uoff_index >> 8));// & 0x0F );
+    write_byte_to_device_register(PCA9685Registers::LED0_ON_L + iled_index, (int)(uon_index & 0xFF) );
+    write_byte_to_device_register(PCA9685Registers::LED0_ON_H + iled_index, (int)(((uint8_t)(uon_index >> 8)) & 0x0F) );
+    write_byte_to_device_register(PCA9685Registers::LED0_OFF_L + iled_index, (int)(uoff_index & 0xFF) );
+    write_byte_to_device_register(PCA9685Registers::LED0_OFF_H + iled_index, (int)(((uint8_t)(uoff_index >> 8)) & 0x0F) );
     
 }
 
