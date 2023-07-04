@@ -352,15 +352,9 @@ void I2CPCA9685::_process(double delta) {
     float angle_multiplier = 1.0f / 180.0f;
     for( int i = 0; i < 16; ++i ) {
         
-        // Degrees go between -90.0 and 90.0, so scale
+        // Degrees go between 0.0 and 180.0, so scale
         // to 0..1 first.
         float angle = servo_angles[i];
-        if( angle < -90.0f ) { 
-            angle = -90.0f; 
-        }else if( angle > 90.0f ) {
-            angle = 90.0f;
-        }
-        angle += 90.0f;
         float tween = angle * angle_multiplier;
         int off_index = (int)((float)_servo_pulses_between_min_max_angles[i] * tween);
         if( off_index < 0 ) {
