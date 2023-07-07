@@ -123,6 +123,8 @@ int SingleBoardComputer::get_board_id() const {
 // GPIO related handlers.
 int SingleBoardComputer::request_gpio_device_file( int pin_index ) {
     ERR_FAIL_COND_V_MSG(pin_index < 0 || pin_index > 39, -1, "Pin index must be between 0 and 39.");
+    ERR_FAIL_COND_V_MSG(_gpio_pins == nullptr, -1, "Gpio pins not yet initialized.");
+    
 
     // Check if the gpio file related to the pin is already open.
     int gpio_index = _gpio_pins[pin_index].get_gpio_device_file_index();
@@ -140,13 +142,14 @@ int SingleBoardComputer::request_gpio_device_file( int pin_index ) {
         ERR_FAIL_COND_V_MSG(new_gpio_numbers_array == nullptr, -1, "Could not create a new gpio file descriptor numbers array.");    
     }
 
-    memcpy( new_gpio_files_array, _opened_gpio_device_files, sizeof(_opened_gpio_device_files) );
-    memcpy( new_gpio_numbers_array, _opened_gpio_device_file_gpio_numbers, sizeof(_opened_gpio_device_file_gpio_numbers) );
+    if( _opened_gpio_device_files != nullptr ) {
+        memcpy( new_gpio_files_array, _opened_gpio_device_files, sizeof(_opened_gpio_device_files) );
+        memcpy( new_gpio_numbers_array, _opened_gpio_device_file_gpio_numbers, sizeof(_opened_gpio_device_file_gpio_numbers) );
 
-    delete[] _opened_gpio_device_files;
+        delete[] _opened_gpio_device_files;
+        delete[] _opened_gpio_device_file_gpio_numbers;
+    }
     _opened_gpio_device_files = new_gpio_files_array;
-
-    delete[] _opened_gpio_device_file_gpio_numbers;
     _opened_gpio_device_file_gpio_numbers = new_gpio_numbers_array;
     
     // Open the file and return the result back.
@@ -200,13 +203,14 @@ int SingleBoardComputer::request_i2c_device_file( int bus_index ) {
         ERR_FAIL_COND_V_MSG(new_i2c_numbers_array == nullptr, -1, "Could not create a new I2C file descriptor numbers array.");    
     }
 
-    memcpy( new_i2c_files_array, _opened_i2c_bus_device_files, sizeof(_opened_i2c_bus_device_files) );
-    memcpy( new_i2c_numbers_array, _opened_i2c_bus_device_file_i2c_bus_numbers, sizeof(_opened_i2c_bus_device_file_i2c_bus_numbers) );
+    if( _opened_i2c_bus_device_files != nullptr ) {
+        memcpy( new_i2c_files_array, _opened_i2c_bus_device_files, sizeof(_opened_i2c_bus_device_files) );
+        memcpy( new_i2c_numbers_array, _opened_i2c_bus_device_file_i2c_bus_numbers, sizeof(_opened_i2c_bus_device_file_i2c_bus_numbers) );
 
-    delete[] _opened_i2c_bus_device_files;
+        delete[] _opened_i2c_bus_device_files;
+        delete[] _opened_i2c_bus_device_file_i2c_bus_numbers;
+    }
     _opened_i2c_bus_device_files = new_i2c_files_array;
-
-    delete[] _opened_i2c_bus_device_file_i2c_bus_numbers;
     _opened_i2c_bus_device_file_i2c_bus_numbers = new_i2c_numbers_array;
     
     // Open the file and return the result back.

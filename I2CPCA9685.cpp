@@ -452,7 +452,7 @@ void I2CPCA9685::_initialize_device() {
     // Only initialize once.
     if( _is_pca9685_initialized ) return;
     if(Engine::get_singleton()->is_editor_hint()) return;
-
+    set_i2c_device_bus_number(_i2c_device_bus_number);
     open_device();
     ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "PCA9685 initialization failed because the device file is not opened.");
     

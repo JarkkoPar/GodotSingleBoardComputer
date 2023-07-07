@@ -76,7 +76,14 @@ void I2CRawDevice::_notification(int p_what) {
 
 
 void I2CRawDevice::set_i2c_device_bus_number( int bus_number ) {
-    // Try and find the device.
+    // This gets called when starting up, and then we want to
+    // just accept what ever the input is.
+    if( is_inside_tree() == false ) {
+        _i2c_device_bus_number = bus_number;
+        return;
+    }
+
+    // The node is already inside the tree. Try and find the device.
     SingleBoardComputer* sbc = Object::cast_to<SingleBoardComputer>(get_parent());
     ERR_FAIL_COND_MSG(sbc == nullptr, "This node needs to be a child of the SingleBoardComputer node.");
 
@@ -134,6 +141,8 @@ int  I2CRawDevice::get_i2c_device_address() const {
 // Device handling
 
 void I2CRawDevice::_initialize_device() {
+    // Set the i2c bus number now to set up the index.
+    set_i2c_device_bus_number(_i2c_device_bus_number);
     open_device();
 }
 
