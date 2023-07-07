@@ -15,14 +15,14 @@ using namespace godot;
 GpioRawDevice::GpioRawDevice() {
     _gpio_device_fd = -1; 
     _gpio_pin_fd = -1;
-    _gpio_pin_offset = -1;
+    //_gpio_pin_offset = -1;
 }
 
 
 GpioRawDevice::~GpioRawDevice() {
     close_device();
     _gpio_device_fd = -1;
-    _gpio_pin_offset = -1;
+    //_gpio_pin_offset = -1;
 }
 
 
@@ -103,12 +103,12 @@ void GpioRawDevice::open_device() {
     ERR_FAIL_COND_MSG(_gpio_device_fd < 0, "Failed to open the gpio device file.");
 
     // Get the pin offset.
-    _gpio_pin_offset = sbc->get_gpio_pin_offset(_gpio_pin_index);
+    int pin_offset = sbc->get_gpio_pin_offset(_gpio_pin_index);
 
     // Get the pin based on type.
     struct gpiohandle_request request; 
 
-    request.lineoffsets[0] = _gpio_pin_offset;
+    request.lineoffsets[0] = pin_offset;
 
     if( _gpio_pin_type == GPIO_TYPE_OUTPUT ) {
         request.flags = GPIOHANDLE_REQUEST_OUTPUT;

@@ -22,7 +22,8 @@ protected:
     int _gpio_pin_index;          // Index in the internal array of the SingleBoardComputer class
     int _gpio_pin_fd;             // The file descriptor for the pin/pins, only used when running the app, not in the editor
     int _gpio_pin_type;           // The type of this pin (INPUT_L, INPUT_H, OUTPUT_L, OUTPUT_H)
-    int _gpio_pin_offset;         // The offset for the pin
+    //int _gpio_pin_offset;         // The offset for the pin
+
     static void _bind_methods();
 
 public:

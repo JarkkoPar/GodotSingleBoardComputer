@@ -10,6 +10,7 @@
 
 // Gpio devices.
 #include "GpioRawDevice.h"
+#include "GpioLED.h"
 
 // Standard headers.
 #include <gdextension_interface.h>
@@ -34,7 +35,7 @@ void initialize_singleboardcomputer_module(ModuleInitializationLevel p_level) {
 
     // Gpio devices.
     ClassDB::register_class<GpioRawDevice>();
-    
+    ClassDB::register_class<GpioLED>();
 }
 
 void uninitialize_singleboardcomputer_module(ModuleInitializationLevel p_level) {
