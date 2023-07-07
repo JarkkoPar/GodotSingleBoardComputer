@@ -61,6 +61,12 @@ void GpioRawDevice::_notification(int p_what) {
 
 
 void GpioRawDevice::set_gpio_pin_index( int pin_index ) {
+    // If just loading, simply set the value.
+    if( is_inside_tree() == false ){
+        _gpio_pin_index = pin_index;
+        return; 
+    }
+
     SingleBoardComputer* sbc = Object::cast_to<SingleBoardComputer>(get_parent());
     ERR_FAIL_COND_MSG(sbc == nullptr, "This node needs to be a child of the SingleBoardComputer node.");
 
@@ -100,7 +106,7 @@ void GpioRawDevice::open_device() {
 
     // Open the selected gpio file.
     _gpio_device_fd = sbc->request_gpio_device_file(_gpio_pin_index);
-    ERR_FAIL_COND_MSG(_gpio_device_fd < 0, "Failed to open the gpio device file.");
+    ERR_FAIL_COND_MSG(_gpio_device_fd < 0, "Request gpio device file failed.");
 
     // Get the pin offset.
     int pin_offset = sbc->get_gpio_pin_offset(_gpio_pin_index);
@@ -159,6 +165,7 @@ void GpioRawDevice::close_device() {
 
 
 void GpioRawDevice::write_byte_to_device( uint8_t data ) {
+    ERR_FAIL_COND_MSG(_gpio_pin_fd < 0, "Write byte to device failed, no file descriptor.");
     //struct gpiohandle_data data_to_send;
     //data_to_send.values[0] = data;
     //int return_value = ioctl(_gpio_pin_fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, &data_to_send);
@@ -175,10 +182,13 @@ void GpioRawDevice::write_byte_to_device( uint8_t data ) {
 // Returns number of bytes read, which is 0 in case of error, 1 otherwise.
 int  GpioRawDevice::read_byte_from_device( uint8_t* result ) {
     ERR_FAIL_COND_V_MSG(result == nullptr, 0, "Result variable given is a null-pointer.");
+    ERR_FAIL_COND_V_MSG(_gpio_pin_fd < 0, 0, "Read byte from device failed, no file descriptor.");
     
     //struct gpiohandle_data data_read;
     struct gpio_v2_line_values data_read;
     memset(&data_read, 0, sizeof(data_read));
+    //data_read.bits = 1; // Read the last bit.
+    data_read.mask = 1;
     int ret_val = ioctl( _gpio_pin_fd, GPIO_V2_LINE_GET_VALUES_IOCTL, &data_read);
     ERR_FAIL_COND_V_MSG(ret_val < 0, 0, "Failed write data to gpio device.");
     *result = (uint8_t)data_read.bits;

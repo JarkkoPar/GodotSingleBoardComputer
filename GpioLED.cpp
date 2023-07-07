@@ -30,6 +30,7 @@ bool GpioLED::get_is_LED_on() const {
 void GpioLED::set_is_LED_on( const bool is_on ) {
     _is_LED_on = is_on;
     if(Engine::get_singleton()->is_editor_hint()) return; // Don't set the pin in editor.
+    if( is_inside_tree() == false ) return; // If just loading, don't try to set the led.
 
     if( _is_LED_on ) {
         write_byte_to_device(1);    
