@@ -7,6 +7,7 @@ using namespace godot;
 
 GpioLED::GpioLED() {
     _is_LED_on = false;
+    _gpio_pin_type = GPIO_TYPE_OUTPUT;
 }
 
 GpioLED::~GpioLED() {
