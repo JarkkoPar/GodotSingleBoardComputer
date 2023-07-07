@@ -105,11 +105,6 @@ void GpioRawDevice::open_device() {
     // Get the pin offset.
     _gpio_pin_offset = sbc->get_gpio_pin_offset(_gpio_pin_index);
 
-
-    // Try to set the address for communications.  
-    //int ioctl_retval = ioctl(_i2c_device_fd, I2C_SLAVE, _i2c_device_address);
-    //ERR_FAIL_COND_MSG(ioctl_retval < 0, "Failed to set the slave device address.");
-
     // Get the pin based on type.
     struct gpiohandle_request request; 
 
