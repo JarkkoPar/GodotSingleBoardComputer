@@ -56,6 +56,7 @@ public:
 
     // Gpio related handers.
     int get_num_gpio_pins() const;
+    int get_gpio_pin_offset(int pin_index) const;
 
     // I2C related handlers.
     int get_num_i2c_buses() const;

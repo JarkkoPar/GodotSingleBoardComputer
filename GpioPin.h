@@ -45,6 +45,9 @@ public:
     void set_gpio_device_file_index( int new_index );
     int get_gpio_device_file_index() const;
 
+    void set_pin_offset( int new_offset );
+    int  get_pin_offset() const;
+
     void set_primary_function( GpioPinFunction new_function );
     GpioPinFunction get_primary_function() const;
 
@@ -56,7 +59,7 @@ private:
     GpioPinFunction _primary_function;
     GpioPinFunction _secondary_function; 
 
-
+    int             _pin_offset;
 };
 
 }

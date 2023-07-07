@@ -159,7 +159,7 @@ int SingleBoardComputer::request_gpio_device_file( int pin_index ) {
     _opened_gpio_device_file_gpio_numbers[_num_opened_gpio_device_files] = gpio_index;
     _num_opened_gpio_device_files += 1; 
 
-    return _opened_gpio_device_files[_num_opened_gpio_device_files];
+    return _opened_gpio_device_files[_num_opened_gpio_device_files-1];
 }
 
 
@@ -169,6 +169,11 @@ int SingleBoardComputer::get_num_gpio_pins() const {
     return _num_gpio_pins;
 }
 
+
+int SingleBoardComputer::get_gpio_pin_offset(int pin_index) const {
+    ERR_FAIL_COND_V_MSG(pin_index < 0 || pin_index > get_num_gpio_pins(), -1, "Gpio pin index must be between 0 and max count.");
+    return _gpio_pins[pin_index].get_pin_offset();
+}
 
 // I2C related handlers.
 int SingleBoardComputer::get_num_i2c_buses() const {
@@ -220,7 +225,7 @@ int SingleBoardComputer::request_i2c_device_file( int bus_index ) {
     _opened_i2c_bus_device_file_i2c_bus_numbers[_num_opened_i2c_bus_device_files] = i2c_index;
     _num_opened_i2c_bus_device_files += 1; 
 
-    return _opened_i2c_bus_device_files[_num_opened_i2c_bus_device_files];
+    return _opened_i2c_bus_device_files[_num_opened_i2c_bus_device_files-1];
 }
     
 
@@ -331,6 +336,56 @@ void SingleBoardComputer::_setup_board(){
             _gpio_pins[36].set_gpio_device_file_index(4); _gpio_pins[37].set_gpio_device_file_index(4);
                                                           _gpio_pins[39].set_gpio_device_file_index(4);
 
+
+            // Set the offsets for the pins.
+            // Radxa uses the formula GPIOx_[A-D]y in their pins, for instance GPIO4_D5
+            // is 32 * 4 + 8 * 3 + 5. You can see the values for a-d below.
+            // As the file is set above, we only need the letter and the last number.
+            int a = 0, b = 1, c = 2, d = 3;
+            a *= 8; b *= 8; c *= 8; d *= 8;
+
+            _gpio_pins[ 2].set_pin_offset(a+7);
+            _gpio_pins[ 4].set_pin_offset(b+0);
+            _gpio_pins[ 6].set_pin_offset(b+3); _gpio_pins[ 7].set_pin_offset(c+4);
+                                                _gpio_pins[ 9].set_pin_offset(c+3);
+            _gpio_pins[10].set_pin_offset(c+2); _gpio_pins[11].set_pin_offset(a+3);
+            _gpio_pins[12].set_pin_offset(c+6);
+            _gpio_pins[14].set_pin_offset(c+5); _gpio_pins[15].set_pin_offset(d+2);
+                                                _gpio_pins[17].set_pin_offset(d+4);
+            _gpio_pins[18].set_pin_offset(b+0); 
+            _gpio_pins[20].set_pin_offset(a+7); _gpio_pins[21].set_pin_offset(d+5); 
+            _gpio_pins[22].set_pin_offset(b+1); _gpio_pins[23].set_pin_offset(b+2);
+                                                _gpio_pins[25].set_pin_offset( -1); // ADC_IN0
+            _gpio_pins[26].set_pin_offset(a+0); _gpio_pins[27].set_pin_offset(a+1);
+            _gpio_pins[28].set_pin_offset(b+2);
+            _gpio_pins[30].set_pin_offset(b+1); _gpio_pins[31].set_pin_offset(c+0);
+            _gpio_pins[32].set_pin_offset(b+4);
+            _gpio_pins[34].set_pin_offset(a+5); _gpio_pins[35].set_pin_offset(a+4);
+            _gpio_pins[36].set_pin_offset(d+6); _gpio_pins[37].set_pin_offset(a+6);
+                                                _gpio_pins[39].set_pin_offset(a+7);
+            
+
+            /* rock 5b*
+            _gpio_pins[ 2].set_pin_offset(b+3);
+            _gpio_pins[ 4].set_pin_offset(b+2);
+            _gpio_pins[ 6].set_pin_offset(c+3); _gpio_pins[ 7].set_pin_offset(b+5);
+                                                _gpio_pins[ 9].set_pin_offset(b+6);
+            _gpio_pins[10].set_pin_offset(c+1); _gpio_pins[11].set_pin_offset(b+5);
+            _gpio_pins[12].set_pin_offset(b+7);
+            _gpio_pins[14].set_pin_offset(c+0); _gpio_pins[15].set_pin_offset(a+4);
+                                                _gpio_pins[17].set_pin_offset(c+4);
+            _gpio_pins[18].set_pin_offset(b+2); 
+            _gpio_pins[20].set_pin_offset(b+1); _gpio_pins[21].set_pin_offset( -1); //SARADC_IN4
+            _gpio_pins[22].set_pin_offset(b+3); _gpio_pins[23].set_pin_offset(b+4);
+                                                _gpio_pins[25].set_pin_offset(b+5); // ADC_IN0
+            _gpio_pins[26].set_pin_offset(c+6); _gpio_pins[27].set_pin_offset(c+5);
+            _gpio_pins[28].set_pin_offset(d+7);
+            _gpio_pins[30].set_pin_offset(b+7); _gpio_pins[31].set_pin_offset(c+2);
+            _gpio_pins[32].set_pin_offset(a+7);
+            _gpio_pins[34].set_pin_offset(b+6); _gpio_pins[35].set_pin_offset(b+1);
+            _gpio_pins[36].set_pin_offset( -1); _gpio_pins[37].set_pin_offset(4);
+                                                          _gpio_pins[39].set_pin_offset(4);
+            /**/
 
             // Set the I2C buses.
             _i2c_buses[0].set_i2c_device_file_index(2);

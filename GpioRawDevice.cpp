@@ -15,12 +15,14 @@ using namespace godot;
 GpioRawDevice::GpioRawDevice() {
     _gpio_device_fd = -1; 
     _gpio_pin_fd = -1;
+    _gpio_pin_offset = -1;
 }
 
 
 GpioRawDevice::~GpioRawDevice() {
     close_device();
     _gpio_device_fd = -1;
+    _gpio_pin_offset = -1;
 }
 
 
@@ -65,43 +67,20 @@ void GpioRawDevice::set_gpio_pin_index( int pin_index ) {
     ERR_FAIL_COND_MSG(pin_index < 0 || pin_index >= sbc->get_num_gpio_pins(), "Pin index must be between 0 and num_pins-1. First valid pin index is 0.");
 
     _gpio_pin_index = pin_index;
-
-
-    /**
-    int num_pins = sbc->get_num_gpio_pins();
-    for( int i = 0; i < num_pins; ++i ) {
-        GpioPin* gpio_pin = sbc->get_gpio_pin(i); 
-        if( gpio_pin == nullptr ) {
-            continue;
-        }
-
-        if( gpio_pin->get_gpio_device_file_index() == bus_number ) {
-            _i2c_device_id = i;
-            _i2c_device_bus_number = bus_number;
-            return;
-        }
-    }
-    
-    // No such device bus number.
-    _i2c_device_id = -1;
-    // todo: add a list of valid numbers here!
-    ERR_FAIL_MSG("Invalid I2C bus number selected, consult the board spec sheet for valid I2C bus numbers.");
-    /**/
 }
 
 int GpioRawDevice::get_gpio_pin_index() const {
     return _gpio_pin_index;
 }
 
-/**
-void GpioRawDevice::set_gpio_pin_type( int pin_type ) {
 
+void GpioRawDevice::set_gpio_pin_type( int pin_type ) {
+    _gpio_pin_type = pin_type;
 }
 
 int  GpioRawDevice::get_gpio_pin_type() const {
-
+    return _gpio_pin_type;
 }
-/**/
 
 // Device handling
 
@@ -119,23 +98,38 @@ void GpioRawDevice::open_device() {
 
     ERR_FAIL_COND_MSG(_gpio_pin_index < 0 || _gpio_pin_index >= sbc->get_num_gpio_pins(), "Invalid index for gpio pin (out of bounds).");
 
-
-    //I2CBus* selectedBus = sbc->get_i2c_bus(_i2c_device_id);
-    //ERR_FAIL_COND_MSG(selectedBus == nullptr, "The selected bus returned nullptr.");
-
-
-    // Open the selected bus file.
-    //int dfi = selectedBus->get_i2c_device_file_index();
-    //char device_filename_buffer[64] = {0};
-    //sprintf(device_filename_buffer, "/dev/i2c-%i\0", dfi);   
-    //_i2c_device_fd = open(device_filename_buffer, O_RDWR);
+    // Open the selected gpio file.
     _gpio_device_fd = sbc->request_gpio_device_file(_gpio_pin_index);
     ERR_FAIL_COND_MSG(_gpio_device_fd < 0, "Failed to open the gpio device file.");
+
+    // Get the pin offset.
+    _gpio_pin_offset = sbc->get_gpio_pin_offset(_gpio_pin_index);
 
 
     // Try to set the address for communications.  
     //int ioctl_retval = ioctl(_i2c_device_fd, I2C_SLAVE, _i2c_device_address);
     //ERR_FAIL_COND_MSG(ioctl_retval < 0, "Failed to set the slave device address.");
+
+    // Get the pin based on type.
+    struct gpiohandle_request request; 
+
+    request.lineoffsets[0] = _gpio_pin_offset;
+
+    if( _gpio_pin_type == GPIO_TYPE_OUTPUT ) {
+        request.flags = GPIOHANDLE_REQUEST_OUTPUT;
+    }
+    else if( _gpio_pin_type == GPIO_TYPE_INPUT ) {
+        request.flags = GPIOHANDLE_REQUEST_INPUT;
+    }
+    
+    request.lines = 1;
+
+    int return_value = ioctl(_gpio_device_fd, GPIO_GET_LINEHANDLE_IOCTL, &request);
+    ERR_FAIL_COND_MSG(return_value < 0, "Failed to get line handle from gpio device.");
+
+    // All OK so store the file descriptor.
+    _gpio_pin_fd = request.fd; 
+
 }
 
 
@@ -146,6 +140,25 @@ void GpioRawDevice::close_device() {
         _gpio_pin_fd = -1;
     }
     _gpio_device_fd = -1; // just reset the main gpio file descriptor, as this will be closed by the SingleBoardComputer class.
+}
+
+
+void GpioRawDevice::write_byte_to_device( uint8_t data ) {
+    struct gpiohandle_data data_to_send;
+    data_to_send.values[0] = data;
+    int return_value = ioctl(_gpio_pin_fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, &data_to_send);
+    ERR_FAIL_COND_MSG(return_value < 0, "Failed write data to gpio device.");
+}
+
+// Returns number of bytes read, which is 0 in case of error, 1 otherwise.
+int  GpioRawDevice::read_byte_from_device( uint8_t* result ) {
+    ERR_FAIL_COND_V_MSG(result == nullptr, 0, "Result variable given is a null-pointer.");
+    
+    struct gpiohandle_data data_read;
+    int ret_val = ioctl( _gpio_pin_fd, GPIOHANDLE_GET_LINE_VALUES_IOCTL, &data_read);
+    ERR_FAIL_COND_V_MSG(ret_val < 0, 0, "Failed write data to gpio device.");
+    *result = data_read.values[0];
+    return 1;
 }
 
 

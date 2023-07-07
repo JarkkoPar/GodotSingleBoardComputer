@@ -7,6 +7,7 @@ using namespace godot;
 
 GpioPin::GpioPin() {
     _gpio_device_file_index = -1; // -1 is an illegal index 
+    _pin_offset = -1; // -1 is an illegal offset
 }
 
 GpioPin::~GpioPin() {
@@ -22,6 +23,14 @@ void GpioPin::set_gpio_device_file_index( int new_index ) {
 
 int GpioPin::get_gpio_device_file_index() const {
     return _gpio_device_file_index;
+}
+
+void GpioPin::set_pin_offset( int new_offset ) {
+    _pin_offset = new_offset;
+}
+
+int  GpioPin::get_pin_offset() const {
+    return _pin_offset;
 }
 
 void GpioPin::set_primary_function( GpioPinFunction new_function ) {
