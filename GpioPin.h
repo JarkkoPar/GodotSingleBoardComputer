@@ -1,18 +1,14 @@
 #ifndef GPIOPIN_H_INCLUDED
 #define GPIOPIN_H_INCLUDED 
 
-#include <godot_cpp/classes/node.hpp>
 
 namespace godot {
 
 
 
-class GpioPin{//} : public Node {
-    //GDCLASS(GpioPin, Node)
-
+class GpioPin{
     
 protected:
-    //static void _bind_methods();
 
 public:
 
@@ -44,17 +40,7 @@ public:
     GpioPin();
     ~GpioPin();
 
-    /*
     // Getters and setters for attributes.
-    void set_board_id( int input );
-    int get_board_id() const;
-
-    // Godot virtuals.
-    void _process(double delta);
-    void _physics_process(double delta);
-
-    void _notification(int p_what);
-    /* */
 
     void set_gpio_device_file_index( int new_index );
     int get_gpio_device_file_index() const;
@@ -66,10 +52,6 @@ public:
     GpioPinFunction get_secondary_function() const;
 
 private:
-    int _pi_pin_id; 
-    bool _is_pin_reserved;
-    
-    //String          _gpio_device_file; // The device file for this pin
     int             _gpio_device_file_index;
     GpioPinFunction _primary_function;
     GpioPinFunction _secondary_function; 

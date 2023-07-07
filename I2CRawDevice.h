@@ -17,9 +17,10 @@ private:
     
 protected: 
     
-    int _i2c_device_fd;
-    int _i2c_device_id;
-    int _i2c_device_address; 
+    int _i2c_device_fd;             // The file for the i2c device, only used when running the app, not in editor
+    int _i2c_device_index;          // Index in the internal array of the SingleBoardComputer class
+    int _i2c_device_bus_number;     // Bus number in the SBC spec sheet
+    int _i2c_device_address;        // Address of the device, usually a hex like 0x40, etc
     unsigned char _i2c_read_buffer[64];
     unsigned char _i2c_write_buffer[32];
     PackedByteArray _i2c_godot_read_buffer;
@@ -39,6 +40,9 @@ public:
     void _notification(int p_what);
 
     // Getters and setters.
+    void set_i2c_device_bus_number( int number );
+    int  get_i2c_device_bus_number() const;
+
     void set_i2c_device_index( int index );
     int  get_i2c_device_index() const;
 

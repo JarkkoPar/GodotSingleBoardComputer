@@ -16,14 +16,15 @@ using namespace godot;
 
 
 I2CRawDevice::I2CRawDevice() {
-    _i2c_device_id = 0;
+    _i2c_device_index = 0;
+    _i2c_device_bus_number = 0;
     _i2c_device_fd = -1; 
 }
 
 
 I2CRawDevice::~I2CRawDevice() {
     if( _i2c_device_fd >= 0 ) {
-        close(_i2c_device_fd );
+        //close(_i2c_device_fd ); // Closed by the SBC.
         _i2c_device_fd = -1;
     }
 }
@@ -32,10 +33,16 @@ I2CRawDevice::~I2CRawDevice() {
 
 void I2CRawDevice::_bind_methods() {
 
+    // Device Number on the SCB.
+    ClassDB::bind_method(D_METHOD("set_i2c_device_bus_number", "bus_number"), &I2CRawDevice::set_i2c_device_bus_number);
+	ClassDB::bind_method(D_METHOD("get_i2c_device_bus_number"), &I2CRawDevice::get_i2c_device_bus_number);
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "I2C Bus Number", PROPERTY_HINT_NONE, ""), "set_i2c_device_bus_number", "get_i2c_device_bus_number");
+
+
     // Device ID on the SCB.
-    ClassDB::bind_method(D_METHOD("set_i2c_device_index", "device_index"), &I2CRawDevice::set_i2c_device_index);
-	ClassDB::bind_method(D_METHOD("get_i2c_device_index"), &I2CRawDevice::get_i2c_device_index);
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "I2C Device", PROPERTY_HINT_NONE, ""), "set_i2c_device_index", "get_i2c_device_index");
+    //ClassDB::bind_method(D_METHOD("set_i2c_device_index", "device_index"), &I2CRawDevice::set_i2c_device_index);
+	//ClassDB::bind_method(D_METHOD("get_i2c_device_index"), &I2CRawDevice::get_i2c_device_index);
+    //ADD_PROPERTY(PropertyInfo(Variant::INT, "I2C Device", PROPERTY_HINT_NONE, ""), "set_i2c_device_index", "get_i2c_device_index");
 
     // Address.
     ClassDB::bind_method(D_METHOD("set_i2c_device_address", "device_address"), &I2CRawDevice::set_i2c_device_address);
@@ -67,16 +74,48 @@ void I2CRawDevice::_notification(int p_what) {
 
 // Getters and setters.
 
+
+void I2CRawDevice::set_i2c_device_bus_number( int bus_number ) {
+    // Try and find the device.
+    SingleBoardComputer* sbc = Object::cast_to<SingleBoardComputer>(get_parent());
+    ERR_FAIL_COND_MSG(sbc == nullptr, "This node needs to be a child of the SingleBoardComputer node.");
+
+    int num_i2c_buses = sbc->get_num_i2c_buses();
+    for( int i = 0; i < num_i2c_buses; ++i ) {
+        I2CBus* i2c_device = sbc->get_i2c_bus(i);
+        if( i2c_device == nullptr ) {
+            continue;
+        }
+
+        if( i2c_device->get_i2c_device_file_index() == bus_number ) {
+            _i2c_device_index = i;
+            _i2c_device_bus_number = bus_number;
+            return;
+        }
+    }
+    
+    // No such device bus number.
+    _i2c_device_index = -1;
+    // todo: add a list of valid numbers here!
+    ERR_FAIL_MSG("Invalid I2C bus number selected, consult the board spec sheet for valid I2C bus numbers.");
+
+}
+
+int  I2CRawDevice::get_i2c_device_bus_number() const {
+    return _i2c_device_bus_number;
+}
+
+
 void I2CRawDevice::set_i2c_device_index( int index ) {
     // If the device is open, cannot change the index.
     ERR_FAIL_COND_MSG(_i2c_device_fd > -1, "Cannot change device index when the device file is open.");
 
-    _i2c_device_id = index;
+    _i2c_device_index = index;
 }
 
 
 int  I2CRawDevice::get_i2c_device_index() const {
-    return _i2c_device_id;
+    return _i2c_device_index;
 }
 
 void I2CRawDevice::set_i2c_device_address( int address ) {
@@ -103,26 +142,27 @@ void I2CRawDevice::_initialize_device() {
 void I2CRawDevice::open_device() {
     // If a device file descriptor exists, close the device
     // before opening a new one. 
-    if( _i2c_device_fd > -1 ) {
-        close_device();
-    }
+    //if( _i2c_device_fd > -1 ) {
+    //    close_device();
+    //}
 
     // Get the parent which should have the i2c bus array.
     SingleBoardComputer* sbc = Object::cast_to<SingleBoardComputer>(get_parent());
     ERR_FAIL_COND_MSG(sbc == nullptr, "This node needs to be a child of the SingleBoardComputer node.");
 
-    ERR_FAIL_COND_MSG(_i2c_device_id < 0 || _i2c_device_id >= sbc->get_num_i2c_buses(), "Invalid index for I2C bus.");
+    ERR_FAIL_COND_MSG(_i2c_device_index < 0 || _i2c_device_index >= sbc->get_num_i2c_buses(), "Invalid index for I2C bus. Have you set the I2C device number?");
 
 
-    I2CBus* selectedBus = sbc->get_i2c_bus(_i2c_device_id);
-    ERR_FAIL_COND_MSG(selectedBus == nullptr, "The selected bus returned nullptr.");
+    //I2CBus* selectedBus = sbc->get_i2c_bus(_i2c_device_id);
+    //ERR_FAIL_COND_MSG(selectedBus == nullptr, "The selected bus returned nullptr.");
 
 
     // Open the selected bus file.
-    int dfi = selectedBus->get_i2c_device_file_index();
-    char device_filename_buffer[64] = {0};
-    sprintf(device_filename_buffer, "/dev/i2c-%i\0", dfi);   
-    _i2c_device_fd = open(device_filename_buffer, O_RDWR);
+    //int dfi = selectedBus->get_i2c_device_file_index();
+    //char device_filename_buffer[64] = {0};
+    //sprintf(device_filename_buffer, "/dev/i2c-%i\0", dfi);   
+    //_i2c_device_fd = open(device_filename_buffer, O_RDWR);
+    _i2c_device_fd = sbc->request_i2c_device_file(_i2c_device_index);
     ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "Failed to open the device file.");
 
 
@@ -133,10 +173,10 @@ void I2CRawDevice::open_device() {
 }
 
 void I2CRawDevice::close_device() {
-    ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "Failed to close device, it is already closed.");
+    //ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "Failed to close device, it is already closed.");
     
-    close(_i2c_device_fd);
-    _i2c_device_fd = -1;
+    //close(_i2c_device_fd);
+    _i2c_device_fd = -1; // just reset the file descriptor.
 }
 
 

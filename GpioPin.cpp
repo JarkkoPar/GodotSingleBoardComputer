@@ -6,9 +6,6 @@ using namespace godot;
 
 
 GpioPin::GpioPin() {
-    _pi_pin_id = 0;
-    _is_pin_reserved = false;
-
     _gpio_device_file_index = -1; // -1 is an illegal index 
 }
 

@@ -1,6 +1,8 @@
 #include "SingleBoardComputer.h"
 
-
+#include <unistd.h>
+//#include <stdio.h>
+#include <fcntl.h>
 
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/classes/engine.hpp>
@@ -43,10 +45,48 @@ SingleBoardComputer::SingleBoardComputer() {
     _gpio_pins = nullptr; 
     _i2c_buses = nullptr;
     _spi_buses = nullptr;
+
+    _opened_gpio_device_files = nullptr;
+    _opened_gpio_device_file_gpio_numbers = nullptr;
+    _num_opened_gpio_device_files = 0; 
+
+    _opened_i2c_bus_device_files = nullptr;
+    _opened_i2c_bus_device_file_i2c_bus_numbers = nullptr;
+    _num_opened_i2c_bus_device_files = 0;
 }
 
 
 SingleBoardComputer::~SingleBoardComputer() {
+    // Close any opened device files.
+    if( _opened_gpio_device_files != nullptr ) {
+        for( int i = 0; i < _num_opened_gpio_device_files; ++i ) {
+            if( _opened_gpio_device_files[i] > -1 ) {
+                close(_opened_gpio_device_files[i]);
+                _opened_gpio_device_files[i] = 0;
+            }
+        }
+        delete[] _opened_gpio_device_files;
+        delete[] _opened_gpio_device_file_gpio_numbers;
+        _opened_gpio_device_files = nullptr;
+        _opened_gpio_device_file_gpio_numbers = nullptr;
+        _num_opened_gpio_device_files = 0;
+    }
+
+    if( _opened_i2c_bus_device_files != nullptr ) {
+        for( int i = 0; i < _num_opened_i2c_bus_device_files; ++i ) {
+            if( _opened_i2c_bus_device_files[i] > -1 ) {
+                close(_opened_i2c_bus_device_files[i]);
+                _opened_i2c_bus_device_files[i] = 0;
+            }
+        }
+        delete[] _opened_i2c_bus_device_files;
+        delete[] _opened_i2c_bus_device_file_i2c_bus_numbers;
+        _opened_i2c_bus_device_files = nullptr;
+        _opened_i2c_bus_device_file_i2c_bus_numbers = nullptr;
+        _num_opened_i2c_bus_device_files = 0;
+    }
+
+    // Free the config arrays.
     if( _gpio_pins != nullptr ) {
         delete[] _gpio_pins;
         _gpio_pins = nullptr;
@@ -80,6 +120,52 @@ int SingleBoardComputer::get_board_id() const {
 }
 
 
+// GPIO related handlers.
+int SingleBoardComputer::request_gpio_device_file( int pin_index ) {
+    ERR_FAIL_COND_V_MSG(pin_index < 0 || pin_index > 39, -1, "Pin index must be between 0 and 39.");
+
+    // Check if the gpio file related to the pin is already open.
+    int gpio_index = _gpio_pins[pin_index].get_gpio_device_file_index();
+    for( int i = 0; i < _num_opened_gpio_device_files; ++i ) {
+        if( _opened_gpio_device_file_gpio_numbers[i] == gpio_index ) {
+            return _opened_gpio_device_files[i];
+        }
+    }
+    // The file wasn't already open so add a new file to the list.
+    int* new_gpio_files_array = new int[_num_opened_gpio_device_files + 1];
+    ERR_FAIL_COND_V_MSG(new_gpio_files_array == nullptr, -1, "Could not create a new gpio file descriptor array.");
+    int* new_gpio_numbers_array = new int[_num_opened_gpio_device_files + 1];
+    if( new_gpio_numbers_array == nullptr ) {
+        delete[] new_gpio_files_array;
+        ERR_FAIL_COND_V_MSG(new_gpio_numbers_array == nullptr, -1, "Could not create a new gpio file descriptor numbers array.");    
+    }
+
+    memcpy( new_gpio_files_array, _opened_gpio_device_files, sizeof(_opened_gpio_device_files) );
+    memcpy( new_gpio_numbers_array, _opened_gpio_device_file_gpio_numbers, sizeof(_opened_gpio_device_file_gpio_numbers) );
+
+    delete[] _opened_gpio_device_files;
+    _opened_gpio_device_files = new_gpio_files_array;
+
+    delete[] _opened_gpio_device_file_gpio_numbers;
+    _opened_gpio_device_file_gpio_numbers = new_gpio_numbers_array;
+    
+    // Open the file and return the result back.
+    char filename[32] = {0};
+    sprintf(filename, "/dev/gpio%i", gpio_index);
+    _opened_gpio_device_files[_num_opened_gpio_device_files] = open(filename, O_RDONLY);
+    _opened_gpio_device_file_gpio_numbers[_num_opened_gpio_device_files] = gpio_index;
+    _num_opened_gpio_device_files += 1; 
+
+    return _opened_gpio_device_files[_num_opened_gpio_device_files];
+}
+
+
+// Gpio related handlers.
+
+int SingleBoardComputer::get_num_gpio_pins() const {
+    return _num_gpio_pins;
+}
+
 
 // I2C related handlers.
 int SingleBoardComputer::get_num_i2c_buses() const {
@@ -93,6 +179,47 @@ I2CBus* SingleBoardComputer::get_i2c_bus( int bus_index ) const {
     }
     return &_i2c_buses[bus_index];
 }    
+
+
+int SingleBoardComputer::request_i2c_device_file( int bus_index ) {
+    ERR_FAIL_COND_V_MSG(bus_index < 0 || bus_index > get_num_i2c_buses(), -1, "I2C bus index must be between 0 and max count.");
+
+    // Check if the i2c file related to the bus is already open.
+    int i2c_index = _i2c_buses[bus_index].get_i2c_device_file_index();
+    for( int i = 0; i < _num_opened_i2c_bus_device_files; ++i ) {
+        if( _opened_i2c_bus_device_file_i2c_bus_numbers[i] == i2c_index ) {
+            return _opened_i2c_bus_device_files[i];
+        }
+    }
+    // The file wasn't already open so add a new file to the list.
+    int* new_i2c_files_array = new int[_num_opened_i2c_bus_device_files + 1];
+    ERR_FAIL_COND_V_MSG(new_i2c_files_array == nullptr, -1, "Could not create a new I2C file descriptor array.");
+    int* new_i2c_numbers_array = new int[_num_opened_i2c_bus_device_files + 1];
+    if( new_i2c_numbers_array == nullptr ) {
+        delete[] new_i2c_files_array;
+        ERR_FAIL_COND_V_MSG(new_i2c_numbers_array == nullptr, -1, "Could not create a new I2C file descriptor numbers array.");    
+    }
+
+    memcpy( new_i2c_files_array, _opened_i2c_bus_device_files, sizeof(_opened_i2c_bus_device_files) );
+    memcpy( new_i2c_numbers_array, _opened_i2c_bus_device_file_i2c_bus_numbers, sizeof(_opened_i2c_bus_device_file_i2c_bus_numbers) );
+
+    delete[] _opened_i2c_bus_device_files;
+    _opened_i2c_bus_device_files = new_i2c_files_array;
+
+    delete[] _opened_i2c_bus_device_file_i2c_bus_numbers;
+    _opened_i2c_bus_device_file_i2c_bus_numbers = new_i2c_numbers_array;
+    
+    // Open the file and return the result back.
+    char filename[32] = {0};
+    sprintf(filename, "/dev/i2c-%i", i2c_index);
+    _opened_i2c_bus_device_files[_num_opened_i2c_bus_device_files] = open(filename, O_RDWR); //O_RDONLY);
+    _opened_i2c_bus_device_file_i2c_bus_numbers[_num_opened_i2c_bus_device_files] = i2c_index;
+    _num_opened_i2c_bus_device_files += 1; 
+
+    return _opened_i2c_bus_device_files[_num_opened_i2c_bus_device_files];
+}
+    
+
 
 
 // Godot virtuals.
@@ -202,10 +329,17 @@ void SingleBoardComputer::_setup_board(){
 
 
             // Set the I2C buses.
-            // https://github.com/besp9510/pi_i2c
             _i2c_buses[0].set_i2c_device_file_index(2);
             _i2c_buses[1].set_i2c_device_file_index(7);
-            
+
+            // Set the pins that the i2c devices will reserve.
+            _i2c_buses[0].add_gpio_reserved_pin(26);
+            _i2c_buses[0].add_gpio_reserved_pin(27);
+
+            _i2c_buses[1].add_gpio_reserved_pin(2);
+            _i2c_buses[1].add_gpio_reserved_pin(4);
+
+
             // And the SPI buses.
             // todo: code when I have an SPI device
         } break;

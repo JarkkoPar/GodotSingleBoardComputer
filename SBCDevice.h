@@ -5,8 +5,8 @@
 
 namespace godot {
 
-// This is a "raw" i2c device node, which allows a more low-level
-// communication interface with any i2c device.
+// This is a base device for any device used
+// on the Single Board Computer.
 class SBCDevice : public Node {
     GDCLASS(SBCDevice, Node)
 
@@ -14,7 +14,7 @@ private:
     
 protected: 
     static void _bind_methods();
-    virtual void _initialize_device();
+    virtual void _initialize_device(); // This is the method all the inheriting devices should override if needed
 public:
     SBCDevice();
     ~SBCDevice();

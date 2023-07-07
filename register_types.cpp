@@ -3,8 +3,13 @@
 // Classes to include in to the gdextension module.
 #include "SingleBoardComputer.h"
 #include "SBCDevice.h"
+
+// I2C devices.
 #include "I2CRawDevice.h"
 #include "I2CPCA9685.h"
+
+// Gpio devices.
+#include "GpioRawDevice.h"
 
 // Standard headers.
 #include <gdextension_interface.h>
@@ -22,8 +27,14 @@ void initialize_singleboardcomputer_module(ModuleInitializationLevel p_level) {
     // Add the classes here.
     ClassDB::register_class<SingleBoardComputer>();
     ClassDB::register_class<SBCDevice>();
+
+    // I2C devices.
     ClassDB::register_class<I2CRawDevice>();
     ClassDB::register_class<I2CPCA9685>();
+
+    // Gpio devices.
+    ClassDB::register_class<GpioRawDevice>();
+    
 }
 
 void uninitialize_singleboardcomputer_module(ModuleInitializationLevel p_level) {
