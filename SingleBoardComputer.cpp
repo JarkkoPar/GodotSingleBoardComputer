@@ -154,7 +154,7 @@ int SingleBoardComputer::request_gpio_device_file( int pin_index ) {
     
     // Open the file and return the result back.
     char filename[32] = {0};
-    sprintf(filename, "/dev/gpio%i", gpio_index);
+    sprintf(filename, "/dev/gpiochip%i", gpio_index);
     _opened_gpio_device_files[_num_opened_gpio_device_files] = open(filename, O_RDONLY);
     _opened_gpio_device_file_gpio_numbers[_num_opened_gpio_device_files] = gpio_index;
     _num_opened_gpio_device_files += 1; 
