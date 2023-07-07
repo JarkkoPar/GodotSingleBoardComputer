@@ -104,7 +104,7 @@ void GpioRawDevice::open_device() {
 
     // Get the pin offset.
     int pin_offset = sbc->get_gpio_pin_offset(_gpio_pin_index);
-
+    /**
     // Get the pin based on type.
     struct gpiohandle_request request; 
 
@@ -124,7 +124,27 @@ void GpioRawDevice::open_device() {
 
     // All OK so store the file descriptor.
     _gpio_pin_fd = request.fd; 
+    */
+    struct gpio_v2_line_request line_request;
+    memset(&line_request, 0, sizeof(line_request));
+    
+    if( _gpio_pin_type == GPIO_TYPE_OUTPUT ) {
+        line_request.config.flags = GPIO_V2_LINE_FLAG_OUTPUT;
+    }
+    else if( _gpio_pin_type == GPIO_TYPE_INPUT ) {
+        line_request.config.flags = GPIO_V2_LINE_FLAG_INPUT;
+    }
+    
+    line_request.config.num_attrs = 0;
+    strcpy(line_request.consumer, "GodotEngine"); // TODO: Add user definable name
+    line_request.num_lines = 1;
+    line_request.offsets[0] = pin_offset;
+    
+    int return_value = ioctl(_gpio_device_fd, GPIO_V2_GET_LINE_IOCTL, &line_request);
+    ERR_FAIL_COND_MSG(return_value < 0, "Failed to get line handle from gpio device.");
 
+    // All OK so store the file descriptor.
+    _gpio_pin_fd = line_request.fd; 
 }
 
 
@@ -139,9 +159,16 @@ void GpioRawDevice::close_device() {
 
 
 void GpioRawDevice::write_byte_to_device( uint8_t data ) {
-    struct gpiohandle_data data_to_send;
-    data_to_send.values[0] = data;
-    int return_value = ioctl(_gpio_pin_fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, &data_to_send);
+    //struct gpiohandle_data data_to_send;
+    //data_to_send.values[0] = data;
+    //int return_value = ioctl(_gpio_pin_fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, &data_to_send);
+    struct gpio_v2_line_values data_to_send;
+    memset(&data_to_send, 0, sizeof(data_to_send));
+	uint64_t mask = 0, bits = 0;
+    data_to_send.bits = data;
+    data_to_send.mask = 1; 
+
+    int return_value = ioctl(_gpio_pin_fd, GPIO_V2_LINE_SET_VALUES_IOCTL, &data_to_send);
     ERR_FAIL_COND_MSG(return_value < 0, "Failed write data to gpio device.");
 }
 
@@ -149,10 +176,12 @@ void GpioRawDevice::write_byte_to_device( uint8_t data ) {
 int  GpioRawDevice::read_byte_from_device( uint8_t* result ) {
     ERR_FAIL_COND_V_MSG(result == nullptr, 0, "Result variable given is a null-pointer.");
     
-    struct gpiohandle_data data_read;
-    int ret_val = ioctl( _gpio_pin_fd, GPIOHANDLE_GET_LINE_VALUES_IOCTL, &data_read);
+    //struct gpiohandle_data data_read;
+    struct gpio_v2_line_values data_read;
+    memset(&data_read, 0, sizeof(data_read));
+    int ret_val = ioctl( _gpio_pin_fd, GPIO_V2_LINE_GET_VALUES_IOCTL, &data_read);
     ERR_FAIL_COND_V_MSG(ret_val < 0, 0, "Failed write data to gpio device.");
-    *result = data_read.values[0];
+    *result = (uint8_t)data_read.bits;
     return 1;
 }
 
