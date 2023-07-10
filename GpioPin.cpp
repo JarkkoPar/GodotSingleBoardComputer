@@ -8,7 +8,9 @@ using namespace godot;
 GpioPin::GpioPin() {
     _gpio_device_file_index = -1; // -1 is an illegal index 
     _adc_device_file_index = -1; // -1 is an illegal index
+    _adc_voltage_file_index = -1; // -1 is an illegal index
     _pin_offset = -1; // -1 is an illegal offset
+    _adc_max_voltage = 0.0f; 
 }
 
 GpioPin::~GpioPin() {
@@ -32,6 +34,22 @@ void GpioPin::set_adc_device_file_index( int new_index ) {
 
 int GpioPin::get_adc_device_file_index() const {
     return _adc_device_file_index;
+}
+
+void GpioPin::set_adc_voltage_file_index( int new_index ) {
+    _adc_voltage_file_index = new_index;
+}
+
+int GpioPin::get_adc_voltage_file_index() const {
+    return _adc_voltage_file_index;
+}
+
+void GpioPin::set_adc_max_voltage( float max_voltage ) {
+    _adc_max_voltage = max_voltage;
+}
+
+float GpioPin::get_adc_max_voltage() const {
+    return _adc_max_voltage;
 }
 
 

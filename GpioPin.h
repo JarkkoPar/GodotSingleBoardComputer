@@ -48,6 +48,12 @@ public:
     void set_adc_device_file_index( int new_index );
     int get_adc_device_file_index() const;
 
+    void set_adc_voltage_file_index( int new_index );
+    int get_adc_voltage_file_index() const;
+
+    void set_adc_max_voltage( float new_voltage );
+    float get_adc_max_voltage() const;
+
     void set_pin_offset( int new_offset );
     int  get_pin_offset() const;
 
@@ -60,6 +66,8 @@ public:
 private:
     int             _gpio_device_file_index;
     int             _adc_device_file_index;
+    int             _adc_voltage_file_index;
+    float           _adc_max_voltage;
     GpioPinFunction _primary_function;
     GpioPinFunction _secondary_function; 
 

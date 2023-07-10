@@ -42,6 +42,10 @@ void ADCRawDevice::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_adc_gpio_pin_value"), &ADCRawDevice::get_adc_pin_value);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "ADC Gpio Pin Value", PROPERTY_HINT_NONE), "set_adc_adc_pin_value", "get_adc_pin_value");
 
+    ClassDB::bind_method(D_METHOD("set_adc_gpio_pin_voltage", "value"), &ADCRawDevice::set_adc_pin_voltage);
+	ClassDB::bind_method(D_METHOD("get_adc_gpio_pin_voltage"), &ADCRawDevice::get_adc_pin_voltage);
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "ADC Gpio Pin Voltage", PROPERTY_HINT_NONE), "set_adc_adc_pin_voltage", "get_adc_pin_voltage");
+
 
     // Read and write methods.
     //ClassDB::bind_method(D_METHOD("open_device"), &I2CRawDevice::open_device);
@@ -124,8 +128,11 @@ void ADCRawDevice::open_device() {
     ERR_FAIL_COND_MSG(_adc_gpio_pin_index < 0 || _adc_gpio_pin_index >= sbc->get_num_gpio_pins(), "Invalid index for gpio pin (out of bounds).");
 
     // Get the raw file index
-    _adc_voltage_raw_file_index = sbc->get_gpio_pins()[_adc_gpio_pin_index].get_adc_device_file_index();
-    ERR_FAIL_COND_MSG(_adc_voltage_raw_file_index < 0, "ADC raw file identification for the voltage reading failed.");
+    _adc_device_raw_file_index = sbc->get_gpio_pins()[_adc_gpio_pin_index].get_adc_device_file_index();
+    _adc_voltage_raw_file_index = sbc->get_gpio_pins()[_adc_gpio_pin_index].get_adc_voltage_file_index();
+    ERR_FAIL_COND_MSG(_adc_device_raw_file_index < 0 || _adc_voltage_raw_file_index < 0, "ADC raw file identification for the voltage reading failed.");
+
+    _adc_pin_max_voltage = sbc->get_gpio_pins()[_adc_gpio_pin_index].get_adc_max_voltage();
 }
 
 
@@ -136,10 +143,10 @@ void ADCRawDevice::close_device() {
 
 int ADCRawDevice::read_value_from_pin() {
     //ERR_FAIL_COND_V_MSG(result == nullptr, 0, "Result variable given is a null-pointer.");
-    ERR_FAIL_COND_V_MSG(_adc_voltage_raw_file_index < 0, 0, "Read value from adc failed, no raw file index set for voltage reading.");
+    ERR_FAIL_COND_V_MSG(_adc_device_raw_file_index < 0 || _adc_voltage_raw_file_index < 0, 0, "Read value from adc failed, no raw file index set for voltage reading.");
 
-    char filename[64] = {0}; // radxa rock 4 specific path! todo: fix to be more generic
-    sprintf(filename, "/sys/bus/iio/devices/iio:device0/in_voltage%i_raw", _adc_voltage_raw_file_index);
+    char filename[64] = {0}; 
+    sprintf(filename, "/sys/bus/iio/devices/iio:device%i/in_voltage%i_raw", _adc_device_raw_file_index, _adc_voltage_raw_file_index);
     int voltage_file_fd = open(filename, O_RDONLY);
     ERR_FAIL_COND_V_MSG(voltage_file_fd < 0, 0, "Failed to open the in_voltage file.");
 
@@ -149,14 +156,13 @@ int ADCRawDevice::read_value_from_pin() {
     ERR_FAIL_COND_V_MSG(num_chars_read <= 0, 0, "Failed to read content from the in_voltage file.");
 
 
-    float ret_val = 0.0f;
     int tempval = 0;
     int success = sscanf(read_data, "%d", &tempval);
     ERR_FAIL_COND_V_MSG(success != 1, 0, "Failed to convert the voltage value read to an integer.");
 
+    // Store the value in the range 0..1023 and then calculate the voltage.
     _adc_pin_value = tempval;
-    // radxa rock 4 specific temporary value! todo: fix to be more generic
-    _adc_pin_voltage = 1.8f * (float)tempval / 1024.0f;
+    _adc_pin_voltage = _adc_pin_max_voltage * (float)tempval / 1024.0f;
 
     return _adc_pin_value;
 }

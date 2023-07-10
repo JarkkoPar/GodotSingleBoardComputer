@@ -17,7 +17,10 @@ protected:
     
     int _adc_device_fd;             // The file for the ADC device, only used when running the app, not in editor
     int _adc_gpio_pin_index;        // Index in the internal array of the SingleBoardComputer class for the pin used for ADC
+    int _adc_device_raw_file_index; // Index of the deviceX-folder for the voltageX_raw file to read for the input
     int _adc_voltage_raw_file_index; // Index of the voltageX_raw file to read for the input
+
+    float _adc_pin_max_voltage;     // The max voltage read by the pin (based on specsheet/documentation)
     float _adc_pin_voltage;         // The voltage read in the pin
     int _adc_pin_value;             // The pin value as an integer (0..1023)
 
