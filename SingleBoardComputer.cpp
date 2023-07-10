@@ -1,7 +1,6 @@
 #include "SingleBoardComputer.h"
 
 #include <unistd.h>
-//#include <stdio.h>
 #include <fcntl.h>
 
 #include <godot_cpp/core/class_db.hpp>
@@ -53,6 +52,13 @@ SingleBoardComputer::SingleBoardComputer() {
     _opened_i2c_bus_device_files = nullptr;
     _opened_i2c_bus_device_file_i2c_bus_numbers = nullptr;
     _num_opened_i2c_bus_device_files = 0;
+
+    /**
+    _opened_adc_device_files = nullptr;
+    _opened_adc_device_file_adc_numbers = nullptr;
+    _num_opened_adc_device_files = 0;
+    /**/
+
 }
 
 
@@ -85,6 +91,22 @@ SingleBoardComputer::~SingleBoardComputer() {
         _opened_i2c_bus_device_file_i2c_bus_numbers = nullptr;
         _num_opened_i2c_bus_device_files = 0;
     }
+
+    /*
+    if( _opened_adc_device_files != nullptr ) {
+        for( int i = 0; i < _num_opened_adc_device_files; ++i ) {
+            if( _opened_adc_device_files[i] > -1 ) {
+                close(_opened_adc_device_files[i]);
+                _opened_adc_device_files[i] = 0;
+            }
+        }
+        delete[] _opened_adc_device_files;
+        delete[] _opened_adc_device_file_adc_numbers;
+        _opened_adc_device_files = nullptr;
+        _opened_adc_device_file_adc_numbers = nullptr;
+        _num_opened_adc_device_files = 0;
+    }
+    /**/
 
     // Free the config arrays.
     if( _gpio_pins != nullptr ) {
@@ -163,10 +185,12 @@ int SingleBoardComputer::request_gpio_device_file( int pin_index ) {
 }
 
 
-// Gpio related handlers.
-
 int SingleBoardComputer::get_num_gpio_pins() const {
     return _num_gpio_pins;
+}
+
+GpioPin* SingleBoardComputer::get_gpio_pins() const {
+    return _gpio_pins;
 }
 
 
@@ -174,6 +198,54 @@ int SingleBoardComputer::get_gpio_pin_offset(int pin_index) const {
     ERR_FAIL_COND_V_MSG(pin_index < 0 || pin_index > get_num_gpio_pins(), -1, "Gpio pin index must be between 0 and max count.");
     return _gpio_pins[pin_index].get_pin_offset();
 }
+
+
+// ADC related handlers.
+/*
+int SingleBoardComputer::request_adc_device_file( int pin_index ) {
+    ERR_FAIL_COND_V_MSG(pin_index < 0 || pin_index > 39, -1, "Pin index must be between 0 and 39.");
+    ERR_FAIL_COND_V_MSG(_gpio_pins == nullptr, -1, "Gpio pins not yet initialized.");
+    ERR_FAIL_COND_V_MSG(!(_gpio_pins[pin_index].get_primary_function() == GpioPin::GpioPinFunction::GPF_ADC_IN || _gpio_pins[pin_index].get_secondary_function() != GpioPin::GpioPinFunction::GPF_ADC_IN), -1, "Gpio pins does not have an ADC function.");
+    
+
+    // Check if the adc file related to the pin is already open.
+    int adc_index = _gpio_pins[pin_index].get_adc_device_file_index();
+    for( int i = 0; i < _num_opened_adc_device_files; ++i ) {
+        if( _opened_adc_device_file_adc_numbers[i] == adc_index ) {
+            return _opened_adc_device_files[i];
+        }
+    }
+    
+    // The file wasn't already open so add a new file to the list.
+    int* new_adc_files_array = new int[_num_opened_adc_device_files + 1];
+    ERR_FAIL_COND_V_MSG(new_adc_files_array == nullptr, -1, "Could not create a new adc file descriptor array.");
+    int* new_adc_numbers_array = new int[_num_opened_adc_device_files + 1];
+    if( new_adc_numbers_array == nullptr ) {
+        delete[] new_adc_files_array;
+        ERR_FAIL_COND_V_MSG(new_adc_numbers_array == nullptr, -1, "Could not create a new adc file descriptor numbers array.");    
+    }
+
+    if( _opened_adc_device_files != nullptr ) {
+        memcpy( new_adc_files_array, _opened_adc_device_files, sizeof(_opened_adc_device_files) );
+        memcpy( new_adc_numbers_array, _opened_adc_device_file_adc_numbers, sizeof(_opened_adc_device_file_adc_numbers) );
+
+        delete[] _opened_adc_device_files;
+        delete[] _opened_adc_device_file_adc_numbers;
+    }
+    _opened_adc_device_files = new_adc_files_array;
+    _opened_adc_device_file_adc_numbers = new_adc_numbers_array;
+    
+    // Open the file and return the result back.
+    char filename[64] = {0};
+    sprintf(filename, "/sys/bus/iio/devices/iio:device0/in_voltage%i_raw", adc_index);
+    _opened_adc_device_files[_num_opened_adc_device_files] = open(filename, O_RDONLY);
+    _opened_adc_device_file_adc_numbers[_num_opened_adc_device_files] = adc_index;
+    _num_opened_adc_device_files += 1; 
+
+    return _opened_adc_device_files[_num_opened_adc_device_files-1];
+}
+/**/
+
 
 // I2C related handlers.
 int SingleBoardComputer::get_num_i2c_buses() const {
@@ -288,6 +360,7 @@ void SingleBoardComputer::_setup_board(){
             _num_i2c_buses = 2;
             _num_spi_buses = 2;
             _num_pwm_pins = 2; 
+            _num_adc_pins = 1;
 
             _gpio_pins = new GpioPin[_num_gpio_pins];
             _i2c_buses = new I2CBus[_num_i2c_buses];
@@ -306,7 +379,7 @@ void SingleBoardComputer::_setup_board(){
             _gpio_pins[18].set_primary_function(GpioPin::GpioPinFunction::GPF_SPI_TXD);    _gpio_pins[19].set_primary_function(GpioPin::GpioPinFunction::GPF_GND);
             _gpio_pins[20].set_primary_function(GpioPin::GpioPinFunction::GPF_SPI_RXD);    _gpio_pins[21].set_primary_function(GpioPin::GpioPinFunction::GPF_PIN);
             _gpio_pins[22].set_primary_function(GpioPin::GpioPinFunction::GPF_SPI_CLK);    _gpio_pins[23].set_primary_function(GpioPin::GpioPinFunction::GPF_SPI_CSn);
-            _gpio_pins[24].set_primary_function(GpioPin::GpioPinFunction::GPF_GND);        _gpio_pins[25].set_primary_function(GpioPin::GpioPinFunction::GPF_ADC_IN0);
+            _gpio_pins[24].set_primary_function(GpioPin::GpioPinFunction::GPF_GND);        _gpio_pins[25].set_primary_function(GpioPin::GpioPinFunction::GPF_ADC_IN);
             _gpio_pins[26].set_primary_function(GpioPin::GpioPinFunction::GPF_I2C_SDA);    _gpio_pins[27].set_primary_function(GpioPin::GpioPinFunction::GPF_I2C_CLK);
             _gpio_pins[28].set_primary_function(GpioPin::GpioPinFunction::GPF_SPI_TXD);    _gpio_pins[29].set_primary_function(GpioPin::GpioPinFunction::GPF_GND);
             _gpio_pins[30].set_primary_function(GpioPin::GpioPinFunction::GPF_SPI_RXD);    _gpio_pins[31].set_primary_function(GpioPin::GpioPinFunction::GPF_SPDIF_TX);
@@ -315,6 +388,8 @@ void SingleBoardComputer::_setup_board(){
             _gpio_pins[36].set_primary_function(GpioPin::GpioPinFunction::GPF_PIN);        _gpio_pins[37].set_primary_function(GpioPin::GpioPinFunction::GPF_I2S_SDI);
             _gpio_pins[38].set_primary_function(GpioPin::GpioPinFunction::GPF_GND);        _gpio_pins[39].set_primary_function(GpioPin::GpioPinFunction::GPF_I2S_SDO);
             
+            // Todo: set secondary functions.
+
             // Set the device file indices for the gpio pins.
             _gpio_pins[ 2].set_gpio_device_file_index(2);
             _gpio_pins[ 4].set_gpio_device_file_index(2);

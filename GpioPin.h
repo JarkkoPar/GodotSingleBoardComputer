@@ -34,7 +34,7 @@ public:
         GPF_I2S_SDI,
         GPF_I2S_SDO,
         GPF_SPDIF_TX ,
-        GPF_ADC_IN0
+        GPF_ADC_IN
     };
 
     GpioPin();
@@ -44,6 +44,9 @@ public:
 
     void set_gpio_device_file_index( int new_index );
     int get_gpio_device_file_index() const;
+
+    void set_adc_device_file_index( int new_index );
+    int get_adc_device_file_index() const;
 
     void set_pin_offset( int new_offset );
     int  get_pin_offset() const;
@@ -56,6 +59,7 @@ public:
 
 private:
     int             _gpio_device_file_index;
+    int             _adc_device_file_index;
     GpioPinFunction _primary_function;
     GpioPinFunction _secondary_function; 
 

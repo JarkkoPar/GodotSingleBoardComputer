@@ -24,6 +24,7 @@ private:
     // to the device-nodes.
     int _num_gpio_pins; // Number of GPIO pins on the sbc - Now assumed 40 in Raspberry PI layout
     int _num_pwm_pins;  // Number of PWM pins on the sbc
+    int _num_adc_pins;  // Number of ADC pins on the sbc
     int _num_i2c_buses; // Number of I2C buses on the sbc
     int _num_spi_buses; // Number of SPI buses on the sbc
 
@@ -41,6 +42,11 @@ private:
     int* _opened_i2c_bus_device_file_i2c_bus_numbers ;
     int  _num_opened_i2c_bus_device_files;
 
+    //int* _opened_adc_device_files;
+    //int* _opened_adc_device_file_adc_numbers ;
+    //int  _num_opened_adc_device_files;
+
+
     void _setup_board();
     void _initialize_child_devices();
 protected:
@@ -56,6 +62,7 @@ public:
 
     // Gpio related handers.
     int get_num_gpio_pins() const;
+    GpioPin* get_gpio_pins() const;
     int get_gpio_pin_offset(int pin_index) const;
 
     // I2C related handlers.
@@ -65,6 +72,7 @@ public:
     // File handle management.
     int request_i2c_device_file( int bus_index );
     int request_gpio_device_file( int pin_index );
+    //int request_adc_device_file( int pin_index );
 
     // Godot virtuals.
     void _ready();

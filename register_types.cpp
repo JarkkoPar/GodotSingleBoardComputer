@@ -12,6 +12,9 @@
 #include "GpioRawDevice.h"
 #include "GpioLED.h"
 
+// ADC devices.
+#include "ADCRawDevice.h"
+
 // Standard headers.
 #include <gdextension_interface.h>
 #include <godot_cpp/core/defs.hpp>
@@ -36,6 +39,10 @@ void initialize_singleboardcomputer_module(ModuleInitializationLevel p_level) {
     // Gpio devices.
     ClassDB::register_class<GpioRawDevice>();
     ClassDB::register_class<GpioLED>();
+
+    // ADC devices.
+       ClassDB::register_class<ADCRawDevice>();
+ 
 }
 
 void uninitialize_singleboardcomputer_module(ModuleInitializationLevel p_level) {
