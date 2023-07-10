@@ -41,7 +41,7 @@ void initialize_singleboardcomputer_module(ModuleInitializationLevel p_level) {
     ClassDB::register_class<GpioLED>();
 
     // ADC devices.
-       ClassDB::register_class<ADCRawDevice>();
+    ClassDB::register_class<ADCRawDevice>();
  
 }
 

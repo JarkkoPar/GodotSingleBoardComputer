@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#include <godot_cpp/classes/engine.hpp>
 
 using namespace godot;
 
@@ -57,6 +58,7 @@ void ADCRawDevice::_process(double delta) {
 
 
 void ADCRawDevice::_physics_process(double delta) {
+    if(Engine::get_singleton()->is_editor_hint()) return;
     read_value_from_pin();
 }
 
