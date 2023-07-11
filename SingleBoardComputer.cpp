@@ -71,6 +71,7 @@ SingleBoardComputer::~SingleBoardComputer() {
                 _opened_gpio_device_files[i] = 0;
             }
         }
+
         delete[] _opened_gpio_device_files;
         delete[] _opened_gpio_device_file_gpio_numbers;
         _opened_gpio_device_files = nullptr;
@@ -367,6 +368,28 @@ void SingleBoardComputer::_setup_board(){
             _spi_buses = new SPIBus[_num_spi_buses];
             
             // Set the functions etc.
+            _gpio_pins[ 0].add_pin_function(GpioPin::GpioPinFunction::GPF_3_3V);       _gpio_pins[ 1].add_pin_function(GpioPin::GpioPinFunction::GPF_5_0V);
+            _gpio_pins[ 2].add_pin_function(GpioPin::GpioPinFunction::GPF_I2C_SDA);    _gpio_pins[ 3].add_pin_function(GpioPin::GpioPinFunction::GPF_5_0V);
+            _gpio_pins[ 4].add_pin_function(GpioPin::GpioPinFunction::GPF_I2C_SCL);    _gpio_pins[ 5].add_pin_function(GpioPin::GpioPinFunction::GPF_GND);
+            _gpio_pins[ 6].add_pin_function(GpioPin::GpioPinFunction::GPF_SPI_CLK);    _gpio_pins[ 7].add_pin_function(GpioPin::GpioPinFunction::GPF_UART_TXD);
+            _gpio_pins[ 8].add_pin_function(GpioPin::GpioPinFunction::GPF_GND);        _gpio_pins[ 9].add_pin_function(GpioPin::GpioPinFunction::GPF_UART_RXD);
+            _gpio_pins[10].add_pin_function(GpioPin::GpioPinFunction::GPF_PWM);        _gpio_pins[11].add_pin_function(GpioPin::GpioPinFunction::GPF_I2S_SCLK);
+            _gpio_pins[12].add_pin_function(GpioPin::GpioPinFunction::GPF_PWM);        _gpio_pins[13].add_pin_function(GpioPin::GpioPinFunction::GPF_GND);
+            _gpio_pins[14].add_pin_function(GpioPin::GpioPinFunction::GPF_SPDIF_TX);   _gpio_pins[15].add_pin_function(GpioPin::GpioPinFunction::GPF_PIN);
+            _gpio_pins[16].add_pin_function(GpioPin::GpioPinFunction::GPF_3_3V);       _gpio_pins[17].add_pin_function(GpioPin::GpioPinFunction::GPF_PIN);
+            _gpio_pins[18].add_pin_function(GpioPin::GpioPinFunction::GPF_SPI_TXD);    _gpio_pins[19].add_pin_function(GpioPin::GpioPinFunction::GPF_GND);
+            _gpio_pins[20].add_pin_function(GpioPin::GpioPinFunction::GPF_SPI_RXD);    _gpio_pins[21].add_pin_function(GpioPin::GpioPinFunction::GPF_PIN);
+            _gpio_pins[22].add_pin_function(GpioPin::GpioPinFunction::GPF_SPI_CLK);    _gpio_pins[23].add_pin_function(GpioPin::GpioPinFunction::GPF_SPI_CSn);
+            _gpio_pins[24].add_pin_function(GpioPin::GpioPinFunction::GPF_GND);        _gpio_pins[25].add_pin_function(GpioPin::GpioPinFunction::GPF_ADC_IN);
+            _gpio_pins[26].add_pin_function(GpioPin::GpioPinFunction::GPF_I2C_SDA);    _gpio_pins[27].add_pin_function(GpioPin::GpioPinFunction::GPF_I2C_CLK);
+            _gpio_pins[28].add_pin_function(GpioPin::GpioPinFunction::GPF_SPI_TXD);    _gpio_pins[29].add_pin_function(GpioPin::GpioPinFunction::GPF_GND);
+            _gpio_pins[30].add_pin_function(GpioPin::GpioPinFunction::GPF_SPI_RXD);    _gpio_pins[31].add_pin_function(GpioPin::GpioPinFunction::GPF_SPDIF_TX);
+            _gpio_pins[32].add_pin_function(GpioPin::GpioPinFunction::GPF_SPI_CSn);    _gpio_pins[33].add_pin_function(GpioPin::GpioPinFunction::GPF_GND);
+            _gpio_pins[34].add_pin_function(GpioPin::GpioPinFunction::GPF_I2S_LRCK_TX);_gpio_pins[35].add_pin_function(GpioPin::GpioPinFunction::GPF_I2S_LRCK_RX);
+            _gpio_pins[36].add_pin_function(GpioPin::GpioPinFunction::GPF_PIN);        _gpio_pins[37].add_pin_function(GpioPin::GpioPinFunction::GPF_I2S_SDI);
+            _gpio_pins[38].add_pin_function(GpioPin::GpioPinFunction::GPF_GND);        _gpio_pins[39].add_pin_function(GpioPin::GpioPinFunction::GPF_I2S_SDO);
+            
+            /*
             _gpio_pins[ 0].set_primary_function(GpioPin::GpioPinFunction::GPF_3_3V);       _gpio_pins[ 1].set_primary_function(GpioPin::GpioPinFunction::GPF_5_0V);
             _gpio_pins[ 2].set_primary_function(GpioPin::GpioPinFunction::GPF_I2C_SDA);    _gpio_pins[ 3].set_primary_function(GpioPin::GpioPinFunction::GPF_5_0V);
             _gpio_pins[ 4].set_primary_function(GpioPin::GpioPinFunction::GPF_I2C_SCL);    _gpio_pins[ 5].set_primary_function(GpioPin::GpioPinFunction::GPF_GND);
@@ -387,7 +410,7 @@ void SingleBoardComputer::_setup_board(){
             _gpio_pins[34].set_primary_function(GpioPin::GpioPinFunction::GPF_I2S_LRCK_TX);_gpio_pins[35].set_primary_function(GpioPin::GpioPinFunction::GPF_I2S_LRCK_RX);
             _gpio_pins[36].set_primary_function(GpioPin::GpioPinFunction::GPF_PIN);        _gpio_pins[37].set_primary_function(GpioPin::GpioPinFunction::GPF_I2S_SDI);
             _gpio_pins[38].set_primary_function(GpioPin::GpioPinFunction::GPF_GND);        _gpio_pins[39].set_primary_function(GpioPin::GpioPinFunction::GPF_I2S_SDO);
-            
+            /**/
             // Todo: set secondary functions.
 
             // Set the device file indices for the gpio pins.

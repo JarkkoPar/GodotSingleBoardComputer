@@ -57,11 +57,14 @@ public:
     void set_pin_offset( int new_offset );
     int  get_pin_offset() const;
 
-    void set_primary_function( GpioPinFunction new_function );
-    GpioPinFunction get_primary_function() const;
+    void add_pin_function( GpioPinFunction new_function );
+    bool has_pin_function( GpioPinFunction function );
 
-    void set_secondary_function( GpioPinFunction new_function );
-    GpioPinFunction get_secondary_function() const;
+    //void set_primary_function( GpioPinFunction new_function );
+    //GpioPinFunction get_primary_function() const;
+
+    //void set_secondary_function( GpioPinFunction new_function );
+    //GpioPinFunction get_secondary_function() const;
 
 private:
     int             _gpio_device_file_index;
@@ -70,6 +73,8 @@ private:
     float           _adc_max_voltage;
     GpioPinFunction _primary_function;
     GpioPinFunction _secondary_function; 
+    GpioPinFunction* _pin_functions;
+    int             _num_pin_functions;
 
     int             _pin_offset;
 };

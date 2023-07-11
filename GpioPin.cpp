@@ -1,5 +1,5 @@
 #include "GpioPin.h"
-
+#include <string.h>
 
 using namespace godot;
 
@@ -11,10 +11,16 @@ GpioPin::GpioPin() {
     _adc_voltage_file_index = -1; // -1 is an illegal index
     _pin_offset = -1; // -1 is an illegal offset
     _adc_max_voltage = 0.0f; 
+
+    _pin_functions = nullptr;
+    _num_pin_functions = 0;
 }
 
 GpioPin::~GpioPin() {
-
+    if( _pin_functions != nullptr ) { 
+        delete[] _pin_functions;
+        _pin_functions = nullptr;
+    }
 }
 
 
@@ -61,6 +67,30 @@ int  GpioPin::get_pin_offset() const {
     return _pin_offset;
 }
 
+void GpioPin::add_pin_function( GpioPinFunction new_function ) {
+    GpioPinFunction* new_list = new GpioPinFunction[_num_pin_functions + 1];
+    if( new_list == nullptr ) {
+        return;
+    }
+    if( _pin_functions != nullptr ) {
+        memcpy( new_list, _pin_functions, sizeof(_pin_functions));
+        delete[] _pin_functions;
+    }
+    _pin_functions = new_list;
+    _num_pin_functions += 1;
+    _pin_functions[_num_pin_functions - 1] = new_function;
+}
+
+bool GpioPin::has_pin_function( GpioPinFunction function ) {
+    for( int i = 0; i < _num_pin_functions; ++i ) {
+        if( _pin_functions[i] == function ) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/*
 void GpioPin::set_primary_function( GpioPinFunction new_function ) {
     _primary_function = new_function;
 }
@@ -76,3 +106,5 @@ void GpioPin::set_secondary_function( GpioPinFunction new_function ) {
 GpioPin::GpioPinFunction GpioPin::get_secondary_function() const {
     return _secondary_function;
 }
+/**/
+
