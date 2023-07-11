@@ -40,11 +40,11 @@ void ADCRawDevice::_bind_methods() {
 
     ClassDB::bind_method(D_METHOD("set_adc_gpio_pin_value", "value"), &ADCRawDevice::set_adc_pin_value);
 	ClassDB::bind_method(D_METHOD("get_adc_gpio_pin_value"), &ADCRawDevice::get_adc_pin_value);
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "ADC Gpio Pin Value", PROPERTY_HINT_NONE), "set_adc_adc_pin_value", "get_adc_pin_value");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "ADC Gpio Pin Value", PROPERTY_HINT_NONE), "set_adc_gpio_pin_value", "get_adc_gpio_pin_value");
 
     ClassDB::bind_method(D_METHOD("set_adc_gpio_pin_voltage", "value"), &ADCRawDevice::set_adc_pin_voltage);
 	ClassDB::bind_method(D_METHOD("get_adc_gpio_pin_voltage"), &ADCRawDevice::get_adc_pin_voltage);
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "ADC Gpio Pin Voltage", PROPERTY_HINT_NONE), "set_adc_adc_pin_voltage", "get_adc_pin_voltage");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "ADC Gpio Pin Voltage", PROPERTY_HINT_NONE), "set_adc_gpio_pin_voltage", "get_adc_gpio_pin_voltage");
 
 
     // Read and write methods.

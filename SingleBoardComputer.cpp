@@ -465,7 +465,7 @@ void SingleBoardComputer::_setup_board(){
             // Set the ADC pins.
             _gpio_pins[25].set_adc_device_file_index(0);
             _gpio_pins[25].set_adc_voltage_file_index(0);
-
+            _gpio_pins[25].set_adc_max_voltage(1.8f);
 
             // Set the I2C buses.
             _i2c_buses[0].set_i2c_device_file_index(2);
