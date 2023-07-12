@@ -1,13 +1,13 @@
-#include "I2CBus.h"
+#include "I2cBus.h"
 
 
-I2CBus::I2CBus() {
+I2cBus::I2cBus() {
     _i2c_device_file_index = -1; // -1 is an invalid index
     _gpio_reserved_pins = nullptr;
     _num_gpio_reserved_pins = 0;
 }
 
-I2CBus::~I2CBus() {
+I2cBus::~I2cBus() {
     if( _gpio_reserved_pins != nullptr ) {
         delete[] _gpio_reserved_pins;
         _gpio_reserved_pins = nullptr;
@@ -18,16 +18,16 @@ I2CBus::~I2CBus() {
 
 // Setters and getters.
 
-void I2CBus::set_i2c_device_file_index( int new_index ) {
+void I2cBus::set_i2c_device_file_index( int new_index ) {
     _i2c_device_file_index = new_index;
 }
 
-int  I2CBus::get_i2c_device_file_index() const {
+int  I2cBus::get_i2c_device_file_index() const {
     return _i2c_device_file_index;
 }
 
 
-void I2CBus::add_gpio_reserved_pin( int new_pin_index ) {
+void I2cBus::add_gpio_reserved_pin( int new_pin_index ) {
     // Simply create a new array and copy over the
     // previously added pins to the new one, and then
     // delete the old array.
@@ -50,6 +50,6 @@ void I2CBus::add_gpio_reserved_pin( int new_pin_index ) {
     _num_gpio_reserved_pins += 1;
 }
 
-int* I2CBus::get_gpio_reserved_pins() const {
+int* I2cBus::get_gpio_reserved_pins() const {
     return _gpio_reserved_pins;
 }

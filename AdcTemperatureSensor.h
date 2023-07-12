@@ -1,14 +1,14 @@
-#ifndef ADC_NTCMF52_3950_H_INCLUDED
-#define ADC_NTCMF52_3950_H_INCLUDED
+#ifndef ADC_TEMPERATURE_SENSOR_H_INCLUDED
+#define ADC_TEMPERATURE_SENSOR_H_INCLUDED
 
-#include "ADCRawDevice.h"
+#include "AdcDevice.h"
 
 namespace godot {
 
 // This is a "raw" Analog-Digital-Converter (ADC) device node, which allows a more low-level
 // interface to SBC pins that allow analog input.
-class ADCNTCMF52_3950 : public ADCRawDevice {
-    GDCLASS(ADCNTCMF52_3950, ADCRawDevice)
+class AdcTemperatureSensor : public AdcDevice {
+    GDCLASS(AdcTemperatureSensor, AdcDevice)
 
 private:
     
@@ -24,8 +24,8 @@ protected:
 
 public:
 
-    ADCNTCMF52_3950();
-    ~ADCNTCMF52_3950();
+    AdcTemperatureSensor();
+    ~AdcTemperatureSensor();
 
      // Godot virtuals.
     void _process(double delta);

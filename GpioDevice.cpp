@@ -1,4 +1,4 @@
-#include "GpioRawDevice.h"
+#include "GpioDevice.h"
 #include "GpioPin.h"
 #include "SingleBoardComputer.h"
 
@@ -12,14 +12,14 @@ using namespace godot;
 
 
 
-GpioRawDevice::GpioRawDevice() {
+GpioDevice::GpioDevice() {
     _gpio_device_fd = -1; 
     _gpio_pin_fd = -1;
     //_gpio_pin_offset = -1;
 }
 
 
-GpioRawDevice::~GpioRawDevice() {
+GpioDevice::~GpioDevice() {
     close_device();
     _gpio_device_fd = -1;
     //_gpio_pin_offset = -1;
@@ -27,11 +27,11 @@ GpioRawDevice::~GpioRawDevice() {
 
 
 
-void GpioRawDevice::_bind_methods() {
+void GpioDevice::_bind_methods() {
 
     // Gpio Pin Number on the SCB.
-    ClassDB::bind_method(D_METHOD("set_gpio_pin_index", "pin_index"), &GpioRawDevice::set_gpio_pin_index);
-	ClassDB::bind_method(D_METHOD("get_gpio_pin_index"), &GpioRawDevice::get_gpio_pin_index);
+    ClassDB::bind_method(D_METHOD("set_gpio_pin_index", "pin_index"), &GpioDevice::set_gpio_pin_index);
+	ClassDB::bind_method(D_METHOD("get_gpio_pin_index"), &GpioDevice::get_gpio_pin_index);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "Gpio Pin Index", PROPERTY_HINT_RANGE, "0,39"), "set_gpio_pin_index", "get_gpio_pin_index");
 
     // Read and write methods.
@@ -43,24 +43,24 @@ void GpioRawDevice::_bind_methods() {
 
 
 
-void GpioRawDevice::_process(double delta) {
+void GpioDevice::_process(double delta) {
 
 }
 
 
-void GpioRawDevice::_physics_process(double delta) {
+void GpioDevice::_physics_process(double delta) {
 
 }
 
 
-void GpioRawDevice::_notification(int p_what) {
+void GpioDevice::_notification(int p_what) {
 
 }
 
 // Getters and setters.
 
 
-void GpioRawDevice::set_gpio_pin_index( int pin_index ) {
+void GpioDevice::set_gpio_pin_index( int pin_index ) {
     // If just loading, simply set the value.
     if( is_inside_tree() == false ){
         _gpio_pin_index = pin_index;
@@ -75,28 +75,28 @@ void GpioRawDevice::set_gpio_pin_index( int pin_index ) {
     _gpio_pin_index = pin_index;
 }
 
-int GpioRawDevice::get_gpio_pin_index() const {
+int GpioDevice::get_gpio_pin_index() const {
     return _gpio_pin_index;
 }
 
 
-void GpioRawDevice::set_gpio_pin_type( int pin_type ) {
+void GpioDevice::set_gpio_pin_type( int pin_type ) {
     _gpio_pin_type = pin_type;
 }
 
-int  GpioRawDevice::get_gpio_pin_type() const {
+int  GpioDevice::get_gpio_pin_type() const {
     return _gpio_pin_type;
 }
 
 // Device handling
 
-void GpioRawDevice::_initialize_device() {
+void GpioDevice::_initialize_device() {
     open_device();
 }
 
 
 
-void GpioRawDevice::open_device() {
+void GpioDevice::open_device() {
 
     // Get the parent which should have the gpio pin array.
     SingleBoardComputer* sbc = Object::cast_to<SingleBoardComputer>(get_parent());
@@ -154,7 +154,7 @@ void GpioRawDevice::open_device() {
 }
 
 
-void GpioRawDevice::close_device() {
+void GpioDevice::close_device() {
     // Close the pin file descriptor if it is still open.
     if( _gpio_pin_fd > -1 ) {
         close( _gpio_pin_fd );
@@ -164,7 +164,7 @@ void GpioRawDevice::close_device() {
 }
 
 
-void GpioRawDevice::write_byte_to_device( uint8_t data ) {
+void GpioDevice::write_byte_to_device( uint8_t data ) {
     ERR_FAIL_COND_MSG(_gpio_pin_fd < 0, "Write byte to device failed, no file descriptor.");
     //struct gpiohandle_data data_to_send;
     //data_to_send.values[0] = data;
@@ -180,7 +180,7 @@ void GpioRawDevice::write_byte_to_device( uint8_t data ) {
 }
 
 // Returns number of bytes read, which is 0 in case of error, 1 otherwise.
-int  GpioRawDevice::read_byte_from_device( uint8_t* result ) {
+int  GpioDevice::read_byte_from_device( uint8_t* result ) {
     ERR_FAIL_COND_V_MSG(result == nullptr, 0, "Result variable given is a null-pointer.");
     ERR_FAIL_COND_V_MSG(_gpio_pin_fd < 0, 0, "Read byte from device failed, no file descriptor.");
     

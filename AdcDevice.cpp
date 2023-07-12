@@ -1,4 +1,4 @@
-#include "ADCRawDevice.h"
+#include "AdcDevice.h"
 
 #include "SingleBoardComputer.h"
 
@@ -12,7 +12,7 @@ using namespace godot;
 
 
 
-ADCRawDevice::ADCRawDevice() {
+AdcDevice::AdcDevice() {
     _adc_device_fd = -1; 
     _adc_gpio_pin_index = -1;
     _adc_pin_voltage = 0.0f;
@@ -21,7 +21,7 @@ ADCRawDevice::ADCRawDevice() {
 }
 
 
-ADCRawDevice::~ADCRawDevice() {
+AdcDevice::~AdcDevice() {
     close_device();
     _adc_device_fd = -1;
     _adc_gpio_pin_index = -1;
@@ -31,19 +31,19 @@ ADCRawDevice::~ADCRawDevice() {
 
 
 
-void ADCRawDevice::_bind_methods() {
+void AdcDevice::_bind_methods() {
 
     // The voltage of the pin and its value between 0..1023.
-    ClassDB::bind_method(D_METHOD("set_adc_gpio_pin_index", "pin_index"), &ADCRawDevice::set_adc_gpio_pin_index);
-	ClassDB::bind_method(D_METHOD("get_adc_gpio_pin_index"), &ADCRawDevice::get_adc_gpio_pin_index);
+    ClassDB::bind_method(D_METHOD("set_adc_gpio_pin_index", "pin_index"), &AdcDevice::set_adc_gpio_pin_index);
+	ClassDB::bind_method(D_METHOD("get_adc_gpio_pin_index"), &AdcDevice::get_adc_gpio_pin_index);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "ADC Gpio Pin Index", PROPERTY_HINT_RANGE, "0,39"), "set_adc_gpio_pin_index", "get_adc_gpio_pin_index");
 
-    ClassDB::bind_method(D_METHOD("set_adc_gpio_pin_value", "value"), &ADCRawDevice::set_adc_pin_value);
-	ClassDB::bind_method(D_METHOD("get_adc_gpio_pin_value"), &ADCRawDevice::get_adc_pin_value);
+    ClassDB::bind_method(D_METHOD("set_adc_gpio_pin_value", "value"), &AdcDevice::set_adc_pin_value);
+	ClassDB::bind_method(D_METHOD("get_adc_gpio_pin_value"), &AdcDevice::get_adc_pin_value);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "ADC Gpio Pin Value", PROPERTY_HINT_NONE), "set_adc_gpio_pin_value", "get_adc_gpio_pin_value");
 
-    ClassDB::bind_method(D_METHOD("set_adc_gpio_pin_voltage", "value"), &ADCRawDevice::set_adc_pin_voltage);
-	ClassDB::bind_method(D_METHOD("get_adc_gpio_pin_voltage"), &ADCRawDevice::get_adc_pin_voltage);
+    ClassDB::bind_method(D_METHOD("set_adc_gpio_pin_voltage", "value"), &AdcDevice::set_adc_pin_voltage);
+	ClassDB::bind_method(D_METHOD("get_adc_gpio_pin_voltage"), &AdcDevice::get_adc_pin_voltage);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "ADC Gpio Pin Voltage", PROPERTY_HINT_NONE), "set_adc_gpio_pin_voltage", "get_adc_gpio_pin_voltage");
 
 
@@ -56,25 +56,25 @@ void ADCRawDevice::_bind_methods() {
 
 
 
-void ADCRawDevice::_process(double delta) {
+void AdcDevice::_process(double delta) {
 
 }
 
 
-void ADCRawDevice::_physics_process(double delta) {
+void AdcDevice::_physics_process(double delta) {
     if(Engine::get_singleton()->is_editor_hint()) return;
     read_value_from_pin();
 }
 
 
-void ADCRawDevice::_notification(int p_what) {
+void AdcDevice::_notification(int p_what) {
 
 }
 
 // Getters and setters.
 
 
-void ADCRawDevice::set_adc_gpio_pin_index( int pin_index ) {
+void AdcDevice::set_adc_gpio_pin_index( int pin_index ) {
     // If just loading, simply set the value.
     if( is_inside_tree() == false ){
         _adc_gpio_pin_index = pin_index;
@@ -89,37 +89,37 @@ void ADCRawDevice::set_adc_gpio_pin_index( int pin_index ) {
     _adc_gpio_pin_index = pin_index;
 }
 
-int ADCRawDevice::get_adc_gpio_pin_index() const {
+int AdcDevice::get_adc_gpio_pin_index() const {
     return _adc_gpio_pin_index;
 }
 
 
-void ADCRawDevice::set_adc_pin_voltage( float voltage ) {
+void AdcDevice::set_adc_pin_voltage( float voltage ) {
     _adc_pin_voltage = voltage;
 }
 
-float ADCRawDevice::get_adc_pin_voltage() const {
+float AdcDevice::get_adc_pin_voltage() const {
     return _adc_pin_voltage;
 }
 
-void ADCRawDevice::set_adc_pin_value( int value ) {
+void AdcDevice::set_adc_pin_value( int value ) {
     _adc_pin_value = value;
 }
 
-int ADCRawDevice::get_adc_pin_value() const {
+int AdcDevice::get_adc_pin_value() const {
     return _adc_pin_value;
 }
 
 
 // Device handling
 
-void ADCRawDevice::_initialize_device() {
+void AdcDevice::_initialize_device() {
     open_device();
 }
 
 
 
-void ADCRawDevice::open_device() {
+void AdcDevice::open_device() {
 
     // Get the parent which should have the gpio pin array.
     SingleBoardComputer* sbc = Object::cast_to<SingleBoardComputer>(get_parent());
@@ -137,12 +137,12 @@ void ADCRawDevice::open_device() {
 }
 
 
-void ADCRawDevice::close_device() {
+void AdcDevice::close_device() {
     _adc_device_fd = -1; // just reset the adc file descriptor, as this will be closed by the SingleBoardComputer class.
 }
 
 
-int ADCRawDevice::read_value_from_pin() {
+int AdcDevice::read_value_from_pin() {
     //ERR_FAIL_COND_V_MSG(result == nullptr, 0, "Result variable given is a null-pointer.");
     ERR_FAIL_COND_V_MSG(_adc_device_raw_file_index < 0 || _adc_voltage_raw_file_index < 0, 0, "Read value from adc failed, no raw file index set for voltage reading.");
 

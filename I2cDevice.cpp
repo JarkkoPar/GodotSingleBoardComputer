@@ -1,5 +1,5 @@
-#include "I2CRawDevice.h"
-#include "I2CBus.h"
+#include "I2cDevice.h"
+#include "I2cBus.h"
 #include "SingleBoardComputer.h"
 
 #include <unistd.h>
@@ -15,14 +15,14 @@ using namespace godot;
 
 
 
-I2CRawDevice::I2CRawDevice() {
+I2cDevice::I2cDevice() {
     _i2c_device_index = 0;
     _i2c_device_bus_number = 0;
     _i2c_device_fd = -1; 
 }
 
 
-I2CRawDevice::~I2CRawDevice() {
+I2cDevice::~I2cDevice() {
     if( _i2c_device_fd >= 0 ) {
         //close(_i2c_device_fd ); // Closed by the SBC.
         _i2c_device_fd = -1;
@@ -31,51 +31,51 @@ I2CRawDevice::~I2CRawDevice() {
 
 
 
-void I2CRawDevice::_bind_methods() {
+void I2cDevice::_bind_methods() {
 
     // Device Number on the SCB.
-    ClassDB::bind_method(D_METHOD("set_i2c_device_bus_number", "bus_number"), &I2CRawDevice::set_i2c_device_bus_number);
-	ClassDB::bind_method(D_METHOD("get_i2c_device_bus_number"), &I2CRawDevice::get_i2c_device_bus_number);
+    ClassDB::bind_method(D_METHOD("set_i2c_device_bus_number", "bus_number"), &I2cDevice::set_i2c_device_bus_number);
+	ClassDB::bind_method(D_METHOD("get_i2c_device_bus_number"), &I2cDevice::get_i2c_device_bus_number);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "I2C Bus Number", PROPERTY_HINT_NONE, ""), "set_i2c_device_bus_number", "get_i2c_device_bus_number");
 
 
     // Device ID on the SCB.
-    //ClassDB::bind_method(D_METHOD("set_i2c_device_index", "device_index"), &I2CRawDevice::set_i2c_device_index);
-	//ClassDB::bind_method(D_METHOD("get_i2c_device_index"), &I2CRawDevice::get_i2c_device_index);
+    //ClassDB::bind_method(D_METHOD("set_i2c_device_index", "device_index"), &I2cDevice::set_i2c_device_index);
+	//ClassDB::bind_method(D_METHOD("get_i2c_device_index"), &I2cDevice::get_i2c_device_index);
     //ADD_PROPERTY(PropertyInfo(Variant::INT, "I2C Device", PROPERTY_HINT_NONE, ""), "set_i2c_device_index", "get_i2c_device_index");
 
     // Address.
-    ClassDB::bind_method(D_METHOD("set_i2c_device_address", "device_address"), &I2CRawDevice::set_i2c_device_address);
-	ClassDB::bind_method(D_METHOD("get_i2c_device_address"), &I2CRawDevice::get_i2c_device_address);
+    ClassDB::bind_method(D_METHOD("set_i2c_device_address", "device_address"), &I2cDevice::set_i2c_device_address);
+	ClassDB::bind_method(D_METHOD("get_i2c_device_address"), &I2cDevice::get_i2c_device_address);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "I2C Device Address", PROPERTY_HINT_NONE, ""), "set_i2c_device_address", "get_i2c_device_address");
 
     // Read and write methods.
-    ClassDB::bind_method(D_METHOD("open_device"), &I2CRawDevice::open_device);
-    ClassDB::bind_method(D_METHOD("close_device"), &I2CRawDevice::close_device);
-    ClassDB::bind_method(D_METHOD("read_bytes_from_device", "num_bytes"), &I2CRawDevice::read_bytes_from_device);
-    ClassDB::bind_method(D_METHOD("write_bytes_to_device", "bytes_to_write"), &I2CRawDevice::write_bytes_to_device);
+    ClassDB::bind_method(D_METHOD("open_device"), &I2cDevice::open_device);
+    ClassDB::bind_method(D_METHOD("close_device"), &I2cDevice::close_device);
+    ClassDB::bind_method(D_METHOD("read_bytes_from_device", "num_bytes"), &I2cDevice::read_bytes_from_device);
+    ClassDB::bind_method(D_METHOD("write_bytes_to_device", "bytes_to_write"), &I2cDevice::write_bytes_to_device);
 }
 
 
 
-void I2CRawDevice::_process(double delta) {
+void I2cDevice::_process(double delta) {
 
 }
 
 
-void I2CRawDevice::_physics_process(double delta) {
+void I2cDevice::_physics_process(double delta) {
 
 }
 
 
-void I2CRawDevice::_notification(int p_what) {
+void I2cDevice::_notification(int p_what) {
 
 }
 
 // Getters and setters.
 
 
-void I2CRawDevice::set_i2c_device_bus_number( int bus_number ) {
+void I2cDevice::set_i2c_device_bus_number( int bus_number ) {
     // This gets called when starting up, and then we want to
     // just accept what ever the input is.
     if( is_inside_tree() == false ) {
@@ -89,7 +89,7 @@ void I2CRawDevice::set_i2c_device_bus_number( int bus_number ) {
 
     int num_i2c_buses = sbc->get_num_i2c_buses();
     for( int i = 0; i < num_i2c_buses; ++i ) {
-        I2CBus* i2c_device = sbc->get_i2c_bus(i);
+        I2cBus* i2c_device = sbc->get_i2c_bus(i);
         if( i2c_device == nullptr ) {
             continue;
         }
@@ -108,12 +108,12 @@ void I2CRawDevice::set_i2c_device_bus_number( int bus_number ) {
 
 }
 
-int  I2CRawDevice::get_i2c_device_bus_number() const {
+int  I2cDevice::get_i2c_device_bus_number() const {
     return _i2c_device_bus_number;
 }
 
 
-void I2CRawDevice::set_i2c_device_index( int index ) {
+void I2cDevice::set_i2c_device_index( int index ) {
     // If the device is open, cannot change the index.
     ERR_FAIL_COND_MSG(_i2c_device_fd > -1, "Cannot change device index when the device file is open.");
 
@@ -121,18 +121,18 @@ void I2CRawDevice::set_i2c_device_index( int index ) {
 }
 
 
-int  I2CRawDevice::get_i2c_device_index() const {
+int  I2cDevice::get_i2c_device_index() const {
     return _i2c_device_index;
 }
 
-void I2CRawDevice::set_i2c_device_address( int address ) {
+void I2cDevice::set_i2c_device_address( int address ) {
     // If the device is open, cannot change the address.
     ERR_FAIL_COND_MSG(_i2c_device_fd > -1, "Cannot change device address when the device file is open.");
 
     _i2c_device_address = address;
 }
 
-int  I2CRawDevice::get_i2c_device_address() const {
+int  I2cDevice::get_i2c_device_address() const {
     return _i2c_device_address;
 }
 
@@ -140,7 +140,7 @@ int  I2CRawDevice::get_i2c_device_address() const {
 
 // Device handling
 
-void I2CRawDevice::_initialize_device() {
+void I2cDevice::_initialize_device() {
     // Set the i2c bus number now to set up the index.
     set_i2c_device_bus_number(_i2c_device_bus_number);
     open_device();
@@ -148,7 +148,7 @@ void I2CRawDevice::_initialize_device() {
 
 
 
-void I2CRawDevice::open_device() {
+void I2cDevice::open_device() {
     // If a device file descriptor exists, close the device
     // before opening a new one. 
     //if( _i2c_device_fd > -1 ) {
@@ -181,7 +181,7 @@ void I2CRawDevice::open_device() {
 
 }
 
-void I2CRawDevice::close_device() {
+void I2cDevice::close_device() {
     //ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "Failed to close device, it is already closed.");
     
     //close(_i2c_device_fd);
@@ -189,17 +189,17 @@ void I2CRawDevice::close_device() {
 }
 
 
-void I2CRawDevice::_read_bytes_from_device(const int length) {
+void I2cDevice::_read_bytes_from_device(const int length) {
     ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "Read failed because the device file is not opened.");
     ERR_FAIL_COND_MSG( read( _i2c_device_fd, _i2c_read_buffer, length ) != length, "Read failed.");
 }
 
-void I2CRawDevice::_write_bytes_to_device( const char* buffer, const int length) {
+void I2cDevice::_write_bytes_to_device( const char* buffer, const int length) {
     ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "Write failed because the device file is not opened.");
     ERR_FAIL_COND_MSG( write( _i2c_device_fd, buffer, length ) != length, "Write failed.");
 }
 
-PackedByteArray I2CRawDevice::read_bytes_from_device( const int length ) {
+PackedByteArray I2cDevice::read_bytes_from_device( const int length ) {
     memset(_i2c_read_buffer, 0, sizeof(_i2c_read_buffer) );
     _read_bytes_from_device(length);
     PackedByteArray retVal = PackedByteArray();
@@ -209,13 +209,13 @@ PackedByteArray I2CRawDevice::read_bytes_from_device( const int length ) {
     return retVal;
 }
 
-void I2CRawDevice::write_bytes_to_device( PackedByteArray bytes ) {
+void I2cDevice::write_bytes_to_device( PackedByteArray bytes ) {
     int data_length = bytes.size();
     _write_bytes_to_device((char *)bytes.ptr(), data_length);
 }
 
 
-uint8_t I2CRawDevice::read_byte_from_device_register( uint8_t i2c_device_register ) {
+uint8_t I2cDevice::read_byte_from_device_register( uint8_t i2c_device_register ) {
     ERR_FAIL_COND_V_MSG(_i2c_device_fd < 0, 0, "Read device register failed because the device file is not opened. Did you forget to call open_device()?");
 
     uint8_t output_buffer[1] = {i2c_device_register}, input_buffer[1] = {0};
@@ -240,7 +240,7 @@ uint8_t I2CRawDevice::read_byte_from_device_register( uint8_t i2c_device_registe
 }
 
 
-void I2CRawDevice::write_byte_to_device_register( uint8_t i2c_device_register, uint8_t value ) {
+void I2cDevice::write_byte_to_device_register( uint8_t i2c_device_register, uint8_t value ) {
     ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "Write device register failed because the device file is not opened. Did you forget to call open_device()?");
 
     uint8_t output_buffer[2] = {i2c_device_register, value};
@@ -260,12 +260,12 @@ void I2CRawDevice::write_byte_to_device_register( uint8_t i2c_device_register, u
 
 }
 
-void I2CRawDevice::write_byte_array_to_device_register( int i2c_device_register, PackedByteArray bytes ) {
+void I2cDevice::write_byte_array_to_device_register( int i2c_device_register, PackedByteArray bytes ) {
     // todo: code
     ERR_FAIL_MSG("write_byte_array_to_device_register is not implemented yet.");
 }
 
-void I2CRawDevice::_write_byte_array_to_device_register( uint8_t i2c_device_register, const uint8_t* bytes ) {
+void I2cDevice::_write_byte_array_to_device_register( uint8_t i2c_device_register, const uint8_t* bytes ) {
     ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "Write device register failed because the device file is not opened. Did you forget to call open_device()?");
 
     //uint8_t output_buffer[2] = {(uint8_t)i2c_device_register, (uint8_t)value};

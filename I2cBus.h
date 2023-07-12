@@ -2,11 +2,11 @@
 #define I2C_BUS_H_INCLUDED 
 
 
-class I2CBus {
+class I2cBus {
 public:
 
-    I2CBus();
-    ~I2CBus();
+    I2cBus();
+    ~I2cBus();
 
     void set_i2c_device_file_index( int new_index );
     int  get_i2c_device_file_index() const;

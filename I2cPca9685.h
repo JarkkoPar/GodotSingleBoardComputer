@@ -2,13 +2,13 @@
 #define I2C_PCA9685_H_INCLUDED
 
 //#include <core/templates/vset.h>
-#include "I2CRawDevice.h"
+#include "I2cDevice.h"
 
 namespace godot {
 
 // This is a control node for the PCA9685 servo driver.
-class I2CPCA9685 : public I2CRawDevice {
-    GDCLASS(I2CPCA9685, I2CRawDevice)
+class I2cPca9685 : public I2cDevice {
+    GDCLASS(I2cPca9685, I2cDevice)
 
 private:
     int _pwm_frequency_hz; 
@@ -54,8 +54,8 @@ public:
         RESTART = 0x80
     };
 
-    I2CPCA9685();
-    ~I2CPCA9685();
+    I2cPca9685();
+    ~I2cPca9685();
 
      // Godot virtuals.
     void _process(double delta);
@@ -228,8 +228,8 @@ public:
 };
 
 
-//VARIANT_ENUM_CAST(I2CPCA9685::PCA9685Registers);
-//VARIANT_ENUM_CAST(I2CPCA9685::PCA9685Mode);
+//VARIANT_ENUM_CAST(I2cPca9685::PCA9685Registers);
+//VARIANT_ENUM_CAST(I2cPca9685::PCA9685Mode);
 
 
 }

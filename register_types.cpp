@@ -5,16 +5,16 @@
 #include "SBCDevice.h"
 
 // I2C devices.
-#include "I2CRawDevice.h"
-#include "I2CPCA9685.h"
+#include "I2cDevice.h"
+#include "I2cPca9685.h"
 
 // Gpio devices.
-#include "GpioRawDevice.h"
+#include "GpioDevice.h"
 #include "GpioLED.h"
 
 // ADC devices.
-#include "ADCRawDevice.h"
-#include "ADCNTCMF52_3950.h"
+#include "AdcDevice.h"
+#include "AdcTemperatureSensor.h"
 
 // Standard headers.
 #include <gdextension_interface.h>
@@ -34,16 +34,16 @@ void initialize_singleboardcomputer_module(ModuleInitializationLevel p_level) {
     ClassDB::register_class<SBCDevice>();
 
     // I2C devices.
-    ClassDB::register_class<I2CRawDevice>();
-    ClassDB::register_class<I2CPCA9685>();
+    ClassDB::register_class<I2cDevice>();
+    ClassDB::register_class<I2cPca9685>();
 
     // Gpio devices.
-    ClassDB::register_class<GpioRawDevice>();
+    ClassDB::register_class<GpioDevice>();
     ClassDB::register_class<GpioLED>();
 
     // ADC devices.
-    ClassDB::register_class<ADCRawDevice>();
-    ClassDB::register_class<ADCNTCMF52_3950>();
+    ClassDB::register_class<AdcDevice>();
+    ClassDB::register_class<AdcTemperatureSensor>();
 }
 
 void uninitialize_singleboardcomputer_module(ModuleInitializationLevel p_level) {

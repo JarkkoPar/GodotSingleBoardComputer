@@ -1,5 +1,5 @@
-#ifndef GPIO_RAWDEVICE_H_INCLUDED
-#define GPIO_RAWDEVICE_H_INCLUDED 
+#ifndef GPIO_DEVICE_H_INCLUDED
+#define GPIO_DEVICE_H_INCLUDED 
 
 #include "SBCDevice.h"
 
@@ -11,8 +11,8 @@ namespace godot {
 
 // This is a "raw" gpio device node, which allows a more low-level
 // communication interface with any gpio pin connected device.
-class GpioRawDevice : public SBCDevice {
-    GDCLASS(GpioRawDevice, SBCDevice)
+class GpioDevice : public SBCDevice {
+    GDCLASS(GpioDevice, SBCDevice)
 
 private:
     
@@ -33,8 +33,8 @@ public:
         OUTPUT
     } GpioPinType;
 
-    GpioRawDevice();
-    ~GpioRawDevice();
+    GpioDevice();
+    ~GpioDevice();
 
      // Godot virtuals.
     void _process(double delta);

@@ -2,10 +2,10 @@
 #define SPI_BUS_H_INCLUDED 
 
 
-class SPIBus{
+class SpiBus{
 public:
-    SPIBus();
-    ~SPIBus();
+    SpiBus();
+    ~SpiBus();
 
     void set_spi_device_file_index( int new_index );
     int  get_spi_device_file_index() const;

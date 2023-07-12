@@ -1,12 +1,12 @@
-#include "SPIBus.h"
+#include "SpiBus.h"
 
 
-SPIBus::SPIBus() {
+SpiBus::SpiBus() {
     _spi_device_file_index = -1; // -1 is an invalid index.
 }
 
 
-SPIBus::~SPIBus() {
+SpiBus::~SpiBus() {
     
 }
 
@@ -14,10 +14,10 @@ SPIBus::~SPIBus() {
 
 // Setters and getters.
 
-void SPIBus::set_spi_device_file_index( int new_index ) {
+void SpiBus::set_spi_device_file_index( int new_index ) {
     _spi_device_file_index = new_index;
 }
 
-int  SPIBus::get_spi_device_file_index() const {
+int  SpiBus::get_spi_device_file_index() const {
     return _spi_device_file_index;
 }

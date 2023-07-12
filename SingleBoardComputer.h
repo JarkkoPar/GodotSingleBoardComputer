@@ -2,8 +2,8 @@
 #define SINGLEBOARDCOMPUTER_H_INCLUDED 
 
 #include "GpioPin.h"
-#include "I2CBus.h"
-#include "SPIBus.h"
+#include "I2cBus.h"
+#include "SpiBus.h"
 
 #include <godot_cpp/classes/node.hpp>
 
@@ -30,8 +30,8 @@ private:
 
     // The configs for the gpio, pwm, ic2, etc...
     GpioPin* _gpio_pins; // An array of gpio pins. 
-    I2CBus* _i2c_buses;  // Array of i2c buses.
-    SPIBus* _spi_buses;  // Array of spi buses.
+    I2cBus* _i2c_buses;  // Array of i2c buses.
+    SpiBus* _spi_buses;  // Array of spi buses.
 
     // The device file descriptors.
     int* _opened_gpio_device_files;
@@ -67,7 +67,7 @@ public:
 
     // I2C related handlers.
     int get_num_i2c_buses() const;
-    I2CBus* get_i2c_bus( int bus_index ) const;
+    I2cBus* get_i2c_bus( int bus_index ) const;
 
     // File handle management.
     int request_i2c_device_file( int bus_index );

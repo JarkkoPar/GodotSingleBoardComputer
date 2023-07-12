@@ -254,7 +254,7 @@ int SingleBoardComputer::get_num_i2c_buses() const {
 }
 
 
-I2CBus* SingleBoardComputer::get_i2c_bus( int bus_index ) const {
+I2cBus* SingleBoardComputer::get_i2c_bus( int bus_index ) const {
     if( bus_index < 0 || bus_index >= _num_i2c_buses ) {
         return nullptr;
     }
@@ -364,8 +364,8 @@ void SingleBoardComputer::_setup_board(){
             _num_adc_pins = 1;
 
             _gpio_pins = new GpioPin[_num_gpio_pins];
-            _i2c_buses = new I2CBus[_num_i2c_buses];
-            _spi_buses = new SPIBus[_num_spi_buses];
+            _i2c_buses = new I2cBus[_num_i2c_buses];
+            _spi_buses = new SpiBus[_num_spi_buses];
             
             // Set the functions etc.
             _gpio_pins[ 0].add_pin_function(GpioPin::GpioPinFunction::GPF_3_3V);       _gpio_pins[ 1].add_pin_function(GpioPin::GpioPinFunction::GPF_5_0V);

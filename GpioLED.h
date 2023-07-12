@@ -1,13 +1,13 @@
 #ifndef GPIO_LED_H_INCLUDED 
 #define GPIO_LED_H_INCLUDED
 
-#include "GpioRawDevice.h"
+#include "GpioDevice.h"
 
 namespace godot {
 
 
-class GpioLED : public GpioRawDevice {
-    GDCLASS(GpioLED, GpioRawDevice)
+class GpioLED : public GpioDevice {
+    GDCLASS(GpioLED, GpioDevice)
 
 private:
     bool _is_LED_on;

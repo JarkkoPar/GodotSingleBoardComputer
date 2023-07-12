@@ -1,5 +1,5 @@
-#ifndef ADC_RAWDEVICE_H_INCLUDED
-#define ADC_RAWDEVICE_H_INCLUDED
+#ifndef ADC_DEVICE_H_INCLUDED
+#define ADC_DEVICE_H_INCLUDED
 
 #include "SBCDevice.h"
 #include <godot_cpp/classes/node.hpp>
@@ -8,8 +8,8 @@ namespace godot {
 
 // This is a "raw" Analog-Digital-Converter (ADC) device node, which allows a more low-level
 // interface to SBC pins that allow analog input.
-class ADCRawDevice : public SBCDevice {
-    GDCLASS(ADCRawDevice, SBCDevice)
+class AdcDevice : public SBCDevice {
+    GDCLASS(AdcDevice, SBCDevice)
 
 private:
     
@@ -28,8 +28,8 @@ protected:
 
 public:
 
-    ADCRawDevice();
-    ~ADCRawDevice();
+    AdcDevice();
+    ~AdcDevice();
 
      // Godot virtuals.
     void _process(double delta);
