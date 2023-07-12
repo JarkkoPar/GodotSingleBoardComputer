@@ -14,6 +14,7 @@
 
 // ADC devices.
 #include "ADCRawDevice.h"
+#include "ADCNTCMF52_3950.h"
 
 // Standard headers.
 #include <gdextension_interface.h>
@@ -42,7 +43,7 @@ void initialize_singleboardcomputer_module(ModuleInitializationLevel p_level) {
 
     // ADC devices.
     ClassDB::register_class<ADCRawDevice>();
- 
+    ClassDB::register_class<ADCNTCMF52_3950>();
 }
 
 void uninitialize_singleboardcomputer_module(ModuleInitializationLevel p_level) {

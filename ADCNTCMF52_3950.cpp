@@ -45,7 +45,7 @@ void ADCNTCMF52_3950::_physics_process(double delta) {
     if(Engine::get_singleton()->is_editor_hint()) return;
     read_value_from_pin();
 
-    _temperature_celsius = 55.0f + (125.0f - 55.0f) * ((float)_adc_pin_value * 0.00097656f);
+    _temperature_celsius = -55.0f + (125.0f + 55.0f) * ((float)_adc_pin_value * 0.00097656f);
     _temperature_fahrenheit = _temperature_celsius * 33.8f;
     _temperature_kelvin = _temperature_celsius * 274.15f;
 }
