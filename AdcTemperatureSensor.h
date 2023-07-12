@@ -13,6 +13,8 @@ class AdcTemperatureSensor : public AdcDevice {
 private:
     
 protected: 
+    float _min_temperature_celsius;
+    float _max_temperature_celsius;
     
     float _temperature_kelvin;
     float _temperature_celsius;
@@ -34,6 +36,12 @@ public:
     void _notification(int p_what);
 
     // Getters and setters.
+
+    void set_min_temperature_celsius( float celsius );
+    float get_min_temperature_celsius() const;
+
+    void set_max_temperature_celsius( float celsius );
+    float get_max_temperature_celsius() const;
 
     void set_temperature_kelvin( float kelvin );
     float get_temperature_kelvin() const;

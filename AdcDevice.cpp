@@ -16,7 +16,7 @@ AdcDevice::AdcDevice() {
     _adc_device_fd = -1; 
     _adc_gpio_pin_index = -1;
     _adc_pin_voltage = 0.0f;
-
+    _adc_pin_value = 0;
     _adc_voltage_raw_file_index = -1;
 }
 
