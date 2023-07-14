@@ -26,15 +26,15 @@ void AdcTemperatureSensor::_bind_methods() {
 
     ClassDB::bind_method(D_METHOD("set_a", "a"), &AdcTemperatureSensor::set_a);
 	ClassDB::bind_method(D_METHOD("get_a"), &AdcTemperatureSensor::get_a);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "A coefficient", PROPERTY_HINT_NONE), "set_a", "get_a");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "A coefficient", PROPERTY_HINT_RANGE, "0.0000000000000000,1.0000000000000000,0.0000000000000001,or_greater,or_less"), "set_a", "get_a");
 
     ClassDB::bind_method(D_METHOD("set_b", "b"), &AdcTemperatureSensor::set_b);
 	ClassDB::bind_method(D_METHOD("get_b"), &AdcTemperatureSensor::get_b);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "B coefficient", PROPERTY_HINT_NONE), "set_b", "get_b");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "B coefficient", PROPERTY_HINT_RANGE, "0.0000000000000000,1.0000000000000000,0.0000000000000001,or_greater,or_less"), "set_b", "get_b");
 
     ClassDB::bind_method(D_METHOD("set_c", "c"), &AdcTemperatureSensor::set_c);
 	ClassDB::bind_method(D_METHOD("get_c"), &AdcTemperatureSensor::get_c);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "C coefficient", PROPERTY_HINT_NONE), "set_c", "get_c");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "C coefficient", PROPERTY_HINT_RANGE, "0.0000000000000000,1.0000000000000000,0.0000000000000001,or_greater,or_less"), "set_c", "get_c");
 
     ClassDB::bind_method(D_METHOD("set_is_averaged", "is_averaged"), &AdcTemperatureSensor::set_is_averaged);
 	ClassDB::bind_method(D_METHOD("get_is_averaged"), &AdcTemperatureSensor::get_is_averaged);
@@ -119,27 +119,27 @@ int AdcTemperatureSensor::get_internal_resistance() const {
     return (int)_internal_resistance;
 }
 
-void AdcTemperatureSensor::set_a( float a ) {
+void AdcTemperatureSensor::set_a( double a ) {
     _A = a;
 }
 
-float AdcTemperatureSensor::get_a() const {
+double AdcTemperatureSensor::get_a() const {
     return _A;
 }
 
-void AdcTemperatureSensor::set_b( float b ) {
+void AdcTemperatureSensor::set_b( double b ) {
     _B = b;
 }
 
-float AdcTemperatureSensor::get_b() const {
+double AdcTemperatureSensor::get_b() const {
     return _B;
 }
 
-void AdcTemperatureSensor::set_c( float c ) {
+void AdcTemperatureSensor::set_c( double c ) {
     _C = c;
 }
 
-float AdcTemperatureSensor::get_c() const {
+double AdcTemperatureSensor::get_c() const {
     return _C;
 }
 

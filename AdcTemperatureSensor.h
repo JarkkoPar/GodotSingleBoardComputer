@@ -16,7 +16,7 @@ protected:
     float _min_temperature_celsius;
     float _max_temperature_celsius;
     float _internal_resistance; // The internal resistance of the thermistor sensor (default 10 kOhms)
-    float _A, _B, _C; // Coefficients for the thermistor calculations
+    double _A, _B, _C; // Coefficients for the thermistor calculations
     bool  _is_averaged;
 
     float _temperature_kelvin;
@@ -42,14 +42,14 @@ public:
     void set_internal_resistance( int ohms );
     int get_internal_resistance() const;
 
-    void set_a( float a );
-    float get_a() const;
+    void set_a( double a );
+    double get_a() const;
 
-    void set_b( float b );
-    float get_b() const;
+    void set_b( double b );
+    double get_b() const;
 
-    void set_c( float c );
-    float get_c() const;
+    void set_c( double c );
+    double get_c() const;
 
     void set_is_averaged( bool is_averaged );
     bool get_is_averaged() const;
