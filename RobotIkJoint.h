@@ -11,27 +11,25 @@ namespace godot {
 class RobotIkJoint : public Node3D {
     GDCLASS(RobotIkJoint, Node3D)
 
-private:
-    Vector3 _joint_axis;
-    double  _min_angle_euler;
-    double  _max_angle_euler;
-    double  _center_angle_euler;
-    bool    _is_arm_tip;
-
-    Vector3 _joint_perpendicular_axis;
-    double  _min_angle_radian;
-    double  _max_angle_radian;
-    double  _center_angle_radian;
-
-    double _current_angle_euler;
-    double _current_angle_radian;
 protected: 
     static void _bind_methods();
 public:
     RobotIkJoint();
     ~RobotIkJoint();
 
+    // Enums.
+    enum RobotIkJointUpdateMethod{
+        PROCESS = 0,
+        PHYSICS_PROCESS
+    };
+
+    // Functions
+
     void evaluate(Vector3 arm_tip_global_position, Vector3 target_global_position );
+
+    // Godot virtuals. 
+    void _process(double delta);
+    void _physics_process(double delta);    
 
     // Getters and setters.
 
@@ -50,9 +48,41 @@ public:
     void set_is_arm_tip( bool is_arm_tip );
     bool get_is_arm_tip() const;
 
+    void set_is_updated_in_editor( bool is_updated_in_editor );
+    bool get_is_updated_in_editor() const;
+
     void set_joint_axis( Vector3 axis );
     Vector3 get_joint_axis() const;
 
+    void set_target_node_path( NodePath path );
+    NodePath get_target_node_path() const;
+
+    void set_update_method( int method );
+    int  get_update_method() const;
+
+private:
+    Vector3 _joint_axis;
+    double  _min_angle_euler;
+    double  _max_angle_euler;
+    double  _center_angle_euler;
+    bool    _is_arm_tip;
+
+    Vector3 _joint_perpendicular_axis;
+    double  _min_angle_radian;
+    double  _max_angle_radian;
+    double  _center_angle_radian;
+
+    double _current_angle_euler;
+    double _current_angle_radian;
+
+    NodePath _target_node_path;
+    Node3D* _target_node;
+
+    RobotIkJointUpdateMethod _update_method;
+
+    bool    _is_updated_in_editor;
+
+    void update_evaluation( double delta );
 };
 
 
