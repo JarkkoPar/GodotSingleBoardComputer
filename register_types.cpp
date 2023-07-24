@@ -16,6 +16,9 @@
 #include "AdcDevice.h"
 #include "AdcTemperatureSensor.h"
 
+// Helpers and others.
+#include "RobotIkJoint.h"
+
 // Standard headers.
 #include <gdextension_interface.h>
 #include <godot_cpp/core/defs.hpp>
@@ -44,6 +47,9 @@ void initialize_singleboardcomputer_module(ModuleInitializationLevel p_level) {
     // ADC devices.
     ClassDB::register_class<AdcDevice>();
     ClassDB::register_class<AdcTemperatureSensor>();
+
+    // Helpers and others.
+    ClassDB::register_class<RobotIkJoint>();
 }
 
 void uninitialize_singleboardcomputer_module(ModuleInitializationLevel p_level) {
