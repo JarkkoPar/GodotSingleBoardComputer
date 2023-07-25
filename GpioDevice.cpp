@@ -32,7 +32,7 @@ void GpioDevice::_bind_methods() {
     // Gpio Pin Number on the SCB.
     ClassDB::bind_method(D_METHOD("set_gpio_pin_index", "pin_index"), &GpioDevice::set_gpio_pin_index);
 	ClassDB::bind_method(D_METHOD("get_gpio_pin_index"), &GpioDevice::get_gpio_pin_index);
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "Gpio Pin Index", PROPERTY_HINT_RANGE, "0,39"), "set_gpio_pin_index", "get_gpio_pin_index");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "gpio_pin_index", PROPERTY_HINT_RANGE, "0,39"), "set_gpio_pin_index", "get_gpio_pin_index");
 
     // Read and write methods.
     //ClassDB::bind_method(D_METHOD("open_device"), &I2CRawDevice::open_device);

@@ -36,7 +36,7 @@ void I2cPca9685::_bind_methods() {
 
     ClassDB::bind_method(D_METHOD("set_pwm_frequency_hz"), &I2cPca9685::set_pwm_frequency_hz);
     ClassDB::bind_method(D_METHOD("get_pwm_frequency_hz"), &I2cPca9685::get_pwm_frequency_hz);
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "PWM Frequency Hz", PROPERTY_HINT_RANGE, "1,1000"), "set_pwm_frequency_hz", "get_pwm_frequency_hz");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "pwm_frequency_hz", PROPERTY_HINT_RANGE, "1,1000"), "set_pwm_frequency_hz", "get_pwm_frequency_hz");
 
     // The servo values.
     ClassDB::bind_method(D_METHOD("set_servo_euler_angle", "servo_index", "new_euler_angle"), &I2cPca9685::set_servo_euler_angle);
@@ -51,134 +51,134 @@ void I2cPca9685::_bind_methods() {
     
     ClassDB::bind_method(D_METHOD("set_servo0_min_angle_ms", "new_min_angle_ms"), &I2cPca9685::set_servo0_min_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo0_min_angle_ms"), &I2cPca9685::get_servo0_min_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 0 min angle ms", PROPERTY_HINT_NONE), "set_servo0_min_angle_ms", "get_servo0_min_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_0_min_angle_ms", PROPERTY_HINT_NONE), "set_servo0_min_angle_ms", "get_servo0_min_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo1_min_angle_ms", "new_min_angle_ms"), &I2cPca9685::set_servo1_min_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo1_min_angle_ms"), &I2cPca9685::get_servo1_min_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 1 min angle ms", PROPERTY_HINT_NONE), "set_servo1_min_angle_ms", "get_servo1_min_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_1_min_angle_ms", PROPERTY_HINT_NONE), "set_servo1_min_angle_ms", "get_servo1_min_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo2_min_angle_ms", "new_min_angle_ms"), &I2cPca9685::set_servo2_min_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo2_min_angle_ms"), &I2cPca9685::get_servo2_min_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 2 min angle ms", PROPERTY_HINT_NONE), "set_servo2_min_angle_ms", "get_servo2_min_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_2_min_angle_ms", PROPERTY_HINT_NONE), "set_servo2_min_angle_ms", "get_servo2_min_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo3_min_angle_ms", "new_min_angle_ms"), &I2cPca9685::set_servo3_min_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo3_min_angle_ms"), &I2cPca9685::get_servo3_min_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 3 min angle ms", PROPERTY_HINT_NONE), "set_servo3_min_angle_ms", "get_servo3_min_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_3_min_angle_ms", PROPERTY_HINT_NONE), "set_servo3_min_angle_ms", "get_servo3_min_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo4_min_angle_ms", "new_min_angle_ms"), &I2cPca9685::set_servo4_min_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo4_min_angle_ms"), &I2cPca9685::get_servo4_min_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 4 min angle ms", PROPERTY_HINT_NONE), "set_servo4_min_angle_ms", "get_servo4_min_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_4_min_angle_ms", PROPERTY_HINT_NONE), "set_servo4_min_angle_ms", "get_servo4_min_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo5_min_angle_ms", "new_min_angle_ms"), &I2cPca9685::set_servo5_min_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo5_min_angle_ms"), &I2cPca9685::get_servo5_min_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 5 min angle ms", PROPERTY_HINT_NONE), "set_servo5_min_angle_ms", "get_servo5_min_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_5_min_angle_ms", PROPERTY_HINT_NONE), "set_servo5_min_angle_ms", "get_servo5_min_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo6_min_angle_ms", "new_min_angle_ms"), &I2cPca9685::set_servo6_min_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo6_min_angle_ms"), &I2cPca9685::get_servo6_min_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 6 min angle ms", PROPERTY_HINT_NONE), "set_servo6_min_angle_ms", "get_servo6_min_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_6_min_angle_ms", PROPERTY_HINT_NONE), "set_servo6_min_angle_ms", "get_servo6_min_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo7_min_angle_ms", "new_min_angle_ms"), &I2cPca9685::set_servo7_min_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo7_min_angle_ms"), &I2cPca9685::get_servo7_min_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 7 min angle ms", PROPERTY_HINT_NONE), "set_servo7_min_angle_ms", "get_servo7_min_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_7_min_angle_ms", PROPERTY_HINT_NONE), "set_servo7_min_angle_ms", "get_servo7_min_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo8_min_angle_ms", "new_min_angle_ms"), &I2cPca9685::set_servo8_min_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo8_min_angle_ms"), &I2cPca9685::get_servo8_min_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 8 min angle ms", PROPERTY_HINT_NONE), "set_servo8_min_angle_ms", "get_servo8_min_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_8_min_angle_ms", PROPERTY_HINT_NONE), "set_servo8_min_angle_ms", "get_servo8_min_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo9_min_angle_ms", "new_min_angle_ms"), &I2cPca9685::set_servo9_min_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo9_min_angle_ms"), &I2cPca9685::get_servo9_min_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 9 min angle ms", PROPERTY_HINT_NONE), "set_servo9_min_angle_ms", "get_servo9_min_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_9_min_angle_ms", PROPERTY_HINT_NONE), "set_servo9_min_angle_ms", "get_servo9_min_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo10_min_angle_ms", "new_min_angle_ms"), &I2cPca9685::set_servo10_min_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo10_min_angle_ms"), &I2cPca9685::get_servo10_min_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 10 min angle ms", PROPERTY_HINT_NONE), "set_servo10_min_angle_ms", "get_servo10_min_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_10_min_angle_ms", PROPERTY_HINT_NONE), "set_servo10_min_angle_ms", "get_servo10_min_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo11_min_angle_ms", "new_min_angle_ms"), &I2cPca9685::set_servo11_min_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo11_min_angle_ms"), &I2cPca9685::get_servo11_min_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 11 min angle ms", PROPERTY_HINT_NONE), "set_servo11_min_angle_ms", "get_servo11_min_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_11_min_angle_ms", PROPERTY_HINT_NONE), "set_servo11_min_angle_ms", "get_servo11_min_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo12_min_angle_ms", "new_min_angle_ms"), &I2cPca9685::set_servo12_min_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo12_min_angle_ms"), &I2cPca9685::get_servo12_min_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 12 min angle ms", PROPERTY_HINT_NONE), "set_servo12_min_angle_ms", "get_servo12_min_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_12_min_angle_ms", PROPERTY_HINT_NONE), "set_servo12_min_angle_ms", "get_servo12_min_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo13_min_angle_ms", "new_min_angle_ms"), &I2cPca9685::set_servo13_min_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo13_min_angle_ms"), &I2cPca9685::get_servo13_min_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 13 min angle ms", PROPERTY_HINT_NONE), "set_servo13_min_angle_ms", "get_servo13_min_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_13_min_angle_ms", PROPERTY_HINT_NONE), "set_servo13_min_angle_ms", "get_servo13_min_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo14_min_angle_ms", "new_min_angle_ms"), &I2cPca9685::set_servo14_min_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo14_min_angle_ms"), &I2cPca9685::get_servo14_min_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 14 min angle ms", PROPERTY_HINT_NONE), "set_servo14_min_angle_ms", "get_servo14_min_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_14_min_angle_ms", PROPERTY_HINT_NONE), "set_servo14_min_angle_ms", "get_servo14_min_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo15_min_angle_ms", "new_min_angle_ms"), &I2cPca9685::set_servo15_min_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo15_min_angle_ms"), &I2cPca9685::get_servo15_min_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 15 min angle ms", PROPERTY_HINT_NONE), "set_servo15_min_angle_ms", "get_servo15_min_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_15_min_angle_ms", PROPERTY_HINT_NONE), "set_servo15_min_angle_ms", "get_servo15_min_angle_ms");
     
 
     ADD_GROUP("Servo max angle ms", "");
     
     ClassDB::bind_method(D_METHOD("set_servo0_max_angle_ms", "new_max_angle_ms"), &I2cPca9685::set_servo0_max_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo0_max_angle_ms"), &I2cPca9685::get_servo0_max_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 0 max angle ms", PROPERTY_HINT_NONE), "set_servo0_max_angle_ms", "get_servo0_max_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_0_max_angle_ms", PROPERTY_HINT_NONE), "set_servo0_max_angle_ms", "get_servo0_max_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo1_max_angle_ms", "new_max_angle_ms"), &I2cPca9685::set_servo1_max_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo1_max_angle_ms"), &I2cPca9685::get_servo1_max_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 1 max angle ms", PROPERTY_HINT_NONE), "set_servo1_max_angle_ms", "get_servo1_max_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_1_max_angle_ms", PROPERTY_HINT_NONE), "set_servo1_max_angle_ms", "get_servo1_max_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo2_max_angle_ms", "new_max_angle_ms"), &I2cPca9685::set_servo2_max_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo2_max_angle_ms"), &I2cPca9685::get_servo2_max_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 2 max angle ms", PROPERTY_HINT_NONE), "set_servo2_max_angle_ms", "get_servo2_max_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_2_max_angle_ms", PROPERTY_HINT_NONE), "set_servo2_max_angle_ms", "get_servo2_max_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo3_max_angle_ms", "new_max_angle_ms"), &I2cPca9685::set_servo3_max_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo3_max_angle_ms"), &I2cPca9685::get_servo3_max_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 3 max angle ms", PROPERTY_HINT_NONE), "set_servo3_max_angle_ms", "get_servo3_max_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_3_max_angle_ms", PROPERTY_HINT_NONE), "set_servo3_max_angle_ms", "get_servo3_max_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo4_max_angle_ms", "new_max_angle_ms"), &I2cPca9685::set_servo4_max_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo4_max_angle_ms"), &I2cPca9685::get_servo4_max_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 4 max angle ms", PROPERTY_HINT_NONE), "set_servo4_max_angle_ms", "get_servo4_max_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_4_max_angle_ms", PROPERTY_HINT_NONE), "set_servo4_max_angle_ms", "get_servo4_max_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo5_max_angle_ms", "new_max_angle_ms"), &I2cPca9685::set_servo5_max_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo5_max_angle_ms"), &I2cPca9685::get_servo5_max_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 5 max angle ms", PROPERTY_HINT_NONE), "set_servo5_max_angle_ms", "get_servo5_max_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_5_max_angle_ms", PROPERTY_HINT_NONE), "set_servo5_max_angle_ms", "get_servo5_max_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo6_max_angle_ms", "new_max_angle_ms"), &I2cPca9685::set_servo6_max_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo6_max_angle_ms"), &I2cPca9685::get_servo6_max_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 6 max angle ms", PROPERTY_HINT_NONE), "set_servo6_max_angle_ms", "get_servo6_max_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_6_max_angle_ms", PROPERTY_HINT_NONE), "set_servo6_max_angle_ms", "get_servo6_max_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo7_max_angle_ms", "new_max_angle_ms"), &I2cPca9685::set_servo7_max_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo7_max_angle_ms"), &I2cPca9685::get_servo7_max_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 7 max angle ms", PROPERTY_HINT_NONE), "set_servo7_max_angle_ms", "get_servo7_max_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_7_max_angle_ms", PROPERTY_HINT_NONE), "set_servo7_max_angle_ms", "get_servo7_max_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo8_max_angle_ms", "new_max_angle_ms"), &I2cPca9685::set_servo8_max_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo8_max_angle_ms"), &I2cPca9685::get_servo8_max_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 8 max angle ms", PROPERTY_HINT_NONE), "set_servo8_max_angle_ms", "get_servo8_max_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_8_max_angle_ms", PROPERTY_HINT_NONE), "set_servo8_max_angle_ms", "get_servo8_max_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo9_max_angle_ms", "new_max_angle_ms"), &I2cPca9685::set_servo9_max_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo9_max_angle_ms"), &I2cPca9685::get_servo9_max_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 9 max angle ms", PROPERTY_HINT_NONE), "set_servo9_max_angle_ms", "get_servo9_max_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_9_max_angle_ms", PROPERTY_HINT_NONE), "set_servo9_max_angle_ms", "get_servo9_max_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo10_max_angle_ms", "new_max_angle_ms"), &I2cPca9685::set_servo10_max_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo10_max_angle_ms"), &I2cPca9685::get_servo10_max_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 10 max angle ms", PROPERTY_HINT_NONE), "set_servo10_max_angle_ms", "get_servo10_max_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_10_max_angle_ms", PROPERTY_HINT_NONE), "set_servo10_max_angle_ms", "get_servo10_max_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo11_max_angle_ms", "new_max_angle_ms"), &I2cPca9685::set_servo11_max_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo11_max_angle_ms"), &I2cPca9685::get_servo11_max_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 11 max angle ms", PROPERTY_HINT_NONE), "set_servo11_max_angle_ms", "get_servo11_max_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_11_max_angle_ms", PROPERTY_HINT_NONE), "set_servo11_max_angle_ms", "get_servo11_max_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo12_max_angle_ms", "new_max_angle_ms"), &I2cPca9685::set_servo12_max_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo12_max_angle_ms"), &I2cPca9685::get_servo12_max_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 12 max angle ms", PROPERTY_HINT_NONE), "set_servo12_max_angle_ms", "get_servo12_max_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_12_max_angle_ms", PROPERTY_HINT_NONE), "set_servo12_max_angle_ms", "get_servo12_max_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo13_max_angle_ms", "new_max_angle_ms"), &I2cPca9685::set_servo13_max_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo13_max_angle_ms"), &I2cPca9685::get_servo13_max_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 13 max angle ms", PROPERTY_HINT_NONE), "set_servo13_max_angle_ms", "get_servo13_max_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_13_max_angle_ms", PROPERTY_HINT_NONE), "set_servo13_max_angle_ms", "get_servo13_max_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo14_max_angle_ms", "new_max_angle_ms"), &I2cPca9685::set_servo14_max_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo14_max_angle_ms"), &I2cPca9685::get_servo14_max_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 14 max angle ms", PROPERTY_HINT_NONE), "set_servo14_max_angle_ms", "get_servo14_max_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_14_max_angle_ms", PROPERTY_HINT_NONE), "set_servo14_max_angle_ms", "get_servo14_max_angle_ms");
     
     ClassDB::bind_method(D_METHOD("set_servo15_max_angle_ms", "new_max_angle_ms"), &I2cPca9685::set_servo15_max_angle_ms);
 	ClassDB::bind_method(D_METHOD("get_servo15_max_angle_ms"), &I2cPca9685::get_servo15_max_angle_ms);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 15 max angle ms", PROPERTY_HINT_NONE), "set_servo15_max_angle_ms", "get_servo15_max_angle_ms");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_15_max_angle_ms", PROPERTY_HINT_NONE), "set_servo15_max_angle_ms", "get_servo15_max_angle_ms");
     
 
     /**/
@@ -187,67 +187,67 @@ void I2cPca9685::_bind_methods() {
 
     ClassDB::bind_method(D_METHOD("set_servo0_euler_angle", "new_euler_angle"), &I2cPca9685::set_servo0_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo0_euler_angle"), &I2cPca9685::get_servo0_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 0 angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo0_euler_angle", "get_servo0_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_0_angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo0_euler_angle", "get_servo0_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo1_euler_angle", "new_euler_angle"), &I2cPca9685::set_servo1_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo1_euler_angle"), &I2cPca9685::get_servo1_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 1 angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo1_euler_angle", "get_servo1_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_1_angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo1_euler_angle", "get_servo1_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo2_euler_angle", "new_euler_angle"), &I2cPca9685::set_servo2_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo2_euler_angle"), &I2cPca9685::get_servo2_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 2 angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo2_euler_angle", "get_servo2_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_2_angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo2_euler_angle", "get_servo2_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo3_euler_angle", "new_euler_angle"), &I2cPca9685::set_servo3_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo3_euler_angle"), &I2cPca9685::get_servo3_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 3 angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo3_euler_angle", "get_servo3_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_3_angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo3_euler_angle", "get_servo3_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo4_euler_angle", "new_euler_angle"), &I2cPca9685::set_servo4_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo4_euler_angle"), &I2cPca9685::get_servo4_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 4 angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo4_euler_angle", "get_servo4_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_4_angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo4_euler_angle", "get_servo4_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo5_euler_angle", "new_euler_angle"), &I2cPca9685::set_servo5_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo5_euler_angle"), &I2cPca9685::get_servo5_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 5 angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo5_euler_angle", "get_servo5_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_5_angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo5_euler_angle", "get_servo5_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo6_euler_angle", "new_euler_angle"), &I2cPca9685::set_servo6_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo6_euler_angle"), &I2cPca9685::get_servo6_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 6 angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo6_euler_angle", "get_servo6_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_6_angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo6_euler_angle", "get_servo6_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo7_euler_angle", "new_euler_angle"), &I2cPca9685::set_servo7_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo7_euler_angle"), &I2cPca9685::get_servo7_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 7 angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo7_euler_angle", "get_servo7_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_7_angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo7_euler_angle", "get_servo7_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo8_euler_angle", "new_euler_angle"), &I2cPca9685::set_servo8_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo8_euler_angle"), &I2cPca9685::get_servo8_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 8 angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo8_euler_angle", "get_servo8_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_8_angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo8_euler_angle", "get_servo8_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo9_euler_angle", "new_euler_angle"), &I2cPca9685::set_servo9_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo9_euler_angle"), &I2cPca9685::get_servo9_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 9 angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo9_euler_angle", "get_servo9_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_9_angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo9_euler_angle", "get_servo9_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo10_euler_angle", "new_euler_angle"), &I2cPca9685::set_servo9_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo10_euler_angle"), &I2cPca9685::get_servo9_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 10 angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo10_euler_angle", "get_servo10_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_10_angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo10_euler_angle", "get_servo10_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo11_euler_angle", "new_euler_angle"), &I2cPca9685::set_servo11_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo11_euler_angle"), &I2cPca9685::get_servo11_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 11 angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo11_euler_angle", "get_servo11_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_11_angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo11_euler_angle", "get_servo11_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo12_euler_angle", "new_euler_angle"), &I2cPca9685::set_servo12_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo12_euler_angle"), &I2cPca9685::get_servo12_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 12 angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo12_euler_angle", "get_servo12_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_12_angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo12_euler_angle", "get_servo12_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo13_euler_angle", "new_euler_angle"), &I2cPca9685::set_servo13_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo13_euler_angle"), &I2cPca9685::get_servo13_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 13 angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo13_euler_angle", "get_servo13_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_13_angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo13_euler_angle", "get_servo13_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo14_euler_angle", "new_euler_angle"), &I2cPca9685::set_servo14_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo14_euler_angle"), &I2cPca9685::get_servo14_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 14 angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo14_euler_angle", "get_servo14_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_14_angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo14_euler_angle", "get_servo14_euler_angle");
 
     ClassDB::bind_method(D_METHOD("set_servo15_euler_angle", "new_euler_angle"), &I2cPca9685::set_servo15_euler_angle);
 	ClassDB::bind_method(D_METHOD("get_servo15_euler_angle"), &I2cPca9685::get_servo15_euler_angle);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Servo 15 angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo15_euler_angle", "get_servo15_euler_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_15_angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo15_euler_angle", "get_servo15_euler_angle");
 
 
     // The led values.

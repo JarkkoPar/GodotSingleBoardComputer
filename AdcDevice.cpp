@@ -36,15 +36,15 @@ void AdcDevice::_bind_methods() {
     // The voltage of the pin and its value between 0..1023.
     ClassDB::bind_method(D_METHOD("set_adc_gpio_pin_index", "pin_index"), &AdcDevice::set_adc_gpio_pin_index);
 	ClassDB::bind_method(D_METHOD("get_adc_gpio_pin_index"), &AdcDevice::get_adc_gpio_pin_index);
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "ADC Gpio Pin Index", PROPERTY_HINT_RANGE, "0,39"), "set_adc_gpio_pin_index", "get_adc_gpio_pin_index");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "adc_gpio_pin_index", PROPERTY_HINT_RANGE, "0,39"), "set_adc_gpio_pin_index", "get_adc_gpio_pin_index");
 
     ClassDB::bind_method(D_METHOD("set_adc_gpio_pin_value", "value"), &AdcDevice::set_adc_pin_value);
 	ClassDB::bind_method(D_METHOD("get_adc_gpio_pin_value"), &AdcDevice::get_adc_pin_value);
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "ADC Gpio Pin Value", PROPERTY_HINT_NONE), "set_adc_gpio_pin_value", "get_adc_gpio_pin_value");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "adc_gpio_pin_value", PROPERTY_HINT_NONE), "set_adc_gpio_pin_value", "get_adc_gpio_pin_value");
 
     ClassDB::bind_method(D_METHOD("set_adc_gpio_pin_voltage", "value"), &AdcDevice::set_adc_pin_voltage);
 	ClassDB::bind_method(D_METHOD("get_adc_gpio_pin_voltage"), &AdcDevice::get_adc_pin_voltage);
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "ADC Gpio Pin Voltage", PROPERTY_HINT_NONE), "set_adc_gpio_pin_voltage", "get_adc_gpio_pin_voltage");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "adc_gpio_pin_voltage", PROPERTY_HINT_NONE), "set_adc_gpio_pin_voltage", "get_adc_gpio_pin_voltage");
 
 
     // Read and write methods.

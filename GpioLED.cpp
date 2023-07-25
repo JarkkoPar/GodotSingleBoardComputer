@@ -17,7 +17,7 @@ GpioLED::~GpioLED() {
 void GpioLED::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_is_LED_on", "is_on"), &GpioLED::set_is_LED_on);
 	ClassDB::bind_method(D_METHOD("get_is_LED_on"), &GpioLED::get_is_LED_on);
-    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "Is LED on"), "set_is_LED_on", "get_is_LED_on");
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_led_on"), "set_is_LED_on", "get_is_LED_on");
     ClassDB::bind_method(D_METHOD("is_LED_on"), &GpioLED::get_is_LED_on);
     ClassDB::bind_method(D_METHOD("toggle_LED", "is_on"), &GpioLED::set_is_LED_on);
 }

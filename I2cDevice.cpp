@@ -36,7 +36,7 @@ void I2cDevice::_bind_methods() {
     // Device Number on the SCB.
     ClassDB::bind_method(D_METHOD("set_i2c_device_bus_number", "bus_number"), &I2cDevice::set_i2c_device_bus_number);
 	ClassDB::bind_method(D_METHOD("get_i2c_device_bus_number"), &I2cDevice::get_i2c_device_bus_number);
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "I2C Bus Number", PROPERTY_HINT_NONE, ""), "set_i2c_device_bus_number", "get_i2c_device_bus_number");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "i2c_bus_number", PROPERTY_HINT_NONE, ""), "set_i2c_device_bus_number", "get_i2c_device_bus_number");
 
 
     // Device ID on the SCB.
@@ -47,7 +47,7 @@ void I2cDevice::_bind_methods() {
     // Address.
     ClassDB::bind_method(D_METHOD("set_i2c_device_address", "device_address"), &I2cDevice::set_i2c_device_address);
 	ClassDB::bind_method(D_METHOD("get_i2c_device_address"), &I2cDevice::get_i2c_device_address);
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "I2C Device Address", PROPERTY_HINT_NONE, ""), "set_i2c_device_address", "get_i2c_device_address");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "i2c_device_address", PROPERTY_HINT_NONE, ""), "set_i2c_device_address", "get_i2c_device_address");
 
     // Read and write methods.
     ClassDB::bind_method(D_METHOD("open_device"), &I2cDevice::open_device);

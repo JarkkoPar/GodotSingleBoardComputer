@@ -8,46 +8,46 @@ using namespace godot;
 void AdcTemperatureSensor::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_temperature_kelvin", "kelvin"), &AdcTemperatureSensor::set_temperature_kelvin);
 	ClassDB::bind_method(D_METHOD("get_temperature_kelvin"), &AdcTemperatureSensor::get_temperature_kelvin);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Kelvin", PROPERTY_HINT_NONE), "set_temperature_kelvin", "get_temperature_kelvin");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "kelvin", PROPERTY_HINT_NONE), "set_temperature_kelvin", "get_temperature_kelvin");
 
     ClassDB::bind_method(D_METHOD("set_temperature_celsius", "celsius"), &AdcTemperatureSensor::set_temperature_celsius);
 	ClassDB::bind_method(D_METHOD("get_temperature_celsius"), &AdcTemperatureSensor::get_temperature_celsius);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Celsius", PROPERTY_HINT_NONE), "set_temperature_celsius", "get_temperature_celsius");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "celsius", PROPERTY_HINT_NONE), "set_temperature_celsius", "get_temperature_celsius");
 
     ClassDB::bind_method(D_METHOD("set_temperature_fahrenheit", "fahrenheit"), &AdcTemperatureSensor::set_temperature_fahrenheit);
 	ClassDB::bind_method(D_METHOD("get_temperature_fahrenheit"), &AdcTemperatureSensor::get_temperature_fahrenheit);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Fahrenheit", PROPERTY_HINT_NONE), "set_temperature_fahrenheit", "get_temperature_fahrenheit");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "fahrenheit", PROPERTY_HINT_NONE), "set_temperature_fahrenheit", "get_temperature_fahrenheit");
 
     ADD_GROUP("Sensor configuration", "");
 
     ClassDB::bind_method(D_METHOD("set_internal_resistance", "ohms"), &AdcTemperatureSensor::set_internal_resistance);
 	ClassDB::bind_method(D_METHOD("get_internal_resistance"), &AdcTemperatureSensor::get_internal_resistance);
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "Internal resistance", PROPERTY_HINT_RANGE, "0,1000000,1,or_greater"), "set_internal_resistance", "get_internal_resistance");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "internal_resistance", PROPERTY_HINT_RANGE, "0,1000000,1,or_greater"), "set_internal_resistance", "get_internal_resistance");
 
     ClassDB::bind_method(D_METHOD("set_a", "a"), &AdcTemperatureSensor::set_a);
 	ClassDB::bind_method(D_METHOD("get_a"), &AdcTemperatureSensor::get_a);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "A coefficient", PROPERTY_HINT_RANGE, "0.0000000000000000,1.0000000000000000,0.0000000000000001,or_greater,or_less"), "set_a", "get_a");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "a_coefficient", PROPERTY_HINT_RANGE, "0.0000000000000000,1.0000000000000000,0.0000000000000001,or_greater,or_less"), "set_a", "get_a");
 
     ClassDB::bind_method(D_METHOD("set_b", "b"), &AdcTemperatureSensor::set_b);
 	ClassDB::bind_method(D_METHOD("get_b"), &AdcTemperatureSensor::get_b);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "B coefficient", PROPERTY_HINT_RANGE, "0.0000000000000000,1.0000000000000000,0.0000000000000001,or_greater,or_less"), "set_b", "get_b");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "b_coefficient", PROPERTY_HINT_RANGE, "0.0000000000000000,1.0000000000000000,0.0000000000000001,or_greater,or_less"), "set_b", "get_b");
 
     ClassDB::bind_method(D_METHOD("set_c", "c"), &AdcTemperatureSensor::set_c);
 	ClassDB::bind_method(D_METHOD("get_c"), &AdcTemperatureSensor::get_c);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "C coefficient", PROPERTY_HINT_RANGE, "0.0000000000000000,1.0000000000000000,0.0000000000000001,or_greater,or_less"), "set_c", "get_c");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "c_coefficient", PROPERTY_HINT_RANGE, "0.0000000000000000,1.0000000000000000,0.0000000000000001,or_greater,or_less"), "set_c", "get_c");
 
     ClassDB::bind_method(D_METHOD("set_is_averaged", "is_averaged"), &AdcTemperatureSensor::set_is_averaged);
 	ClassDB::bind_method(D_METHOD("get_is_averaged"), &AdcTemperatureSensor::get_is_averaged);
-    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "Is averaged?", PROPERTY_HINT_NONE), "set_is_averaged", "get_is_averaged");
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_averaged", PROPERTY_HINT_NONE), "set_is_averaged", "get_is_averaged");
 
 
     ClassDB::bind_method(D_METHOD("set_min_temperature_celsius", "celsius"), &AdcTemperatureSensor::set_min_temperature_celsius);
 	ClassDB::bind_method(D_METHOD("get_min_temperature_celsius"), &AdcTemperatureSensor::get_min_temperature_celsius);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Min Celsius", PROPERTY_HINT_RANGE, "-1000.0,1000.0,0.01,suffix:C"), "set_min_temperature_celsius", "get_min_temperature_celsius");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "min_celsius", PROPERTY_HINT_RANGE, "-1000.0,1000.0,0.01,suffix:C"), "set_min_temperature_celsius", "get_min_temperature_celsius");
 
     ClassDB::bind_method(D_METHOD("set_max_temperature_celsius", "celsius"), &AdcTemperatureSensor::set_max_temperature_celsius);
 	ClassDB::bind_method(D_METHOD("get_max_temperature_celsius"), &AdcTemperatureSensor::get_max_temperature_celsius);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Max Celsius", PROPERTY_HINT_RANGE, "-1000.0,1000.0,0.01,suffix:C"), "set_max_temperature_celsius", "get_max_temperature_celsius");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "max_celsius", PROPERTY_HINT_RANGE, "-1000.0,1000.0,0.01,suffix:C"), "set_max_temperature_celsius", "get_max_temperature_celsius");
 
  }
 

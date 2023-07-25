@@ -8,44 +8,44 @@ using namespace godot;
 void RobotIkJoint::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_joint_axis"), &RobotIkJoint::set_joint_axis);
     ClassDB::bind_method(D_METHOD("get_joint_axis"), &RobotIkJoint::get_joint_axis);
-    ADD_PROPERTY(PropertyInfo(Variant::VECTOR3, "Joint axis", PROPERTY_HINT_NONE), "set_joint_axis", "get_joint_axis");
+    ADD_PROPERTY(PropertyInfo(Variant::VECTOR3, "joint_axis", PROPERTY_HINT_NONE), "set_joint_axis", "get_joint_axis");
 
     ClassDB::bind_method(D_METHOD("set_is_arm_tip"), &RobotIkJoint::set_is_arm_tip);
     ClassDB::bind_method(D_METHOD("get_is_arm_tip"), &RobotIkJoint::get_is_arm_tip);
-    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "Is arm tip", PROPERTY_HINT_NONE), "set_is_arm_tip", "get_is_arm_tip");
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_arm_tip", PROPERTY_HINT_NONE), "set_is_arm_tip", "get_is_arm_tip");
 
     ClassDB::bind_method(D_METHOD("set_target_node_path"), &RobotIkJoint::set_target_node_path);
     ClassDB::bind_method(D_METHOD("get_target_node_path"), &RobotIkJoint::get_target_node_path);
-    ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "Target node", PROPERTY_HINT_NONE), "set_target_node_path", "get_target_node_path");
+    ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "target_node", PROPERTY_HINT_NONE), "set_target_node_path", "get_target_node_path");
 
 
     ClassDB::bind_method(D_METHOD("set_center_angle_euler"), &RobotIkJoint::set_center_angle_euler);
     ClassDB::bind_method(D_METHOD("get_center_angle_euler"), &RobotIkJoint::get_center_angle_euler);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Center angle in Euler", PROPERTY_HINT_RANGE, "-360,360"), "set_center_angle_euler", "get_center_angle_euler");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "center_angle_Euler", PROPERTY_HINT_RANGE, "-360,360"), "set_center_angle_euler", "get_center_angle_euler");
 
     ClassDB::bind_method(D_METHOD("set_min_angle_euler"), &RobotIkJoint::set_min_angle_euler);
     ClassDB::bind_method(D_METHOD("get_min_angle_euler"), &RobotIkJoint::get_min_angle_euler);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Min angle in Euler", PROPERTY_HINT_RANGE, "-360,360"), "set_min_angle_euler", "get_min_angle_euler");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "min_angle_euler", PROPERTY_HINT_RANGE, "-360,360"), "set_min_angle_euler", "get_min_angle_euler");
 
     ClassDB::bind_method(D_METHOD("set_max_angle_euler"), &RobotIkJoint::set_max_angle_euler);
     ClassDB::bind_method(D_METHOD("get_max_angle_euler"), &RobotIkJoint::get_max_angle_euler);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Max angle in Euler", PROPERTY_HINT_RANGE, "-360,360"), "set_max_angle_euler", "get_max_angle_euler");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "max_angle_euler", PROPERTY_HINT_RANGE, "-360,360"), "set_max_angle_euler", "get_max_angle_euler");
 
     ClassDB::bind_method(D_METHOD("set_current_angle_euler"), &RobotIkJoint::set_current_angle_euler);
     ClassDB::bind_method(D_METHOD("get_current_angle_euler"), &RobotIkJoint::get_current_angle_euler);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Current angle in Euler", PROPERTY_HINT_RANGE, "-360,360"), "set_current_angle_euler", "get_current_angle_euler");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "current_angle_euler", PROPERTY_HINT_RANGE, "-360,360"), "set_current_angle_euler", "get_current_angle_euler");
 
 
     ClassDB::bind_method(D_METHOD("set_update_method"), &RobotIkJoint::set_update_method);
     ClassDB::bind_method(D_METHOD("get_update_method"), &RobotIkJoint::get_update_method);
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "Update method", PROPERTY_HINT_ENUM, "Process:0,Physics process:1"), "set_update_method", "get_update_method");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "update_method", PROPERTY_HINT_ENUM, "Process:0,Physics process:1"), "set_update_method", "get_update_method");
 
 
-    ADD_GROUP("In-editor properties", "");
+    //ADD_GROUP("In-editor properties", "");
     
-    ClassDB::bind_method(D_METHOD("set_is_updated_in_editor"), &RobotIkJoint::set_is_updated_in_editor);
-    ClassDB::bind_method(D_METHOD("get_is_updated_in_editor"), &RobotIkJoint::get_is_updated_in_editor);
-    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "Is updated in editor", PROPERTY_HINT_NONE), "set_is_updated_in_editor", "get_is_updated_in_editor");
+    //ClassDB::bind_method(D_METHOD("set_is_updated_in_editor"), &RobotIkJoint::set_is_updated_in_editor);
+    //ClassDB::bind_method(D_METHOD("get_is_updated_in_editor"), &RobotIkJoint::get_is_updated_in_editor);
+    //ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_updated_in_editor", PROPERTY_HINT_NONE), "set_is_updated_in_editor", "get_is_updated_in_editor");
 
 }
 
