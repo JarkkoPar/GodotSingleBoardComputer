@@ -104,16 +104,18 @@ void RobotIkJoint::evaluate(Vector3 arm_tip_global_position, Vector3 target_glob
         float rotation_angle_radian = 0.0f;
         get_transform().get_basis().get_rotation_axis_angle_local(rotation_axis, rotation_angle_radian);
 
-        float constraint_corrected_angle_radian = rotation_angle_radian + _center_angle_radian;
+        float constraint_corrected_angle_radian = -rotation_angle_radian + _center_angle_radian;
+        
         if( constraint_corrected_angle_radian < _min_angle_radian ) {
             constraint_corrected_angle_radian = _min_angle_radian;
         } else if( constraint_corrected_angle_radian > _max_angle_radian ) {
             constraint_corrected_angle_radian = _max_angle_radian;
         }
-        _current_angle_radian = rotation_angle_radian; //constraint_corrected_angle_radian;
+        _current_angle_radian = constraint_corrected_angle_radian;
         _current_angle_euler = Math::rad_to_deg( _current_angle_radian );
         
         constraint_corrected_angle_radian -= _center_angle_radian;
+        constraint_corrected_angle_radian = -constraint_corrected_angle_radian; 
         Quaternion constrained_rotation = Quaternion( rotation_axis, constraint_corrected_angle_radian );
         set_quaternion(constrained_rotation);
         
