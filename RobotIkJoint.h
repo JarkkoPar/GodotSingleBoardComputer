@@ -33,17 +33,17 @@ public:
 
     // Getters and setters.
 
-    void set_current_angle_euler( double angle );
-    double get_current_angle_euler() const;
+    void set_current_angle_euler( float angle );
+    float get_current_angle_euler() const;
 
-    void set_min_angle_euler( double angle );
-    double get_min_angle_euler() const;
+    void set_min_angle_euler( float angle );
+    float get_min_angle_euler() const;
 
-    void set_max_angle_euler( double angle );
-    double get_max_angle_euler() const;
+    void set_max_angle_euler( float angle );
+    float get_max_angle_euler() const;
 
-    void set_center_angle_euler( double angle );
-    double get_center_angle_euler() const;
+    void set_center_angle_euler( float angle );
+    float get_center_angle_euler() const;
 
     void set_is_arm_tip( bool is_arm_tip );
     bool get_is_arm_tip() const;
@@ -62,18 +62,18 @@ public:
 
 private:
     Vector3 _joint_axis;
-    double  _min_angle_euler;
-    double  _max_angle_euler;
-    double  _center_angle_euler;
+    float  _min_angle_euler;
+    float  _max_angle_euler;
+    float  _center_angle_euler;
     bool    _is_arm_tip;
 
     Vector3 _joint_perpendicular_axis;
-    double  _min_angle_radian;
-    double  _max_angle_radian;
-    double  _center_angle_radian;
+    float  _min_angle_radian;
+    float  _max_angle_radian;
+    float  _center_angle_radian;
 
-    double _current_angle_euler;
-    double _current_angle_radian;
+    float _current_angle_euler;
+    float _current_angle_radian;
 
     NodePath _target_node_path;
     Node3D* _target_node;

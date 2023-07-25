@@ -21,15 +21,20 @@ void RobotIkJoint::_bind_methods() {
 
     ClassDB::bind_method(D_METHOD("set_center_angle_euler"), &RobotIkJoint::set_center_angle_euler);
     ClassDB::bind_method(D_METHOD("get_center_angle_euler"), &RobotIkJoint::get_center_angle_euler);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Center angle in Euler", PROPERTY_HINT_RANGE, "0,360"), "set_center_angle_euler", "get_center_angle_euler");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Center angle in Euler", PROPERTY_HINT_RANGE, "-360,360"), "set_center_angle_euler", "get_center_angle_euler");
 
     ClassDB::bind_method(D_METHOD("set_min_angle_euler"), &RobotIkJoint::set_min_angle_euler);
     ClassDB::bind_method(D_METHOD("get_min_angle_euler"), &RobotIkJoint::get_min_angle_euler);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Min angle in Euler", PROPERTY_HINT_RANGE, "0,360"), "set_min_angle_euler", "get_min_angle_euler");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Min angle in Euler", PROPERTY_HINT_RANGE, "-360,360"), "set_min_angle_euler", "get_min_angle_euler");
 
     ClassDB::bind_method(D_METHOD("set_max_angle_euler"), &RobotIkJoint::set_max_angle_euler);
     ClassDB::bind_method(D_METHOD("get_max_angle_euler"), &RobotIkJoint::get_max_angle_euler);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Max angle in Euler", PROPERTY_HINT_RANGE, "0,360"), "set_max_angle_euler", "get_max_angle_euler");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Max angle in Euler", PROPERTY_HINT_RANGE, "-360,360"), "set_max_angle_euler", "get_max_angle_euler");
+
+    ClassDB::bind_method(D_METHOD("set_current_angle_euler"), &RobotIkJoint::set_current_angle_euler);
+    ClassDB::bind_method(D_METHOD("get_current_angle_euler"), &RobotIkJoint::get_current_angle_euler);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Current angle in Euler", PROPERTY_HINT_RANGE, "-360,360"), "set_current_angle_euler", "get_current_angle_euler");
+
 
     ClassDB::bind_method(D_METHOD("set_update_method"), &RobotIkJoint::set_update_method);
     ClassDB::bind_method(D_METHOD("get_update_method"), &RobotIkJoint::get_update_method);
@@ -46,15 +51,15 @@ void RobotIkJoint::_bind_methods() {
 
 
 RobotIkJoint::RobotIkJoint() {
-    _min_angle_euler = 0.0;
-    _max_angle_euler = 180.0;
-    _center_angle_euler = 90.0;
+    _min_angle_euler = 0.0f;
+    _max_angle_euler = 180.0f;
+    _center_angle_euler = 90.0f;
     _min_angle_radian = Math::deg_to_rad(_min_angle_euler);
     _max_angle_radian = Math::deg_to_rad(_max_angle_euler);
     _center_angle_radian = Math::deg_to_rad(_center_angle_euler);
 
     _joint_axis = Vector3( 1.0, 0.0, 0.0 );
-    _joint_perpendicular_axis = Vector3(0.0, 1.0, 0.0 );
+    _joint_perpendicular_axis = Vector3(0.0, 0.0, -1.0 );
 
     _current_angle_euler = _center_angle_euler;
     _current_angle_radian = _center_angle_radian;
@@ -80,39 +85,38 @@ void RobotIkJoint::evaluate(Vector3 arm_tip_global_position, Vector3 target_glob
         // Point towards the target.
         Vector3 arm_tip_local = to_local(arm_tip_global_position);
         Vector3 target_local = to_local(target_global_position);
-        if( arm_tip_local == target_local ) return; // already matched the positions.
 
         Vector3 joint_position = get_transform().get_origin();
-
-        Vector3 direction_to_arm_tip_local = (arm_tip_local - joint_position).normalized();
-        Vector3 direction_to_target_local = (target_local - joint_position).normalized();
+        Vector3 direction_to_arm_tip_local = arm_tip_local.normalized();//(arm_tip_local - joint_position).normalized();
+        Vector3 direction_to_target_local = target_local.normalized();// (target_local - joint_position).normalized();
 
         Quaternion current_rotation = get_transform().basis.get_rotation_quaternion();
         Quaternion point_to_target_rotation = Quaternion(direction_to_arm_tip_local, direction_to_target_local) * current_rotation;
-        /**
         // Constraint to hinge axis.
         Vector3 hinge_axis_local = point_to_target_rotation.xform(_joint_axis);
         Quaternion hinge_rotation_back = Quaternion( hinge_axis_local, _joint_axis );
 
         Quaternion hinge_corrected_rotation = hinge_rotation_back * point_to_target_rotation;
-
+        hinge_corrected_rotation.normalize();
+        set_quaternion(hinge_corrected_rotation);
         // Constraint to the min & max angles.
-        Vector3 rotation_axis = hinge_corrected_rotation.get_axis();
-        double  rotation_angle_radian = hinge_corrected_rotation.get_angle();
+        Vector3 rotation_axis = Vector3(1.0f, 0.0f, 0.0f); 
+        float rotation_angle_radian = 0.0f;
+        get_transform().get_basis().get_rotation_axis_angle_local(rotation_axis, rotation_angle_radian);
 
-        double constraint_corrected_angle_radian = Math::clamp( rotation_angle_radian + _center_angle_radian, _min_angle_radian, _max_angle_radian ) - _center_angle_radian;
-
-        _current_angle_radian = constraint_corrected_angle_radian + _center_angle_radian;
+        float constraint_corrected_angle_radian = rotation_angle_radian + _center_angle_radian;
+        if( constraint_corrected_angle_radian < _min_angle_radian ) {
+            constraint_corrected_angle_radian = _min_angle_radian;
+        } else if( constraint_corrected_angle_radian > _max_angle_radian ) {
+            constraint_corrected_angle_radian = _max_angle_radian;
+        }
+        _current_angle_radian = rotation_angle_radian; //constraint_corrected_angle_radian;
         _current_angle_euler = Math::rad_to_deg( _current_angle_radian );
-
+        
+        constraint_corrected_angle_radian -= _center_angle_radian;
         Quaternion constrained_rotation = Quaternion( rotation_axis, constraint_corrected_angle_radian );
-        /**/
-        // Set the basis.
-        set_quaternion(point_to_target_rotation.normalized());
-        //Transform3D new_transform = Transform3D(point_to_target_rotation);//constrained_rotation);
-        //new_transform.set_origin( joint_position );
-        //set_transform(new_transform);
-        //get_transform().basis = Transform3D(constrained_rotation).basis;
+        set_quaternion(constrained_rotation);
+        
     }
 
     // Check the parent.
@@ -156,42 +160,42 @@ void RobotIkJoint::_physics_process(double delta) {
 // Getters and setters.
 
 
-void RobotIkJoint::set_current_angle_euler( double angle ) {
+void RobotIkJoint::set_current_angle_euler( float angle ) {
     _current_angle_euler = angle;
     _current_angle_radian = Math::deg_to_rad(_current_angle_euler);
 
 }
 
-double RobotIkJoint::get_current_angle_euler() const {
+float RobotIkJoint::get_current_angle_euler() const {
     return _current_angle_euler;
 }
 
 
-void RobotIkJoint::set_min_angle_euler( double angle ) {
+void RobotIkJoint::set_min_angle_euler( float angle ) {
     _min_angle_euler = angle;
     _min_angle_radian = Math::deg_to_rad(_min_angle_euler);
 
 }
 
-double RobotIkJoint::get_min_angle_euler() const {
+float RobotIkJoint::get_min_angle_euler() const {
     return _min_angle_euler;
 }
 
-void RobotIkJoint::set_max_angle_euler( double angle ) {
+void RobotIkJoint::set_max_angle_euler( float angle ) {
     _max_angle_euler = angle;
     _max_angle_radian = Math::deg_to_rad(_max_angle_euler);
 }
 
-double RobotIkJoint::get_max_angle_euler() const {
+float RobotIkJoint::get_max_angle_euler() const {
     return _max_angle_euler;
 }
 
-void RobotIkJoint::set_center_angle_euler( double angle ) {
+void RobotIkJoint::set_center_angle_euler( float angle ) {
     _center_angle_euler = angle;
     _center_angle_radian = Math::deg_to_rad(_center_angle_euler);
 }
 
-double RobotIkJoint::get_center_angle_euler() const {
+float RobotIkJoint::get_center_angle_euler() const {
     return _center_angle_euler;
 }
 
