@@ -16,7 +16,7 @@ void RobotIkJoint::_bind_methods() {
 
     ClassDB::bind_method(D_METHOD("set_target_node_path"), &RobotIkJoint::set_target_node_path);
     ClassDB::bind_method(D_METHOD("get_target_node_path"), &RobotIkJoint::get_target_node_path);
-    ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "target_node", PROPERTY_HINT_NONE), "set_target_node_path", "get_target_node_path");
+    ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "target_node_path", PROPERTY_HINT_NONE), "set_target_node_path", "get_target_node_path");
 
 
     ClassDB::bind_method(D_METHOD("set_center_angle_euler"), &RobotIkJoint::set_center_angle_euler);
@@ -135,7 +135,7 @@ void RobotIkJoint::update_evaluation(double delta) {
     if(Engine::get_singleton()->is_editor_hint() && _is_updated_in_editor == false) return;
     if( _target_node == nullptr ) {
         Node* target_node = get_node_or_null( _target_node_path );
-        ERR_FAIL_COND_MSG( target_node == nullptr, "No target node nodepath set!" );
+        ERR_FAIL_COND_MSG( target_node == nullptr, "Could not find the target node for the robot ik joint with the given node path: " + _target_node_path + "." );
         _target_node = static_cast<Node3D*>(target_node);
         ERR_FAIL_COND_MSG( _target_node == nullptr, "The target node must be of type Node3D or a node type derived from it." );
     }
