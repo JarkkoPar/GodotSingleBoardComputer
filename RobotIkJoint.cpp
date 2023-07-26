@@ -41,11 +41,11 @@ void RobotIkJoint::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::INT, "update_method", PROPERTY_HINT_ENUM, "Process:0,Physics process:1"), "set_update_method", "get_update_method");
 
 
-    //ADD_GROUP("In-editor properties", "");
+    ADD_GROUP("In-editor properties", "");
     
-    //ClassDB::bind_method(D_METHOD("set_is_updated_in_editor"), &RobotIkJoint::set_is_updated_in_editor);
-    //ClassDB::bind_method(D_METHOD("get_is_updated_in_editor"), &RobotIkJoint::get_is_updated_in_editor);
-    //ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_updated_in_editor", PROPERTY_HINT_NONE), "set_is_updated_in_editor", "get_is_updated_in_editor");
+    ClassDB::bind_method(D_METHOD("set_is_updated_in_editor"), &RobotIkJoint::set_is_updated_in_editor);
+    ClassDB::bind_method(D_METHOD("get_is_updated_in_editor"), &RobotIkJoint::get_is_updated_in_editor);
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_updated_in_editor", PROPERTY_HINT_NONE), "set_is_updated_in_editor", "get_is_updated_in_editor");
 
 }
 
@@ -82,6 +82,9 @@ RobotIkJoint::~RobotIkJoint() {
 void RobotIkJoint::evaluate(Vector3 arm_tip_global_position, Vector3 target_global_position ) {
     // Skip the evaluation if this is a the arm tip.
     if( !_is_arm_tip ) {
+        // Check that to_local can be done.
+        if( get_transform().basis.determinant() == 0 ) return;
+
         // Point towards the target.
         Vector3 arm_tip_local = to_local(arm_tip_global_position);
         Vector3 target_local = to_local(target_global_position);
@@ -122,24 +125,28 @@ void RobotIkJoint::evaluate(Vector3 arm_tip_global_position, Vector3 target_glob
     }
 
     // Check the parent.
-    RobotIkJoint* parent_joint = static_cast<RobotIkJoint*>(get_parent());
-    if( parent_joint == nullptr ) {
-        return;
-    }
+    if( get_parent() == nullptr ) return;
+    RobotIkJoint* parent_joint = Object::cast_to<RobotIkJoint>(get_parent());
+    if( parent_joint == nullptr ) return;
     parent_joint->evaluate( arm_tip_global_position, target_global_position );
 
 }
 
 void RobotIkJoint::update_evaluation(double delta) {
+    if( !is_inside_tree() ) return;
     if( !_is_arm_tip ) return;
-    if(Engine::get_singleton()->is_editor_hint() && _is_updated_in_editor == false) return;
+    if(Engine::get_singleton()->is_editor_hint() ) {
+        if( _is_updated_in_editor == false) return;
+    } 
     if( _target_node == nullptr ) {
+        ERR_FAIL_COND_MSG( _target_node_path.is_empty(), "No target node path set for the robot ik joint." );
         Node* target_node = get_node_or_null( _target_node_path );
         ERR_FAIL_COND_MSG( target_node == nullptr, "Could not find the target node for the robot ik joint with the given node path: " + _target_node_path + "." );
-        _target_node = static_cast<Node3D*>(target_node);
+        _target_node = Object::cast_to<Node3D>(target_node);
         ERR_FAIL_COND_MSG( _target_node == nullptr, "The target node must be of type Node3D or a node type derived from it." );
+    } else {
+        evaluate( get_global_position(), _target_node->get_global_position());
     }
-    evaluate( get_global_position(), _target_node->get_global_position());
     
 }
 
