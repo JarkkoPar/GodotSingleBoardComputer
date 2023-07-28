@@ -47,6 +47,10 @@ void RobotIkJoint::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_is_updated_in_editor"), &RobotIkJoint::get_is_updated_in_editor);
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_updated_in_editor", PROPERTY_HINT_NONE), "set_is_updated_in_editor", "get_is_updated_in_editor");
 
+    ClassDB::bind_method(D_METHOD("set_is_no_target_node_error_suppressed"), &RobotIkJoint::set_is_no_target_node_error_suppressed);
+    ClassDB::bind_method(D_METHOD("get_is_no_target_node_error_suppressed"), &RobotIkJoint::get_is_no_target_node_error_suppressed);
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_no_target_node_error_suppressed", PROPERTY_HINT_NONE), "set_is_no_target_node_error_suppressed", "get_is_no_target_node_error_suppressed");
+
 }
 
 
@@ -68,6 +72,7 @@ RobotIkJoint::RobotIkJoint() {
 
     _is_arm_tip = false;
     _is_updated_in_editor = false;
+    _is_no_target_node_error_suppressed = true;
 
     _target_node = nullptr;
 }
@@ -139,12 +144,28 @@ void RobotIkJoint::update_evaluation(double delta) {
         if( _is_updated_in_editor == false) return;
     } 
     if( _target_node == nullptr ) {
-        ERR_FAIL_COND_MSG( _target_node_path.is_empty(), "No target node path set for the robot ik joint." );
+        // If the error about missing target node is suppressed, don't show an error
+        // about an empty node path. The other errors should be shown, though, as 
+        // when a node path is set the user clearly is expecting that the target 
+        // node is valid.
+        if( _is_no_target_node_error_suppressed ) {
+            if( _target_node_path.is_empty() ) return; 
+        } else {
+            ERR_FAIL_COND_MSG( _target_node_path.is_empty(), "No target node path set for the robot ik joint." );
+        }
         Node* target_node = get_node_or_null( _target_node_path );
         ERR_FAIL_COND_MSG( target_node == nullptr, "Could not find the target node for the robot ik joint with the given node path: " + _target_node_path + "." );
         _target_node = Object::cast_to<Node3D>(target_node);
         ERR_FAIL_COND_MSG( _target_node == nullptr, "The target node must be of type Node3D or a node type derived from it." );
     } else {
+        // Make sure the target node has not been moved outside of the tree or deleted.
+        if( !_target_node->is_inside_tree() || _target_node->is_queued_for_deletion() ) {
+            bool tgt_is_deleted = _target_node->is_queued_for_deletion();
+            bool tgt_is_not_inside_tree = !_target_node->is_inside_tree();
+            _target_node = nullptr;
+            ERR_FAIL_COND_MSG( tgt_is_not_inside_tree, "The target node is not inside the tree, cleared the target to avoid errors." );
+            ERR_FAIL_COND_MSG( tgt_is_deleted, "The target node is queued for deletion, cleared the target to avoid errors." );
+        }
         evaluate( get_global_position(), _target_node->get_global_position());
     }
     
@@ -222,6 +243,14 @@ void RobotIkJoint::set_is_updated_in_editor( bool is_updated_in_editor ) {
 
 bool RobotIkJoint::get_is_updated_in_editor() const {
     return _is_updated_in_editor;
+}
+
+void RobotIkJoint::set_is_no_target_node_error_suppressed( bool is_no_target_node_error_suppressed ) {
+    _is_no_target_node_error_suppressed = is_no_target_node_error_suppressed;
+}
+
+bool RobotIkJoint::get_is_no_target_node_error_suppressed() const {
+    return _is_no_target_node_error_suppressed;
 }
 
 

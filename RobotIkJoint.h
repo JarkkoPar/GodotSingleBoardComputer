@@ -51,6 +51,10 @@ public:
     void set_is_updated_in_editor( bool is_updated_in_editor );
     bool get_is_updated_in_editor() const;
 
+    void set_is_no_target_node_error_suppressed( bool is_no_target_node_error_suppressed );
+    bool get_is_no_target_node_error_suppressed() const;
+
+
     void set_joint_axis( Vector3 axis );
     Vector3 get_joint_axis() const;
 
@@ -75,6 +79,7 @@ private:
     float _current_angle_euler;
     float _current_angle_radian;
 
+    bool  _is_no_target_node_error_suppressed;
     NodePath _target_node_path;
     Node3D* _target_node;
 
