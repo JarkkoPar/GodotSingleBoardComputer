@@ -16,16 +16,17 @@ As SBC's have limited cpu and memory resources, it is recommended that you do th
 
 To run your godot app on your SBC you can start it directly from the command line (assuming main.tscn is your main scene):
 
-sudo ./your-godot-executable main.tscn
+`sudo ./your-godot-executable main.tscn`
 
 If you do not need the 2D/3D views from godot, you get more performance by running the project headless:
 
-sudo ./your-godot-executable main.tscn --headless 
+`sudo ./your-godot-executable main.tscn --headless`
 
 If your SBC doesn't support Vulkan and you have developed on your Linux machine using the Forward+ renderer, you may need to specify your rendering driver as well:
 
-sudo ./your-godot-executable main.tscn --rendering-driver opengl3
+`sudo ./your-godot-executable main.tscn --rendering-driver opengl3`
 
+You need to use `sudo` for the nodes to be able to access the device files in Linux.
 
 ## Compiling
 
