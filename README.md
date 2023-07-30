@@ -52,6 +52,8 @@ A temperature sensor that interfaces with an ADC. While this just now returns va
 
 ## Helper nodes 
 
+The helper nodes do not need to be child nodes of the SingleBoardComputer node.
+
 ### RoboticIkJoint
 
 A helper node to create robotic appendixes that are rotated using servos. Each joint is constrained to a single axis that is defined in the node inspector and can be set a minimum and maximum angle for rotation around the assigned axis. The center angle is set to 90 by default, and minimum and maximum to 0 and 180 respectively which seem to be defaults for many hobby servos.
