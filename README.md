@@ -12,12 +12,31 @@ Copy the extension to your godot project bin-folder and you should be set.
 
 Add the SingleBoardComputer node to your scene, select the board you are using from the supported ones, and under the SingleBoardComputer node add any of the device nodes you need. Then configure each device based on your specs and assign them the correct device or pin index, addresses, etc.
 
+As SBC's have limited cpu and memory resources, it is recommended that you do the Godot development on your Linux laptop/desktop and then copy over the files to your SBC. This will greatly speed up your work in the Godot engine editor. 
+
+To run your godot app on your SBC you can start it directly from the command line (assuming main.tscn is your main scene):
+
+sudo ./your-godot-executable main.tscn
+
+If you do not need the 2D/3D views from godot, you get more performance by running the project headless:
+
+sudo ./your-godot-executable main.tscn --headless 
+
+If your SBC doesn't support Vulkan and you have developed on your Linux machine using the Forward+ renderer, you may need to specify your rendering driver as well:
+
+sudo ./your-godot-executable main.tscn --rendering-driver opengl3
+
+
+## Compiling
+
+Set up your project as described in the godot documentation for the gdexample extension example. Copy all the code from this repository in to the src folder, then copy the SConstruct file found in this repository to the gdextension folder and rename it to SConstruct. Finally copy the libsingleboardcomputer.gdextension file to the demo/bin folder. Compile with scons platform=linux command as usual.
+
 
 ## The top level nodes 
 
 ### SingleBoardComputer 
 
-The main node that is needed to interface with any device. You must choose which SBC you are using in the Board-dropdown in the inspector. This will allow the initialization of relevant interfaces when your project is run.
+The main node that is needed to interface with any device. You must choose which SBC you are using in the Board-dropdown in the inspector. This will allow the initialization of all the relevant interfaces when your project is run.
 
 ### SBCDevice 
 
