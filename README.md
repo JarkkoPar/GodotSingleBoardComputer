@@ -30,7 +30,7 @@ You need to use `sudo` for the nodes to be able to access the device files in Li
 
 ## Compiling
 
-Set up your project as described in the godot documentation for the gdexample extension example. Copy all the code from this repository in to the src folder, then copy the SConstruct file found in this repository to the gdextension folder and rename it to SConstruct. Finally copy the libsingleboardcomputer.gdextension file to the demo/bin folder. Compile with scons platform=linux command as usual.
+Set up your project as described in the godot documentation for the gdexample extension example. Copy all the code from this repository in to the src folder, then copy the `_SConstruct` file found in this repository to the gdextension folder and rename it to `SConstruct`. Finally copy the libsingleboardcomputer.gdextension file to the demo/bin folder. Compile with `scons platform=linux` command as usual.
 
 
 ## The top level nodes 
