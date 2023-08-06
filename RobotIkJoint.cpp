@@ -21,19 +21,19 @@ void RobotIkJoint::_bind_methods() {
 
     ClassDB::bind_method(D_METHOD("set_center_angle_euler"), &RobotIkJoint::set_center_angle_euler);
     ClassDB::bind_method(D_METHOD("get_center_angle_euler"), &RobotIkJoint::get_center_angle_euler);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "center_angle_Euler", PROPERTY_HINT_RANGE, "-360,360"), "set_center_angle_euler", "get_center_angle_euler");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "center_angle_euler", PROPERTY_HINT_RANGE, "-360,360,degrees"), "set_center_angle_euler", "get_center_angle_euler");
 
     ClassDB::bind_method(D_METHOD("set_min_angle_euler"), &RobotIkJoint::set_min_angle_euler);
     ClassDB::bind_method(D_METHOD("get_min_angle_euler"), &RobotIkJoint::get_min_angle_euler);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "min_angle_euler", PROPERTY_HINT_RANGE, "-360,360"), "set_min_angle_euler", "get_min_angle_euler");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "min_angle_euler", PROPERTY_HINT_RANGE, "-360,360,degrees"), "set_min_angle_euler", "get_min_angle_euler");
 
     ClassDB::bind_method(D_METHOD("set_max_angle_euler"), &RobotIkJoint::set_max_angle_euler);
     ClassDB::bind_method(D_METHOD("get_max_angle_euler"), &RobotIkJoint::get_max_angle_euler);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "max_angle_euler", PROPERTY_HINT_RANGE, "-360,360"), "set_max_angle_euler", "get_max_angle_euler");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "max_angle_euler", PROPERTY_HINT_RANGE, "-360,360,degrees"), "set_max_angle_euler", "get_max_angle_euler");
 
     ClassDB::bind_method(D_METHOD("set_current_angle_euler"), &RobotIkJoint::set_current_angle_euler);
     ClassDB::bind_method(D_METHOD("get_current_angle_euler"), &RobotIkJoint::get_current_angle_euler);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "current_angle_euler", PROPERTY_HINT_RANGE, "-360,360"), "set_current_angle_euler", "get_current_angle_euler");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "current_angle_euler", PROPERTY_HINT_RANGE, "-360,360,degrees"), "set_current_angle_euler", "get_current_angle_euler");
 
 
     ClassDB::bind_method(D_METHOD("set_update_method"), &RobotIkJoint::set_update_method);

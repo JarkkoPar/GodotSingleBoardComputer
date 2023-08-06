@@ -14,6 +14,8 @@ private:
     double _vl53l0x_update_frame_delay;
     double _vl53l0x_update_wait_time;
 
+    //uint8_t _custom_vl53l0x_i2c_device_address;
+    bool _is_active;
     int _reading_mode; 
     float _distance_mm;
     
@@ -80,11 +82,18 @@ public:
 
 
     // Getters and setters.
+
+    void set_is_active( bool is_active );
+    bool get_is_active() const;
+
     void set_reading_mode( int mode );
     int  get_reading_mode() const;
     
     void  set_distance_mm( float distance_mm );
     float get_distance_mm();
+
+    void  set_custom_vl53l0x_i2c_device_address( int new_i2c_device_address );
+    //int   get_custom_vl53l0x_i2c_device_address();
 
     // Device handling.
     virtual void _initialize_device() override;
