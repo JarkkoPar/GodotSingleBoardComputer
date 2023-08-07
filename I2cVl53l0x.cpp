@@ -71,6 +71,7 @@ void I2cVl53l0x::_notification(int p_what) {
 
 
 // Getters and setters.
+
 void I2cVl53l0x::set_is_active( bool is_active ) {
     _is_active = is_active;
 }

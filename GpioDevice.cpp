@@ -102,7 +102,8 @@ void GpioDevice::open_device() {
     SingleBoardComputer* sbc = Object::cast_to<SingleBoardComputer>(get_parent());
     ERR_FAIL_COND_MSG(sbc == nullptr, "This node needs to be a child of the SingleBoardComputer node.");
 
-    ERR_FAIL_COND_MSG(_gpio_pin_index < 0 || _gpio_pin_index >= sbc->get_num_gpio_pins(), "Invalid index for gpio pin (out of bounds).");
+    //ERR_FAIL_COND_MSG(_gpio_pin_index < 0 || _gpio_pin_index >= sbc->get_num_gpio_pins(), "Invalid index for gpio pin (out of bounds).");
+    ERR_FAIL_INDEX_EDMSG(_gpio_pin_index, 40, "Invalid index for gpio pin (out of bounds).");
 
     // Open the selected gpio file.
     _gpio_device_fd = sbc->request_gpio_device_file(_gpio_pin_index);

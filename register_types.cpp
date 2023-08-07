@@ -12,6 +12,7 @@
 // Gpio devices.
 #include "GpioDevice.h"
 #include "GpioLED.h"
+#include "GpioHcSr04.h"
 
 // ADC devices.
 #include "AdcDevice.h"
@@ -45,6 +46,8 @@ void initialize_singleboardcomputer_module(ModuleInitializationLevel p_level) {
     // Gpio devices.
     ClassDB::register_class<GpioDevice>();
     ClassDB::register_class<GpioLED>();
+    ClassDB::register_class<GpioHcSr04>();
+
 
     // ADC devices.
     ClassDB::register_class<AdcDevice>();
