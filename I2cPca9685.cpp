@@ -13,6 +13,8 @@ I2cPca9685::I2cPca9685() {
         servo_max_angle_ms[i] = 2.0;
     }
 
+    _is_active = true;
+
     _pwm_frequency_hz = 50; 
     _pwm_oscillator_frequency = 25000000.0; // 25 MHz
     update_servo_min_max_angle_pulse_counts();
@@ -30,11 +32,15 @@ I2cPca9685::~I2cPca9685() {
 
 void I2cPca9685::_bind_methods() {
     
+    ClassDB::bind_method(D_METHOD("set_is_active", "is_active"), &I2cPca9685::set_is_active);
+    ClassDB::bind_method(D_METHOD("get_is_active"), &I2cPca9685::get_is_active);
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_active", PROPERTY_HINT_NONE), "set_is_active", "get_is_active");
+
     
     // Initialization timeout helper.
     ClassDB::bind_method(D_METHOD("on_timer_finished_finalize_initialize"), &I2cPca9685::on_timer_finished_finalize_initialize);   
 
-    ClassDB::bind_method(D_METHOD("set_pwm_frequency_hz"), &I2cPca9685::set_pwm_frequency_hz);
+    ClassDB::bind_method(D_METHOD("set_pwm_frequency_hz", "pwm_frequency_hz"), &I2cPca9685::set_pwm_frequency_hz);
     ClassDB::bind_method(D_METHOD("get_pwm_frequency_hz"), &I2cPca9685::get_pwm_frequency_hz);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "pwm_frequency_hz", PROPERTY_HINT_RANGE, "1,1000"), "set_pwm_frequency_hz", "get_pwm_frequency_hz");
 
@@ -400,6 +406,15 @@ void I2cPca9685::update_servo_min_max_angle_pulse_counts() {
     _pwm_prescale_value = (int)(_pwm_oscillator_frequency / (4096.0 * (double)_pwm_frequency_hz));
 }
 
+
+void I2cPca9685::set_is_active( bool is_active ) {
+    _is_active = is_active;
+}
+
+bool I2cPca9685::get_is_active() const {
+    return _is_active;
+}
+
 void I2cPca9685::set_pwm_frequency_hz( int new_frequency_hz ) {
     _pwm_frequency_hz = new_frequency_hz;
     if( _pwm_frequency_hz > 1000 ) {
@@ -411,6 +426,7 @@ void I2cPca9685::set_pwm_frequency_hz( int new_frequency_hz ) {
     if(Engine::get_singleton()->is_editor_hint()) return;
     if( _i2c_device_fd < 0 ) return; // Device not opened so cannot do this yet. Will be set on init in any case.
     if( !_is_pca9685_initialized ) return;
+    if( !_is_active ) return;
 
     // Send to the device if not in editor.
     //int prescaling = (int)(25000000.0f / (4096.0f * (float)_pwm_frequency_hz) - 0.5f);
@@ -452,6 +468,7 @@ void I2cPca9685::_initialize_device() {
     // Only initialize once.
     if( _is_pca9685_initialized ) return;
     if(Engine::get_singleton()->is_editor_hint()) return;
+    if( !_is_active ) return;
     set_i2c_device_bus_number(_i2c_device_bus_number);
     open_device();
     ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "PCA9685 initialization failed because the device file is not opened.");
