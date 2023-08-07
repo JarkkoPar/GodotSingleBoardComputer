@@ -17,7 +17,7 @@ private:
     //uint8_t _custom_vl53l0x_i2c_device_address;
     bool _is_active;
     int _reading_mode; 
-    float _distance_mm;
+    float _distance_mm, _distance_inch;
     
 protected: 
     static void _bind_methods();
@@ -93,6 +93,9 @@ public:
     
     void  set_distance_mm( float distance_mm );
     float get_distance_mm();
+
+    void  set_distance_inch( float distance_inch );
+    float get_distance_inch();
 
     void  set_custom_vl53l0x_i2c_device_address( int new_i2c_device_address );
     //int   get_custom_vl53l0x_i2c_device_address();

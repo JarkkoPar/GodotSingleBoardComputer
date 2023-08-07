@@ -45,11 +45,11 @@ The base device node, not meant to be used in scenes. Unifies the initialization
 
 ### I2cDevice
 
-The base node for I2C devices with generic interfaces to interact with an I2C device. Under this node you will find specific device nodes. All I2C devices need the index of the i2c device file and the address of the device. The derived nodes will have additional properties depending on the device in question.
+The base node for I2C devices with generic interfaces to interact with an I2C device. Under this node you will find specific device nodes. All I2C devices need the index of the i2c device file and the address of the device. While you can type in the address as hexadecimal, it will show up in the inspector as an integer. The derived I2C device nodes will have additional properties depending on the device in question.
 
 ### AdcDevice 
 
-The base node for Analog-to-digital converter devices. If there are ADC pins on the SBC, you can use the device nodes derived from this to interface with them. 
+The base node for Analog-to-digital converter devices built-in to the SBC. If there are ADC pins on the SBC, you can use the device nodes derived from this to interface with them. 
 
 ### SpiDevice 
 
@@ -58,16 +58,29 @@ The base node for SPI devices. Not implemented yet.
 
 ## I2cDevice nodes 
 
+### I2cAds1115
+
+A ADS1115 based device for interfacing with analog sensors using I2C. Currently in development.
+
+Default I2C address 0x48.
+
 ### I2cPca9685
 
 A PCA9685 based device for controlling leds or servo motors. Currently the servo controls are implemented for a 16 channel PCA9685 device. You can set the minimum and maximum ms for each of the 16 channels (which each correspond with a servo), and the angle for each servo. 
 
+Default I2C address 0x40.
+
+### I2cVl53l0x
+
+A VL53L0X based distance sensor for measuring distances. Currently initializes automatically in to continuous (or back-to-back) reading mode. You can get the measured distance in millimeters from the `distance_mm` property of the node and in inches from the `distance_inch` property. Note that the maximum distance measured by the VL53L0X sensor is 2 meters (2000 millimeters or 78.7 inches). If the distance returned is greater than the maximum, it meas there is nothing found in range of the sensor.
+
+Default I2C address 0x29.
 
 ## AdcDevice nodes 
 
 ### AdcTemperatureSensor
 
-A temperature sensor that interfaces with an ADC. While this just now returns values, they may be wrong.
+A temperature sensor that interfaces with an ADC built in to the SingleBoardComputer. While this just now returns values, they may be wrong.
 
 
 ## Helper nodes 

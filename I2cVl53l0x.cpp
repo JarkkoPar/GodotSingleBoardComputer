@@ -13,6 +13,7 @@ I2cVl53l0x::I2cVl53l0x() {
 
     _reading_mode = (int)Vl53l0xReadingMode::BACK_TO_BACK;
     _distance_mm = 0.0f;
+    _distance_inch = 0.0f;
 }
 
 I2cVl53l0x::~I2cVl53l0x() {
@@ -31,9 +32,13 @@ void I2cVl53l0x::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_reading_mode"), &I2cVl53l0x::get_reading_mode);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "reading_mode", PROPERTY_HINT_ENUM, "One_shot:0,Continuous:2"), "set_reading_mode", "get_reading_mode");
 
-    ClassDB::bind_method(D_METHOD("set_distance_mm", "distance"), &I2cVl53l0x::set_distance_mm);
+    ClassDB::bind_method(D_METHOD("set_distance_mm", "distance_mm"), &I2cVl53l0x::set_distance_mm);
 	ClassDB::bind_method(D_METHOD("get_distance_mm"), &I2cVl53l0x::get_distance_mm);
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "distance_mm", PROPERTY_HINT_RANGE, "0.0,2000.0,allow_greater,suffix:mm", PROPERTY_USAGE_READ_ONLY), "set_distance_mm", "get_distance_mm");
+
+    ClassDB::bind_method(D_METHOD("set_distance_inch", "distance_inch"), &I2cVl53l0x::set_distance_inch);
+	ClassDB::bind_method(D_METHOD("get_distance_inch"), &I2cVl53l0x::get_distance_inch);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "distance_inch", PROPERTY_HINT_RANGE, "0.0,2000.0,allow_greater,suffix:inch", PROPERTY_USAGE_READ_ONLY), "set_distance_inch", "get_distance_inch");
 
 }
 
@@ -47,12 +52,13 @@ void I2cVl53l0x::_process(double delta) {
     if( _vl53l0x_update_wait_time > 0.0 ) return;
     _vl53l0x_update_wait_time = _vl53l0x_update_frame_delay;
 
-    ERR_FAIL_COND_MSG( !_is_vl53l0x_initialized, "VL53L0X is not yet initialized, cannot update distance_mm in _process().");
+    ERR_FAIL_COND_MSG( !_is_vl53l0x_initialized, "VL53L0X is not yet initialized, cannot update the distance property in _process().");
     
     uint8_t msb = read_byte_from_device_register((uint8_t)(Vl53l0xRegisters::MEASUREMENT_MOST_SIGNIFICANT_BIT));
     uint8_t lsb = read_byte_from_device_register((uint8_t)(Vl53l0xRegisters::MEASUREMENT_LEAST_SIGNIFICANT_BIT));
     
     _distance_mm = (float)( (uint16_t)(msb << 8) | (uint16_t)(lsb) );
+    _distance_inch = _distance_mm * 0.03937007874f; // divide mm by 25.4f;
 }
 
 void I2cVl53l0x::_physics_process(double delta) {
@@ -88,6 +94,14 @@ void  I2cVl53l0x::set_distance_mm( float distance_mm ) {
 
 float I2cVl53l0x::get_distance_mm() {
     return _distance_mm;
+}
+
+void  I2cVl53l0x::set_distance_inch( float distance_inch ) {
+    _distance_inch = distance_inch;
+}
+
+float I2cVl53l0x::get_distance_inch() {
+    return _distance_inch;
 }
 
 
