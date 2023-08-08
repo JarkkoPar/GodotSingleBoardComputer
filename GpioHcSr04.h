@@ -2,7 +2,8 @@
 #define GPIO_HC_SR04_H_INCLUDED 
 
 #include "GpioDevice.h"
-
+#include <thread>
+#include <mutex>
 
 namespace godot {
 
@@ -33,20 +34,12 @@ protected:
     float _distance_mm;
     float _distance_inch;
 
-    //int _gpio_device_fd;          // The file descriptor for the gpio device, only used when running the app, not in the editor
-    //int _gpio_pin_index;          // Index in the internal array of the SingleBoardComputer class
-    //int _gpio_pin_fd;             // The file descriptor for the pin/pins, only used when running the app, not in the editor
-    //int _gpio_pin_type;           // The type of this pin (INPUT_L, INPUT_H, OUTPUT_L, OUTPUT_H)
-    //int _gpio_pin_offset;         // The offset for the pin
-
+    std::thread _distance_polling_thread;
+    std::mutex  _distance_polling_mutex;
+    bool        _end_processing;
     static void _bind_methods();
 
 public:
-
-    enum {
-        INPUT = 0,
-        OUTPUT
-    } GpioPinType;
 
     GpioHcSr04();
     ~GpioHcSr04();
@@ -82,7 +75,7 @@ public:
     void open_device();
     void close_device();
 
-    void trigger_echo_loop();
+    //void trigger_echo_loop();
 
     //void write_byte_to_device( uint8_t data );
     //int read_byte_from_device( uint8_t* result );

@@ -54,7 +54,7 @@ public:
     virtual void _initialize_device() override;
 
     void open_device();
-    void close_device();
+    virtual void close_device() override;
 
     void write_byte_to_device( uint8_t data );
     int read_byte_from_device( uint8_t* result );

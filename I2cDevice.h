@@ -53,7 +53,7 @@ public:
     virtual void _initialize_device() override;
 
     void open_device();
-    void close_device();
+    virtual void close_device() override;
 
     void _read_bytes_from_device(const int length);
     void _write_bytes_to_device(const char* buffer, int length);

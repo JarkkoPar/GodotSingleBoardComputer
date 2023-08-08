@@ -21,6 +21,7 @@ public:
 
     void initialize_device();
 
+    virtual void close_device();
 };
 
 

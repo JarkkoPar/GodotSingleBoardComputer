@@ -8,7 +8,7 @@ SBCDevice::SBCDevice() {
 
 
 SBCDevice::~SBCDevice() {
-
+    close_device();
 }
 
 
@@ -23,5 +23,9 @@ void SBCDevice::initialize_device() {
 
 
 void SBCDevice::_initialize_device() {
+    
+}
+
+void SBCDevice::close_device() {
     
 }

@@ -23,6 +23,7 @@ I2cDevice::I2cDevice() {
 
 
 I2cDevice::~I2cDevice() {
+    close_device();
     if( _i2c_device_fd >= 0 ) {
         //close(_i2c_device_fd ); // Closed by the SBC.
         _i2c_device_fd = -1;
