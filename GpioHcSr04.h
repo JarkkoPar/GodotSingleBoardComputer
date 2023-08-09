@@ -15,6 +15,10 @@ class GpioHcSr04 : public GpioDevice {
 private:
     
 protected: 
+    static void _bind_methods();
+
+
+public:
 
     bool _is_hcsr04_initialized;
     bool _is_active;
@@ -37,9 +41,8 @@ protected:
     std::thread _distance_polling_thread;
     std::mutex  _distance_polling_mutex;
     bool        _end_processing;
-    static void _bind_methods();
 
-public:
+//public:
 
     GpioHcSr04();
     ~GpioHcSr04();

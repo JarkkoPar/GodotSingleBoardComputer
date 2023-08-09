@@ -12,48 +12,51 @@
 
 using namespace godot;
 
-/**
-void thread_function_poll_distance( int trig_pin_fd, int echo_pin_fd, float* distance_mm, float* distance_inch, bool* end_processing ) {
+/**/
+void trigger_echo_loop( GpioHcSr04* sensor ) { //int trig_pin_fd, int echo_pin_fd, float* distance_mm, float* distance_inch, bool* end_processing ) {
     int return_value = 0;
     int echo_value = 0;
+    int gpio_trig_pin_fd = sensor->_gpio_trig_pin_fd;
+    int gpio_echo_pin_fd = sensor->_gpio_echo_pin_fd;
     struct gpio_v2_line_values data_to_send;
     struct gpio_v2_line_values data_read;
-    std::mutex m;
-    while(*end_processing == false ) {
+    while( sensor->_end_processing == false ) {
         echo_value = 0;
         memset(&data_to_send, 0, sizeof(data_to_send));
 	    //uint64_t mask = 0, bits = 0;
         data_to_send.bits = 1;
         data_to_send.mask = 1; 
-        return_value = ioctl(trig_pin_fd, GPIO_V2_LINE_SET_VALUES_IOCTL, &data_to_send);
+        return_value = ioctl(gpio_trig_pin_fd, GPIO_V2_LINE_SET_VALUES_IOCTL, &data_to_send);
         std::this_thread::sleep_for(std::chrono::microseconds(10));
         
         memset(&data_to_send, 0, sizeof(data_to_send));
 	    //uint64_t mask = 0, bits = 0;
         data_to_send.bits = 0;
         data_to_send.mask = 1; 
-        return_value = ioctl(trig_pin_fd, GPIO_V2_LINE_SET_VALUES_IOCTL, &data_to_send);
+        return_value = ioctl(gpio_trig_pin_fd, GPIO_V2_LINE_SET_VALUES_IOCTL, &data_to_send);
         auto start = std::chrono::high_resolution_clock::now();
-        while( *end_processing == false && echo_value == 0 ) {
+        while( echo_value == 0 ) {
+            if( sensor->_end_processing ) return;
             start = std::chrono::high_resolution_clock::now();
             memset(&data_read, 0, sizeof(data_read));
             data_read.mask = 1;
-            return_value = ioctl( echo_pin_fd, GPIO_V2_LINE_GET_VALUES_IOCTL, &data_read);
+            return_value = ioctl( gpio_echo_pin_fd, GPIO_V2_LINE_GET_VALUES_IOCTL, &data_read);
             echo_value = (uint8_t)data_read.bits;
         }
         auto end = std::chrono::high_resolution_clock::now();
-        while( *end_processing == false && echo_value == 1 ) {
+        while( echo_value == 1 ) {
+            if( sensor->_end_processing ) return;
             end = std::chrono::high_resolution_clock::now();
             memset(&data_read, 0, sizeof(data_read));
             data_read.mask = 1;
-            return_value = ioctl( echo_pin_fd, GPIO_V2_LINE_GET_VALUES_IOCTL, &data_read);
+            return_value = ioctl( gpio_echo_pin_fd, GPIO_V2_LINE_GET_VALUES_IOCTL, &data_read);
             echo_value = (uint8_t)data_read.bits;
         }
         auto duration_microseconds = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
         {
-            std::lock_guard<std::mutex> lock(m);
-            *distance_mm = (float)(duration_microseconds.count() * 0.0017150);
-            *distance_inch = *distance_mm * 0.03937007874f;
+            std::lock_guard<std::mutex> lock(sensor->_distance_polling_mutex);
+            sensor->_distance_mm = (float)(duration_microseconds.count() * 0.0017150);
+            sensor->_distance_inch = sensor->_distance_mm * 0.03937007874f;
         }
     }
 }
@@ -67,6 +70,8 @@ GpioHcSr04::GpioHcSr04() {
     _gpio_echo_pin_index = 6;
     _gpio_trig_pin_device_fd = -1;
     _gpio_echo_pin_device_fd = -1;
+    _gpio_trig_pin_fd = -1;
+    _gpio_echo_pin_fd = -1;
 
     _distance_mm = 0.0f;
     _distance_inch = 0.0f;
@@ -231,20 +236,19 @@ void GpioHcSr04::open_device() {
     _gpio_echo_pin_fd = echo_line_request.fd; 
 
     // Start th distance polling thread.
-    //_end_processing = false;
-    //_distance_polling_thread = std::thread(thread_function_poll_distance, _gpio_trig_pin_fd, _gpio_echo_pin_fd, &_distance_mm, &_distance_inch, &_end_processing );
+    _end_processing = false;
+    _distance_polling_thread = std::thread(trigger_echo_loop, this);//thread_function_poll_distance, _gpio_trig_pin_fd, _gpio_echo_pin_fd, &_distance_mm, &_distance_inch, &_end_processing );
 }
 
 
 void GpioHcSr04::close_device() {
-    //_distance_polling_mutex.lock();
-    /*{
+    {
         std::lock_guard<std::mutex> lock(_distance_polling_mutex);
         _end_processing = true;
     }
     if( _distance_polling_thread.joinable() ) {
         _distance_polling_thread.join();
-    }*/
+    }
 
     // Close the pin file descriptors if they are still open.
     if( _gpio_trig_pin_fd > -1 ) {
