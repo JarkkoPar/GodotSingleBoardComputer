@@ -12,8 +12,8 @@
 
 using namespace godot;
 
-/**/
-void trigger_echo_loop( GpioHcSr04* sensor ) { //int trig_pin_fd, int echo_pin_fd, float* distance_mm, float* distance_inch, bool* end_processing ) {
+
+void trigger_echo_loop( GpioHcSr04* sensor ) { 
     int return_value = 0;
     int echo_value = 0;
     int gpio_trig_pin_fd = sensor->_gpio_trig_pin_fd;
@@ -22,19 +22,19 @@ void trigger_echo_loop( GpioHcSr04* sensor ) { //int trig_pin_fd, int echo_pin_f
     struct gpio_v2_line_values data_read;
     while( sensor->_end_processing == false ) {
         echo_value = 0;
+        // Activate trigger.
+        auto start = std::chrono::high_resolution_clock::now();
         memset(&data_to_send, 0, sizeof(data_to_send));
-	    //uint64_t mask = 0, bits = 0;
         data_to_send.bits = 1;
         data_to_send.mask = 1; 
         return_value = ioctl(gpio_trig_pin_fd, GPIO_V2_LINE_SET_VALUES_IOCTL, &data_to_send);
         std::this_thread::sleep_for(std::chrono::microseconds(10));
-        
+        // Deactivate trigger.
         memset(&data_to_send, 0, sizeof(data_to_send));
-	    //uint64_t mask = 0, bits = 0;
-        data_to_send.bits = 0;
+	    data_to_send.bits = 0;
         data_to_send.mask = 1; 
         return_value = ioctl(gpio_trig_pin_fd, GPIO_V2_LINE_SET_VALUES_IOCTL, &data_to_send);
-        auto start = std::chrono::high_resolution_clock::now();
+        // Listen to the echo back going high.
         while( echo_value == 0 ) {
             if( sensor->_end_processing ) return;
             start = std::chrono::high_resolution_clock::now();
@@ -43,6 +43,7 @@ void trigger_echo_loop( GpioHcSr04* sensor ) { //int trig_pin_fd, int echo_pin_f
             return_value = ioctl( gpio_echo_pin_fd, GPIO_V2_LINE_GET_VALUES_IOCTL, &data_read);
             echo_value = (uint8_t)data_read.bits;
         }
+        // Listen to the echo back going low.
         auto end = std::chrono::high_resolution_clock::now();
         while( echo_value == 1 ) {
             if( sensor->_end_processing ) return;
@@ -55,12 +56,14 @@ void trigger_echo_loop( GpioHcSr04* sensor ) { //int trig_pin_fd, int echo_pin_f
         auto duration_microseconds = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
         {
             std::lock_guard<std::mutex> lock(sensor->_distance_polling_mutex);
-            sensor->_distance_mm = (float)(duration_microseconds.count() * 0.0017150);
+            sensor->_distance_mm = (float)(duration_microseconds.count() * 0.034f * 0.5f);
             sensor->_distance_inch = sensor->_distance_mm * 0.03937007874f;
         }
+        // Seems to need this pause to work properly.
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
 }
-/**/
+
 
 GpioHcSr04::GpioHcSr04() {
     _is_hcsr04_initialized = false;
@@ -190,7 +193,7 @@ void GpioHcSr04::open_device() {
 
     ERR_FAIL_INDEX_EDMSG(_gpio_trig_pin_index, 40, "Invalid index for gpio trigger pin (out of bounds).");
     ERR_FAIL_INDEX_EDMSG(_gpio_echo_pin_index, 40, "Invalid index for gpio echo pin (out of bounds).");
-
+    
     // Open the selected gpio file.
     _gpio_trig_pin_device_fd = sbc->request_gpio_device_file(_gpio_trig_pin_index);
     ERR_FAIL_COND_MSG(_gpio_trig_pin_device_fd < 0, "Request for gpio trigger pin device file failed.");
@@ -234,14 +237,16 @@ void GpioHcSr04::open_device() {
 
     // All OK so store the file descriptor.
     _gpio_echo_pin_fd = echo_line_request.fd; 
-
+    
     // Start th distance polling thread.
+    _is_hcsr04_initialized = true;
     _end_processing = false;
-    _distance_polling_thread = std::thread(trigger_echo_loop, this);//thread_function_poll_distance, _gpio_trig_pin_fd, _gpio_echo_pin_fd, &_distance_mm, &_distance_inch, &_end_processing );
+    _distance_polling_thread = std::thread(trigger_echo_loop, this);
 }
 
 
 void GpioHcSr04::close_device() {
+        
     {
         std::lock_guard<std::mutex> lock(_distance_polling_mutex);
         _end_processing = true;
