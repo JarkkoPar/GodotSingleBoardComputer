@@ -56,7 +56,7 @@ void trigger_echo_loop( GpioHcSr04* sensor ) {
         auto duration_microseconds = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
         {
             std::lock_guard<std::mutex> lock(sensor->_distance_polling_mutex);
-            sensor->_distance_mm = (float)(duration_microseconds.count() * 0.034f * 0.5f);
+            sensor->_distance_mm = 10.0f * (float)(duration_microseconds.count() * 0.034f * 0.5f);
             sensor->_distance_inch = sensor->_distance_mm * 0.03937007874f;
         }
         // Seems to need this pause to work properly.
