@@ -47,6 +47,10 @@ The base device node, not meant to be used in scenes. Unifies the initialization
 
 The base node for I2C devices with generic interfaces to interact with an I2C device. Under this node you will find specific device nodes. All I2C devices need the index of the i2c device file and the address of the device. While you can type in the address as hexadecimal, it will show up in the inspector as an integer. The derived I2C device nodes will have additional properties depending on the device in question.
 
+### GpioDevice
+
+The base node for various gpio-pin using devices that do not use a specific protocol.
+
 ### AdcDevice 
 
 The base node for Analog-to-digital converter devices built-in to the SBC. If there are ADC pins on the SBC, you can use the device nodes derived from this to interface with them. 
@@ -72,9 +76,15 @@ Default I2C address 0x40.
 
 ### I2cVl53l0x
 
-A VL53L0X based distance sensor for measuring distances. Currently initializes automatically in to continuous (or back-to-back) reading mode. You can get the measured distance in millimeters from the `distance_mm` property of the node and in inches from the `distance_inch` property. Note that the maximum distance measured by the VL53L0X sensor is 2 meters (2000 millimeters or 78.7 inches). If the distance returned is greater than the maximum, it meas there is nothing found in range of the sensor.
+A VL53L0X based distance sensor for measuring distances. Currently initializes automatically in to continuous (or back-to-back) reading mode. You can get the measured distance in millimeters from the `distance_mm` property of the node and in inches from the `distance_inch` property. Note that the maximum distance measured by the VL53L0X sensor is 2 meters (2000 millimeters or 78.7 inches). If the distance returned is greater than the maximum, there is nothing found in range of the sensor.
 
 Default I2C address 0x29.
+
+## GpioDevice nodes 
+
+### GpioHcSr04
+
+A HC-SR04 ultrasonic distance sensor for measuring distances. You can get the measured distance in millimeters from the `distance_mm` property of the node and in inches from the `distance_inch` property. The node uses a separate thread to do the measurement every 200 milliseconds, or about 5 times per second.
 
 ## AdcDevice nodes 
 
