@@ -25,6 +25,8 @@ public:
         GPF_SPI_CSn,
         GPF_SPI_TXD,
         GPF_SPI_RXD,
+        GPF_SPI_MISO,
+        GPF_SPI_MOSI,
         GPF_PWM,
         GPF_UART_TXD,
         GPF_UART_RXD,
@@ -33,8 +35,10 @@ public:
         GPF_I2S_LRCK_RX,
         GPF_I2S_SDI,
         GPF_I2S_SDO,
-        GPF_SPDIF_TX ,
-        GPF_ADC_IN
+        GPF_SPDIF_TX,
+        GPF_ADC_IN,
+        GPF_CAN_TX,
+        GPF_CAN_RX
     };
 
     GpioPin();

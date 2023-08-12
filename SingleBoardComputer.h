@@ -27,11 +27,13 @@ private:
     int _num_adc_pins;  // Number of ADC pins on the sbc
     int _num_i2c_buses; // Number of I2C buses on the sbc
     int _num_spi_buses; // Number of SPI buses on the sbc
+    int _num_can_buses; // Number of CAN buses on the sbc
 
     // The configs for the gpio, pwm, ic2, etc...
     GpioPin* _gpio_pins; // An array of gpio pins. 
     I2cBus* _i2c_buses;  // Array of i2c buses.
     SpiBus* _spi_buses;  // Array of spi buses.
+    //CanBus* _can_buses;  // Array of can buses.
 
     // The device file descriptors.
     int* _opened_gpio_device_files;
