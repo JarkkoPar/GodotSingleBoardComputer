@@ -66,8 +66,8 @@ void trigger_echo_loop( GpioHcSr04* sensor ) {
 
 
 GpioHcSr04::GpioHcSr04() {
-    _is_hcsr04_initialized = false;
-    _is_active = true;
+    //_is_hcsr04_initialized = false;
+    //_is_active = true;
 
     _gpio_trig_pin_index = 5;
     _gpio_echo_pin_index = 6;
@@ -88,10 +88,6 @@ GpioHcSr04::~GpioHcSr04() {
 
 
 void GpioHcSr04::_bind_methods() {
-
-    ClassDB::bind_method(D_METHOD("set_is_active", "is_active"), &GpioHcSr04::set_is_active);
-	ClassDB::bind_method(D_METHOD("get_is_active"), &GpioHcSr04::get_is_active);
-    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_active", PROPERTY_HINT_NONE ), "set_is_active", "get_is_active");
 
     ClassDB::bind_method(D_METHOD("set_gpio_trig_pin_index", "echo_pin_number"), &GpioHcSr04::set_gpio_trig_pin_index);
 	ClassDB::bind_method(D_METHOD("get_gpio_trig_pin_index"), &GpioHcSr04::get_gpio_trig_pin_index);
@@ -129,15 +125,6 @@ void GpioHcSr04::_notification(int p_what) {
 
 
 // Getters and setters.
-
-void GpioHcSr04::set_is_active( bool is_active ) {
-    _is_active = is_active;
-}
-
-bool GpioHcSr04::get_is_active() const {
-    return _is_active;
-}
-
 
 void GpioHcSr04::set_gpio_trig_pin_index( int trig_pin_number ) {
     _gpio_trig_pin_index = trig_pin_number - 1;
@@ -177,9 +164,9 @@ float GpioHcSr04::get_distance_inch() {
 
 void GpioHcSr04::_initialize_device() {
     // Only initialize once.
-    if( _is_hcsr04_initialized ) return;
-    if(Engine::get_singleton()->is_editor_hint()) return;
-    if( !_is_active ) return;
+    //if( _is_hcsr04_initialized ) return;
+    //if(Engine::get_singleton()->is_editor_hint()) return;
+    //if( !_is_active ) return;
 
     open_device();
 }
@@ -239,7 +226,7 @@ void GpioHcSr04::open_device() {
     _gpio_echo_pin_fd = echo_line_request.fd; 
     
     // Start th distance polling thread.
-    _is_hcsr04_initialized = true;
+    //_is_hcsr04_initialized = true;
     _end_processing = false;
     _distance_polling_thread = std::thread(trigger_echo_loop, this);
 }

@@ -34,9 +34,9 @@ AdcDevice::~AdcDevice() {
 void AdcDevice::_bind_methods() {
 
     // The voltage of the pin and its value between 0..1023.
-    ClassDB::bind_method(D_METHOD("set_adc_gpio_pin_index", "pin_index"), &AdcDevice::set_adc_gpio_pin_index);
-	ClassDB::bind_method(D_METHOD("get_adc_gpio_pin_index"), &AdcDevice::get_adc_gpio_pin_index);
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "adc_gpio_pin_index", PROPERTY_HINT_RANGE, "0,39"), "set_adc_gpio_pin_index", "get_adc_gpio_pin_index");
+    ClassDB::bind_method(D_METHOD("set_adc_gpio_pin_number", "pin_number"), &AdcDevice::set_adc_gpio_pin_index);
+	ClassDB::bind_method(D_METHOD("get_adc_gpio_pin_number"), &AdcDevice::get_adc_gpio_pin_index);
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "adc_gpio_pin_number", PROPERTY_HINT_RANGE, "1,40"), "set_adc_gpio_pin_number", "get_adc_gpio_pin_number");
 
     ClassDB::bind_method(D_METHOD("set_adc_gpio_pin_value", "value"), &AdcDevice::set_adc_pin_value);
 	ClassDB::bind_method(D_METHOD("get_adc_gpio_pin_value"), &AdcDevice::get_adc_pin_value);
@@ -74,8 +74,9 @@ void AdcDevice::_notification(int p_what) {
 // Getters and setters.
 
 
-void AdcDevice::set_adc_gpio_pin_index( int pin_index ) {
+void AdcDevice::set_adc_gpio_pin_index( int pin_number ) {
     // If just loading, simply set the value.
+    int pin_index = pin_number - 1;
     if( is_inside_tree() == false ){
         _adc_gpio_pin_index = pin_index;
         return; 
@@ -83,14 +84,14 @@ void AdcDevice::set_adc_gpio_pin_index( int pin_index ) {
 
     SingleBoardComputer* sbc = Object::cast_to<SingleBoardComputer>(get_parent());
     ERR_FAIL_COND_MSG(sbc == nullptr, "This node needs to be a child of the SingleBoardComputer node.");
-    ERR_FAIL_COND_MSG(pin_index < 0 || pin_index >= sbc->get_num_gpio_pins(), "Pin index must be between 0 and num_pins-1. First valid pin index is 0.");
+    ERR_FAIL_COND_MSG(pin_index < 0 || pin_index >= sbc->get_num_gpio_pins(), "Pin number must be between 1 and num_pins. First valid pin number is 1.");
     ERR_FAIL_COND_MSG(!sbc->get_gpio_pins()[pin_index].has_pin_function(GpioPin::GpioPinFunction::GPF_ADC_IN), "The selected pin does not have the ADC function.");
 
     _adc_gpio_pin_index = pin_index;
 }
 
 int AdcDevice::get_adc_gpio_pin_index() const {
-    return _adc_gpio_pin_index;
+    return _adc_gpio_pin_index + 1;
 }
 
 
@@ -125,7 +126,7 @@ void AdcDevice::open_device() {
     SingleBoardComputer* sbc = Object::cast_to<SingleBoardComputer>(get_parent());
     ERR_FAIL_COND_MSG(sbc == nullptr, "This node needs to be a child of the SingleBoardComputer node.");
 
-    ERR_FAIL_COND_MSG(_adc_gpio_pin_index < 0 || _adc_gpio_pin_index >= sbc->get_num_gpio_pins(), "Invalid index for gpio pin (out of bounds).");
+    ERR_FAIL_COND_MSG(_adc_gpio_pin_index < 0 || _adc_gpio_pin_index >= sbc->get_num_gpio_pins(), "Invalid pin number for gpio pin (out of bounds).");
     ERR_FAIL_COND_MSG(!sbc->get_gpio_pins()[_adc_gpio_pin_index].has_pin_function(GpioPin::GpioPinFunction::GPF_ADC_IN), "The selected pin does not have the ADC function.");
 
     // Get the raw file index

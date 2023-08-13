@@ -14,7 +14,7 @@ private:
     //int _pwm_frequency_hz; 
     //int _pwm_prescale_value;
     //double _pwm_oscillator_frequency;
-    bool _is_ads1115_initialized;
+    //bool _is_ads1115_initialized;
     double _ads1115_update_frame_delay;
     double _ads1115_update_wait_time;
 

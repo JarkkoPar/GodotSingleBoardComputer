@@ -11,7 +11,7 @@ class I2cPca9685 : public I2cDevice {
     GDCLASS(I2cPca9685, I2cDevice)
 
 private:
-    bool _is_active;
+    //bool _is_active;
 
     int _pwm_frequency_hz; 
     int _pwm_prescale_value;
@@ -69,8 +69,8 @@ public:
 
     // Getters and setters.
 
-    void set_is_active( bool is_active );
-    bool get_is_active() const;
+    //void set_is_active( bool is_active );
+    //bool get_is_active() const;
 
     void set_pwm_frequency_hz( int new_frequency_hz );
     int  get_pwm_frequency_hz() const;    

@@ -37,7 +37,7 @@ Set up your project as described in the godot documentation for the gdexample ex
 
 ### SingleBoardComputer 
 
-The main node that is needed to interface with any device. You must choose which SBC you are using in the Board-dropdown in the inspector. This will allow the initialization of all the relevant interfaces when your project is run.
+The main node that is needed to interface with any device. You must choose which SBC you are using in the Board-dropdown in the inspector. This will allow the initialization of all the relevant interfaces when your project is run. The SingleBoardComputer node is also the one that holds most of the file descriptors, and the actual device nodes will request for them during runtime.
 
 ### SBCDevice 
 

@@ -20,8 +20,7 @@ protected:
 
 public:
 
-    bool _is_hcsr04_initialized;
-    bool _is_active;
+    //bool _is_hcsr04_initialized;
     
     int _gpio_trig_pin_index;     // The triggering pin index
     int _gpio_trig_pin_type;      // The triggering pin type
@@ -54,9 +53,6 @@ public:
     void _notification(int p_what);
 
     // Getters and setters.
-
-    void set_is_active( bool is_active );
-    bool get_is_active() const;
 
     void set_gpio_trig_pin_index( int trig_pin_number );
     int  get_gpio_trig_pin_index() const;

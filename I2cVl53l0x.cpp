@@ -5,8 +5,8 @@
 using namespace godot;
 
 I2cVl53l0x::I2cVl53l0x() {
-    _is_active = true;
-    _is_vl53l0x_initialized = false;
+    //_is_active = true;
+    //_is_vl53l0x_initialized = false;
     _vl53l0x_update_frame_delay = 0.25;
     _vl53l0x_update_wait_time = 0.0;
     //_custom_vl53l0x_i2c_device_address = 0x28;
@@ -24,9 +24,9 @@ void I2cVl53l0x::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_custom_vl53l0x_i2c_device_address", "new_i2c_device_address"), &I2cVl53l0x::set_custom_vl53l0x_i2c_device_address);
 	//ClassDB::bind_method(D_METHOD("get_custom_vl53l0x_i2c_device_address"), &I2cVl53l0x::get_custom_vl53l0x_i2c_device_address);
 
-    ClassDB::bind_method(D_METHOD("set_is_active", "is_active"), &I2cVl53l0x::set_is_active);
-	ClassDB::bind_method(D_METHOD("get_is_active"), &I2cVl53l0x::get_is_active);
-    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_active", PROPERTY_HINT_NONE ), "set_is_active", "get_is_active");
+    //ClassDB::bind_method(D_METHOD("set_is_active", "is_active"), &I2cVl53l0x::set_is_active);
+	//ClassDB::bind_method(D_METHOD("get_is_active"), &I2cVl53l0x::get_is_active);
+    //ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_active", PROPERTY_HINT_NONE ), "set_is_active", "get_is_active");
 
     ClassDB::bind_method(D_METHOD("set_reading_mode", "mode"), &I2cVl53l0x::set_reading_mode);
 	ClassDB::bind_method(D_METHOD("get_reading_mode"), &I2cVl53l0x::get_reading_mode);
@@ -52,7 +52,8 @@ void I2cVl53l0x::_process(double delta) {
     if( _vl53l0x_update_wait_time > 0.0 ) return;
     _vl53l0x_update_wait_time = _vl53l0x_update_frame_delay;
 
-    ERR_FAIL_COND_MSG( !_is_vl53l0x_initialized, "VL53L0X is not yet initialized, cannot update the distance property in _process().");
+    //ERR_FAIL_COND_MSG( !_is_vl53l0x_initialized, "VL53L0X is not yet initialized, cannot update the distance property in _process().");
+    ERR_FAIL_COND_MSG( !_is_device_initialized, "VL53L0X is not yet initialized, cannot update the distance property in _process().");
     
     uint8_t msb = read_byte_from_device_register((uint8_t)(Vl53l0xRegisters::MEASUREMENT_MOST_SIGNIFICANT_BIT));
     uint8_t lsb = read_byte_from_device_register((uint8_t)(Vl53l0xRegisters::MEASUREMENT_LEAST_SIGNIFICANT_BIT));
@@ -72,6 +73,7 @@ void I2cVl53l0x::_notification(int p_what) {
 
 // Getters and setters.
 
+/**
 void I2cVl53l0x::set_is_active( bool is_active ) {
     _is_active = is_active;
 }
@@ -79,7 +81,7 @@ void I2cVl53l0x::set_is_active( bool is_active ) {
 bool I2cVl53l0x::get_is_active() const {
     return _is_active;
 }
-
+/**/
 
 void I2cVl53l0x::set_reading_mode( int mode ) {
     _reading_mode = mode;
@@ -120,7 +122,7 @@ void I2cVl53l0x::set_custom_vl53l0x_i2c_device_address( int new_i2c_device_addre
 
 void I2cVl53l0x::_initialize_device() {
     // Only initialize once.
-    if( _is_vl53l0x_initialized ) return;
+    //if( _is_vl53l0x_initialized ) return;
     if(Engine::get_singleton()->is_editor_hint()) return;
     if( !_is_active ) return;
     set_i2c_device_bus_number(_i2c_device_bus_number);
@@ -135,7 +137,7 @@ void I2cVl53l0x::_initialize_device() {
     //    WARN_PRINT_ONCE("The custom device address is set but it does not match the address on the device.");
     //}
     
-    _is_vl53l0x_initialized = true;
+    //_is_vl53l0x_initialized = true;
 }   
     
 

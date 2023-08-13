@@ -32,9 +32,9 @@ I2cPca9685::~I2cPca9685() {
 
 void I2cPca9685::_bind_methods() {
     
-    ClassDB::bind_method(D_METHOD("set_is_active", "is_active"), &I2cPca9685::set_is_active);
-    ClassDB::bind_method(D_METHOD("get_is_active"), &I2cPca9685::get_is_active);
-    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_active", PROPERTY_HINT_NONE), "set_is_active", "get_is_active");
+    //ClassDB::bind_method(D_METHOD("set_is_active", "is_active"), &I2cPca9685::set_is_active);
+    //ClassDB::bind_method(D_METHOD("get_is_active"), &I2cPca9685::get_is_active);
+    //ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_active", PROPERTY_HINT_NONE), "set_is_active", "get_is_active");
 
     
     // Initialization timeout helper.
@@ -406,7 +406,7 @@ void I2cPca9685::update_servo_min_max_angle_pulse_counts() {
     _pwm_prescale_value = (int)(_pwm_oscillator_frequency / (4096.0 * (double)_pwm_frequency_hz));
 }
 
-
+/**
 void I2cPca9685::set_is_active( bool is_active ) {
     _is_active = is_active;
 }
@@ -414,6 +414,7 @@ void I2cPca9685::set_is_active( bool is_active ) {
 bool I2cPca9685::get_is_active() const {
     return _is_active;
 }
+/**/
 
 void I2cPca9685::set_pwm_frequency_hz( int new_frequency_hz ) {
     _pwm_frequency_hz = new_frequency_hz;

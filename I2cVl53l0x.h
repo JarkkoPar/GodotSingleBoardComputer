@@ -10,7 +10,7 @@ class I2cVl53l0x : public I2cDevice {
     GDCLASS(I2cVl53l0x, I2cDevice)
 
 private:
-    bool _is_vl53l0x_initialized;
+    //bool _is_vl53l0x_initialized;
     double _vl53l0x_update_frame_delay;
     double _vl53l0x_update_wait_time;
 
@@ -85,8 +85,8 @@ public:
 
     // Getters and setters.
 
-    void set_is_active( bool is_active );
-    bool get_is_active() const;
+    //void set_is_active( bool is_active );
+    //bool get_is_active() const;
 
     void set_reading_mode( int mode );
     int  get_reading_mode() const;
