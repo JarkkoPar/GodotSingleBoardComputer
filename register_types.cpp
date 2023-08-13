@@ -36,21 +36,21 @@ void initialize_singleboardcomputer_module(ModuleInitializationLevel p_level) {
 
     // Add the classes here.
     ClassDB::register_class<SingleBoardComputer>();
-    ClassDB::register_class<SBCDevice>();
+    ClassDB::register_class<SBCDevice>(true);
 
     // I2C devices.
-    ClassDB::register_class<I2cDevice>();
+    ClassDB::register_class<I2cDevice>(true);
     ClassDB::register_class<I2cPca9685>();
     ClassDB::register_class<I2cVl53l0x>();
 
     // Gpio devices.
-    ClassDB::register_class<GpioDevice>();
+    ClassDB::register_class<GpioDevice>(true);
     ClassDB::register_class<GpioLED>();
     ClassDB::register_class<GpioHcSr04>();
 
 
     // ADC devices.
-    ClassDB::register_class<AdcDevice>();
+    ClassDB::register_class<AdcDevice>(true);
     ClassDB::register_class<AdcTemperatureSensor>();
 
     // Helpers and others.

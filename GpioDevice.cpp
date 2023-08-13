@@ -30,9 +30,9 @@ GpioDevice::~GpioDevice() {
 void GpioDevice::_bind_methods() {
 
     // Gpio Pin Number on the SCB.
-    ClassDB::bind_method(D_METHOD("set_gpio_pin_index", "pin_index"), &GpioDevice::set_gpio_pin_index);
-	ClassDB::bind_method(D_METHOD("get_gpio_pin_index"), &GpioDevice::get_gpio_pin_index);
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "gpio_pin_index", PROPERTY_HINT_RANGE, "0,39"), "set_gpio_pin_index", "get_gpio_pin_index");
+    ClassDB::bind_method(D_METHOD("set_gpio_pin_number", "pin_number"), &GpioDevice::set_gpio_pin_index);
+	ClassDB::bind_method(D_METHOD("get_gpio_pin_number"), &GpioDevice::get_gpio_pin_index);
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "gpio_pin_number", PROPERTY_HINT_RANGE, "1,40"), "set_gpio_pin_number", "get_gpio_pin_number");
 
     // Read and write methods.
     //ClassDB::bind_method(D_METHOD("open_device"), &I2CRawDevice::open_device);
@@ -60,8 +60,9 @@ void GpioDevice::_notification(int p_what) {
 // Getters and setters.
 
 
-void GpioDevice::set_gpio_pin_index( int pin_index ) {
+void GpioDevice::set_gpio_pin_index( int pin_number ) {
     // If just loading, simply set the value.
+    int pin_index = pin_number - 1;
     if( is_inside_tree() == false ){
         _gpio_pin_index = pin_index;
         return; 
@@ -76,7 +77,7 @@ void GpioDevice::set_gpio_pin_index( int pin_index ) {
 }
 
 int GpioDevice::get_gpio_pin_index() const {
-    return _gpio_pin_index;
+    return _gpio_pin_index + 1;
 }
 
 
