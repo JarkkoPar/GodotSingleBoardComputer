@@ -190,11 +190,15 @@ void GpioHcSr04::open_device() {
 
 
     // Get the pin offsets.
-    int trig_pin_offset = sbc->get_gpio_pin_offset(_gpio_trig_pin_index);
-    int echo_pin_offset = sbc->get_gpio_pin_offset(_gpio_echo_pin_index);
+    //int trig_pin_offset = sbc->get_gpio_pin_offset(_gpio_trig_pin_index);
+    //int echo_pin_offset = sbc->get_gpio_pin_offset(_gpio_echo_pin_index);
     
 
     // Request the triggering pin.
+    _gpio_trig_pin_fd = request_pin_number(_gpio_trig_pin_index + 1, GPIO_TYPE_OUTPUT, (char *)this->get_name().to_ascii_buffer().ptr() );
+    ERR_FAIL_COND_MSG(_gpio_trig_pin_fd < 0, "Failed to get line handle from gpio device for the HC-SR04 triggering pin.");
+    
+    /**
     struct gpio_v2_line_request trig_line_request;
     memset(&trig_line_request, 0, sizeof(trig_line_request));
     trig_line_request.config.flags = GPIO_V2_LINE_FLAG_OUTPUT;
@@ -205,12 +209,15 @@ void GpioHcSr04::open_device() {
     
     int return_value = ioctl(_gpio_trig_pin_device_fd, GPIO_V2_GET_LINE_IOCTL, &trig_line_request);
     ERR_FAIL_COND_MSG(return_value < 0, "Failed to get line handle from gpio device for the HC-SR04 triggering pin.");
-
+    
     // All OK so store the file descriptor.
     _gpio_trig_pin_fd = trig_line_request.fd; 
-
+    */
 
     // Request the echoing pin.
+    _gpio_echo_pin_fd = request_pin_number(_gpio_echo_pin_index + 1, GPIO_TYPE_INPUT, (char *)this->get_name().to_ascii_buffer().ptr() );
+    ERR_FAIL_COND_MSG(_gpio_echo_pin_fd < 0, "Failed to get line handle from gpio device for the HC-SR04 echoing pin.");
+    /**
     struct gpio_v2_line_request echo_line_request;
     memset(&echo_line_request, 0, sizeof(echo_line_request));
     echo_line_request.config.flags = GPIO_V2_LINE_FLAG_INPUT;    
@@ -224,7 +231,7 @@ void GpioHcSr04::open_device() {
 
     // All OK so store the file descriptor.
     _gpio_echo_pin_fd = echo_line_request.fd; 
-    
+    /**/
     // Start th distance polling thread.
     //_is_hcsr04_initialized = true;
     _end_processing = false;

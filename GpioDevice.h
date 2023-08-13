@@ -18,10 +18,10 @@ private:
     
 protected: 
     
-    int _gpio_device_fd;          // The file descriptor for the gpio device, only used when running the app, not in the editor
-    int _gpio_pin_index;          // Index in the internal array of the SingleBoardComputer class
-    int _gpio_pin_fd;             // The file descriptor for the pin/pins, only used when running the app, not in the editor
-    int _gpio_pin_type;           // The type of this pin (INPUT_L, INPUT_H, OUTPUT_L, OUTPUT_H)
+    //int _gpio_device_fd;          // The file descriptor for the gpio device, only used when running the app, not in the editor
+    //int _gpio_pin_index;          // Index in the internal array of the SingleBoardComputer class
+    //int _gpio_pin_fd;             // The file descriptor for the pin/pins, only used when running the app, not in the editor
+    //int _gpio_pin_type;           // The type of this pin (INPUT_L, INPUT_H, OUTPUT_L, OUTPUT_H)
     //int _gpio_pin_offset;         // The offset for the pin
 
     static void _bind_methods();
@@ -44,20 +44,23 @@ public:
 
     // Getters and setters.
 
-    void set_gpio_pin_index( int pin_index );
-    int  get_gpio_pin_index() const;
+    //void set_gpio_pin_index( int pin_index );
+    //int  get_gpio_pin_index() const;
     
-    void set_gpio_pin_type( int pin_type );
-    int  get_gpio_pin_type() const;
+    //void set_gpio_pin_type( int pin_type );
+    //int  get_gpio_pin_type() const;
 
     // Device handling.
+
+    int request_pin_number( int pin_number, int pin_type, const char* consumer_name );
+
     virtual void _initialize_device() override;
 
     void open_device();
     virtual void close_device() override;
 
-    void write_byte_to_device( uint8_t data );
-    int read_byte_from_device( uint8_t* result );
+    void write_byte_to_device( int gpio_pin_fd, uint8_t data );
+    int read_byte_from_device( int gpio_pin_fd, uint8_t* result );
 };
 
 }
