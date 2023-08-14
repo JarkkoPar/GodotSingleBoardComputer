@@ -5,6 +5,22 @@ using namespace godot;
 
 
 I2cAds1115::I2cAds1115() {
+    _ain0_value = 0;
+    _ain1_value = 0;
+    _ain2_value = 0;
+    _ain3_value = 0;
+
+    // The default config
+    _config =  ADS1115InputMultiplexerConfiguration::P_AIN0_N_AIN1   |
+               ADS1115ProgrammableGainAmplifierConfiguration::GAIN_2 |
+               ADS1115DeviceOperatingMode::SINGLE_SHOT |
+               ADS1115DataRate::SPS_128 |
+               ADS1115ComparatorMode::TRADITIONAL |
+               ADS1115ComparatorPolarity::ACTIVE_LOW ||
+               ADS1115LatchingComparator::NON_LATCHING |
+               ADS1115ComparatorQueueAndDisable::DISABLE
+    ;
+
 
 }
 
