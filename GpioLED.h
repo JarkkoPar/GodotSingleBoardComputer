@@ -16,6 +16,8 @@ private:
 protected: 
 
     static void _bind_methods();
+    virtual void _open_gpio_device() override;
+    virtual void _configure_gpio_device();
 
 public: 
     GpioLED();
@@ -31,9 +33,8 @@ public:
 
 
     // Device handling.
-    virtual void _initialize_device() override;
-    void open_device();
-
+    
+    
 };
 
 }

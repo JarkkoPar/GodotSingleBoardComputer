@@ -59,14 +59,14 @@ void GpioLED::set_is_LED_on( const bool is_on ) {
 
 // Device handling.
 
-void GpioLED::_initialize_device() {
-    open_device();
+void GpioLED::_open_gpio_device() {
+    _led_fd = request_pin_number(_led_pin_index + 1, GPIO_TYPE_OUTPUT, (char *)this->get_name().to_ascii_buffer().ptr());
 }
 
 
-void GpioLED::open_device() {
-    _led_fd = request_pin_number(_led_pin_index + 1, GPIO_TYPE_OUTPUT, (char *)this->get_name().to_ascii_buffer().ptr());
-
+void GpioLED::_configure_gpio_device() {
+    ERR_FAIL_COND_MSG(_led_fd < 0, "LED configuration failed because the device file is not opened.");
+    
     if( _is_LED_on ) {
         write_byte_to_device(_led_fd, 1);    
     } else {

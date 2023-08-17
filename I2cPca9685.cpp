@@ -13,14 +13,9 @@ I2cPca9685::I2cPca9685() {
         servo_max_angle_ms[i] = 2.0;
     }
 
-    _is_active = true;
-
     _pwm_frequency_hz = 50; 
     _pwm_oscillator_frequency = 25000000.0; // 25 MHz
-    update_servo_min_max_angle_pulse_counts();
-    _is_pca9685_initialized = false;
-    
-    
+    update_servo_min_max_angle_pulse_counts();    
 }
 
 
@@ -32,13 +27,9 @@ I2cPca9685::~I2cPca9685() {
 
 void I2cPca9685::_bind_methods() {
     
-    //ClassDB::bind_method(D_METHOD("set_is_active", "is_active"), &I2cPca9685::set_is_active);
-    //ClassDB::bind_method(D_METHOD("get_is_active"), &I2cPca9685::get_is_active);
-    //ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_active", PROPERTY_HINT_NONE), "set_is_active", "get_is_active");
-
     
     // Initialization timeout helper.
-    ClassDB::bind_method(D_METHOD("on_timer_finished_finalize_initialize"), &I2cPca9685::on_timer_finished_finalize_initialize);   
+    //ClassDB::bind_method(D_METHOD("on_timer_finished_finalize_initialize"), &I2cPca9685::on_timer_finished_finalize_initialize);   
 
     ClassDB::bind_method(D_METHOD("set_pwm_frequency_hz", "pwm_frequency_hz"), &I2cPca9685::set_pwm_frequency_hz);
     ClassDB::bind_method(D_METHOD("get_pwm_frequency_hz"), &I2cPca9685::get_pwm_frequency_hz);
@@ -255,7 +246,7 @@ void I2cPca9685::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_servo15_euler_angle"), &I2cPca9685::get_servo15_euler_angle);
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "servo_15_angle", PROPERTY_HINT_RANGE, "0.0,180.0"), "set_servo15_euler_angle", "get_servo15_euler_angle");
 
-
+    /**
     // The led values.
     ADD_GROUP("LEDs", "");
     ClassDB::bind_method(D_METHOD("set_led0_value", "led_value"), &I2cPca9685::set_led0_value);
@@ -325,20 +316,6 @@ void I2cPca9685::_bind_methods() {
     //ClassDB::bind_method(D_METHOD("set_led0_value", "led_value"), &I2cPca9685::set_led0_value);
 	//ClassDB::bind_method(D_METHOD("get_led0_value"), &I2cPca9685::get_led0_value);
     //ADD_PROPERTY(PropertyInfo(Variant::INT, "LED 0", PROPERTY_HINT_NONE, ""), "set_led0_value", "get_led0_value");
-
-    /*
-    BIND_ENUM_CONSTANT(MODE1);
-    BIND_ENUM_CONSTANT(MODE2);
-    BIND_ENUM_CONSTANT(SUBADDR1);
-    BIND_ENUM_CONSTANT(SUBADDR2);
-    BIND_ENUM_CONSTANT(SUBADDR3);
-    BIND_ENUM_CONSTANT(BROADCAST);
-    BIND_ENUM_CONSTANT(SLOT0);
-    BIND_ENUM_CONSTANT(SLOT0_ON_L);
-    BIND_ENUM_CONSTANT(SLOT0_ON_H);
-    BIND_ENUM_CONSTANT(SLOT0_OFF_L);
-    BIND_ENUM_CONSTANT(SLOT0_OFF_H);
-    BIND_ENUM_CONSTANT(PRESCALE); 
     /**/
 }
 
@@ -346,7 +323,7 @@ void I2cPca9685::_bind_methods() {
 
 
 void I2cPca9685::_process(double delta) {
-    if( !_is_pca9685_initialized ) return;
+    if( !_is_device_initialized ) return;
     if(Engine::get_singleton()->is_editor_hint()) return;
 
     // We update at the same hz as the servo's are running
@@ -406,15 +383,6 @@ void I2cPca9685::update_servo_min_max_angle_pulse_counts() {
     _pwm_prescale_value = (int)(_pwm_oscillator_frequency / (4096.0 * (double)_pwm_frequency_hz));
 }
 
-/**
-void I2cPca9685::set_is_active( bool is_active ) {
-    _is_active = is_active;
-}
-
-bool I2cPca9685::get_is_active() const {
-    return _is_active;
-}
-/**/
 
 void I2cPca9685::set_pwm_frequency_hz( int new_frequency_hz ) {
     _pwm_frequency_hz = new_frequency_hz;
@@ -426,7 +394,7 @@ void I2cPca9685::set_pwm_frequency_hz( int new_frequency_hz ) {
     }
     if(Engine::get_singleton()->is_editor_hint()) return;
     if( _i2c_device_fd < 0 ) return; // Device not opened so cannot do this yet. Will be set on init in any case.
-    if( !_is_pca9685_initialized ) return;
+    if( !_is_device_initialized ) return;
     if( !_is_active ) return;
 
     // Send to the device if not in editor.
@@ -465,18 +433,9 @@ int  I2cPca9685::get_pwm_frequency_hz() const {
 }
 
 
-void I2cPca9685::_initialize_device() {
-    // Only initialize once.
-    if( _is_pca9685_initialized ) return;
-    if(Engine::get_singleton()->is_editor_hint()) return;
-    if( !_is_active ) return;
-    set_i2c_device_bus_number(_i2c_device_bus_number);
-    open_device();
-    ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "PCA9685 initialization failed because the device file is not opened.");
+void I2cPca9685::_configure_i2c_device() {
+    ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "PCA9685 configuration failed because the device file is not opened.");
     
-
-    _is_pca9685_initialized = true;
-
     // Read the current MODE1 register value.
     //uint8_t current_state = read_byte_from_device_register(PCA9685Registers::MODE1);
 
@@ -487,42 +446,6 @@ void I2cPca9685::_initialize_device() {
     
     set_pwm_frequency_hz(_pwm_frequency_hz);
 
-    // Device must sleep to change the setting.
-    /**
-    current_state |= PCA9685Mode::SLEEP;
-    write_byte_to_device_register( PCA9685Registers::MODE1, PCA9685Mode::SLEEP);
-    OS::get_singleton()->delay_msec(50);
-    write_byte_to_device_register( PCA9685Registers::PRESCALE, (uint8_t)_pwm_prescale_value);
-    OS::get_singleton()->delay_msec(50);
-    write_byte_to_device_register( PCA9685Registers::MODE1, PCA9685Mode::RESTART);
-    OS::get_singleton()->delay_msec(50);
-    
-    OS::get_singleton()->delay_msec(50);
-    /**
-    // Create a timer that will then finalize the 
-    // initialization.
-    Timer* waittimer = memnew(Timer);//::_new();
-    add_child(waittimer);
-    waittimer->set_wait_time(0.5);
-    waittimer->set_one_shot(true);
-    waittimer->connect("timeout", godot::Callable(this, "on_timer_finished_finalize_initialize"));
-     // callable_mp(this, &I2cPca9685::on_timer_finished_finalize_initialize ));
-    //"on_timer_finished_finalize_initialize");
-    
-    waittimer->start();
-    //delay(1); 
-    /**/
-}
-
-void I2cPca9685::on_timer_finished_finalize_initialize() {
-    // Remove the timer.
-    Timer* waittimer = static_cast<Timer*>(find_child("wake_wait_timer", false, true));
-    if( waittimer != nullptr ) {
-        waittimer->queue_free();
-        waittimer = nullptr;
-    }
-
-    wake_pca9685();
 }
 
 
@@ -850,31 +773,6 @@ int  I2cPca9685::get_servo_max_angle_pulses() const {
 void I2cPca9685::set_servo_euler_angle( const int servo_index, const float new_euler_angle ) {
     ERR_FAIL_COND_MSG(servo_index < 0 || servo_index > 15, "set_servo_euler_angle: Servo index out of bounds.");
     servo_angles[servo_index] = new_euler_angle;
-    
-    
-    return;
-    if(Engine::get_singleton()->is_editor_hint()) return;
-
-    /**
-    // Degrees go between -90.0 and 90.0, so scale
-    // to 0..1 first.
-    float angle = new_euler_angle;
-    if( angle < -90.0f ) { 
-        angle = -90.0f; 
-    }else if( angle > 90.0f ) {
-        angle = 90.0f;
-    }
-    angle += 90.0f;
-    angle /= 180.0f;
-    //int servo_pulse_range = _servo_max_angle_pulses - _servo_min_angle_pulses;
-
-    int off_index = (int)((float)_servo_pulses_between_min_max_angles * angle);
-    //if( off_index > _servo_max_angle_pulses ) {
-    //    off_index = _servo_max_angle_pulses;
-    //}
-
-    set_led_pulse_range( servo_index, 0, _servo_min_angle_pulses + off_index );
-    /**/
 }
 
 void I2cPca9685::set_servo0_euler_angle( const float new_euler_angle ) {

@@ -32,6 +32,8 @@ private:
 protected: 
     static void _bind_methods();
 
+    virtual void _configure_i2c_device() override;
+    
 public:
 
     enum PCA9685Registers {
@@ -77,12 +79,7 @@ public:
 
     
     // Device handling.
-    //uint8_t get_register_value( uint8_t pca9685_register );
-    //void set_register_value( uint8_t pca9685_register, uint8_t mode );
-    virtual void _initialize_device() override;
-    void on_timer_finished_finalize_initialize();
-    //void set_slot_value( uint8_t slot_index, uint8_t value );
-
+    
     void wake_pca9685();
     void sleep_pca9685();
     void restart_pca9685();

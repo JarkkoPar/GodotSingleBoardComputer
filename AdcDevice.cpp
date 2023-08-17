@@ -10,8 +10,6 @@
 using namespace godot;
 
 
-
-
 AdcDevice::AdcDevice() {
     _adc_device_fd = -1; 
     _adc_gpio_pin_index = -1;
@@ -22,11 +20,6 @@ AdcDevice::AdcDevice() {
 
 
 AdcDevice::~AdcDevice() {
-    close_device();
-    _adc_device_fd = -1;
-    _adc_gpio_pin_index = -1;
-    _adc_pin_voltage = 0.0f;
-    _adc_voltage_raw_file_index = -1;
 }
 
 
@@ -46,18 +39,11 @@ void AdcDevice::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_adc_gpio_pin_voltage"), &AdcDevice::get_adc_pin_voltage);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "adc_gpio_pin_voltage", PROPERTY_HINT_NONE), "set_adc_gpio_pin_voltage", "get_adc_gpio_pin_voltage");
 
-
-    // Read and write methods.
-    //ClassDB::bind_method(D_METHOD("open_device"), &I2CRawDevice::open_device);
-    //ClassDB::bind_method(D_METHOD("close_device"), &I2CRawDevice::close_device);
-    //ClassDB::bind_method(D_METHOD("read_bytes_from_device", "num_bytes"), &I2CRawDevice::read_bytes_from_device);
-    //ClassDB::bind_method(D_METHOD("write_bytes_to_device", "bytes_to_write"), &I2CRawDevice::write_bytes_to_device);
 }
 
 
 
 void AdcDevice::_process(double delta) {
-
 }
 
 
@@ -68,11 +54,10 @@ void AdcDevice::_physics_process(double delta) {
 
 
 void AdcDevice::_notification(int p_what) {
-
 }
 
-// Getters and setters.
 
+// Getters and setters.
 
 void AdcDevice::set_adc_gpio_pin_index( int pin_number ) {
     // If just loading, simply set the value.
@@ -115,12 +100,13 @@ int AdcDevice::get_adc_pin_value() const {
 // Device handling
 
 void AdcDevice::_initialize_device() {
-    open_device();
+    _open_adc_device();
+    _configure_adc_device();
 }
 
 
 
-void AdcDevice::open_device() {
+void AdcDevice::_open_adc_device() {
 
     // Get the parent which should have the gpio pin array.
     SingleBoardComputer* sbc = Object::cast_to<SingleBoardComputer>(get_parent());
@@ -138,7 +124,12 @@ void AdcDevice::open_device() {
 }
 
 
-void AdcDevice::close_device() {
+void AdcDevice::_configure_adc_device() {
+    
+}
+
+
+void AdcDevice::_deinitialize_device() {
     _adc_device_fd = -1; // just reset the adc file descriptor, as this will be closed by the SingleBoardComputer class.
 }
 

@@ -22,6 +22,8 @@ private:
 protected: 
     static void _bind_methods();
 
+    virtual void _configure_i2c_device() override;
+
 public:
 //https://github.com/GrimbiXcode/VL53L0X-Register-Map
 
@@ -101,7 +103,7 @@ public:
     //int   get_custom_vl53l0x_i2c_device_address();
 
     // Device handling.
-    virtual void _initialize_device() override;
+    //virtual void _initialize_device() override;
     
     //void wake_Vl53l0x();
     //void sleep_Vl53l0x();

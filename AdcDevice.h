@@ -25,6 +25,13 @@ protected:
     int _adc_pin_value;             // The pin value as an integer (0..1023)
 
     static void _bind_methods();
+    
+    virtual void _initialize_device() override;
+    virtual void _deinitialize_device() override;
+
+    virtual void _open_adc_device();
+    virtual void _configure_adc_device();
+
 
 public:
 
@@ -50,11 +57,7 @@ public:
 
 
     // Device handling.
-    virtual void _initialize_device() override;
 
-    void open_device();
-    void close_device();
-    
     int read_value_from_pin();
     
 };

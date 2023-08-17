@@ -19,15 +19,14 @@ protected:
 
     static void _bind_methods();
     virtual void _initialize_device(); // This is the method all the inheriting devices should override if needed
-    
+    virtual void _deinitialize_device(); // This is the method all the inheriting devices should override if needed
 public:
 
     SBCDevice();
     ~SBCDevice();
 
     void initialize_device();
-
-    virtual void close_device();
+    void deinitialize_device(); 
 
     // Getters and setters.
 

@@ -66,9 +66,6 @@ void trigger_echo_loop( GpioHcSr04* sensor ) {
 
 
 GpioHcSr04::GpioHcSr04() {
-    //_is_hcsr04_initialized = false;
-    //_is_active = true;
-
     _gpio_trig_pin_index = 5;
     _gpio_echo_pin_index = 6;
     _gpio_trig_pin_device_fd = -1;
@@ -82,8 +79,7 @@ GpioHcSr04::GpioHcSr04() {
     _run_trigger_echo_loop = true;
 }
 
-GpioHcSr04::~GpioHcSr04() {
-    close_device();    
+GpioHcSr04::~GpioHcSr04() { 
 }
 
 
@@ -122,8 +118,6 @@ void GpioHcSr04::_notification(int p_what) {
 }
 
 
-
-
 // Getters and setters.
 
 void GpioHcSr04::set_gpio_trig_pin_index( int trig_pin_number ) {
@@ -143,36 +137,29 @@ int  GpioHcSr04::get_gpio_echo_pin_index() const {
 }   
 
 void GpioHcSr04::set_distance_mm( float distance_mm ) {
+    std::lock_guard<std::mutex> lock(_distance_polling_mutex);
     _distance_mm = distance_mm;
 }
 
 float GpioHcSr04::get_distance_mm() {
+    std::lock_guard<std::mutex> lock(_distance_polling_mutex);
     return _distance_mm;
 }
 
 void GpioHcSr04::set_distance_inch( float distance_inch ) {
+    std::lock_guard<std::mutex> lock(_distance_polling_mutex);
     _distance_inch = distance_inch;
 }
 
 float GpioHcSr04::get_distance_inch() {
+    std::lock_guard<std::mutex> lock(_distance_polling_mutex);
     return _distance_inch;
 }
 
 
-
 // Device handling.
 
-void GpioHcSr04::_initialize_device() {
-    // Only initialize once.
-    //if( _is_hcsr04_initialized ) return;
-    //if(Engine::get_singleton()->is_editor_hint()) return;
-    //if( !_is_active ) return;
-
-    open_device();
-}
-
-
-void GpioHcSr04::open_device() {
+void GpioHcSr04::_configure_gpio_device() {
 
     // Get the parent which should have the gpio pin array.
     SingleBoardComputer* sbc = Object::cast_to<SingleBoardComputer>(get_parent());
@@ -186,60 +173,23 @@ void GpioHcSr04::open_device() {
     ERR_FAIL_COND_MSG(_gpio_trig_pin_device_fd < 0, "Request for gpio trigger pin device file failed.");
 
     _gpio_echo_pin_device_fd = sbc->request_gpio_device_file(_gpio_echo_pin_index);
-    ERR_FAIL_COND_MSG(_gpio_echo_pin_device_fd < 0, "Request for gpio echo pin device file failed.");
-
-
-    // Get the pin offsets.
-    //int trig_pin_offset = sbc->get_gpio_pin_offset(_gpio_trig_pin_index);
-    //int echo_pin_offset = sbc->get_gpio_pin_offset(_gpio_echo_pin_index);
-    
+    ERR_FAIL_COND_MSG(_gpio_echo_pin_device_fd < 0, "Request for gpio echo pin device file failed.");    
 
     // Request the triggering pin.
     _gpio_trig_pin_fd = request_pin_number(_gpio_trig_pin_index + 1, GPIO_TYPE_OUTPUT, (char *)this->get_name().to_ascii_buffer().ptr() );
     ERR_FAIL_COND_MSG(_gpio_trig_pin_fd < 0, "Failed to get line handle from gpio device for the HC-SR04 triggering pin.");
     
-    /**
-    struct gpio_v2_line_request trig_line_request;
-    memset(&trig_line_request, 0, sizeof(trig_line_request));
-    trig_line_request.config.flags = GPIO_V2_LINE_FLAG_OUTPUT;
-    trig_line_request.config.num_attrs = 0;
-    strcpy(trig_line_request.consumer, (char *)this->get_name().to_ascii_buffer().ptr() );//"GpioHcSr04"); // TODO: Add user definable name
-    trig_line_request.num_lines = 1;
-    trig_line_request.offsets[0] = trig_pin_offset;
-    
-    int return_value = ioctl(_gpio_trig_pin_device_fd, GPIO_V2_GET_LINE_IOCTL, &trig_line_request);
-    ERR_FAIL_COND_MSG(return_value < 0, "Failed to get line handle from gpio device for the HC-SR04 triggering pin.");
-    
-    // All OK so store the file descriptor.
-    _gpio_trig_pin_fd = trig_line_request.fd; 
-    */
-
     // Request the echoing pin.
     _gpio_echo_pin_fd = request_pin_number(_gpio_echo_pin_index + 1, GPIO_TYPE_INPUT, (char *)this->get_name().to_ascii_buffer().ptr() );
     ERR_FAIL_COND_MSG(_gpio_echo_pin_fd < 0, "Failed to get line handle from gpio device for the HC-SR04 echoing pin.");
-    /**
-    struct gpio_v2_line_request echo_line_request;
-    memset(&echo_line_request, 0, sizeof(echo_line_request));
-    echo_line_request.config.flags = GPIO_V2_LINE_FLAG_INPUT;    
-    echo_line_request.config.num_attrs = 0;
-    strcpy(echo_line_request.consumer, (char *)this->get_name().to_ascii_buffer().ptr());//"GpioHcSr04"); // TODO: Add user definable name
-    echo_line_request.num_lines = 1;
-    echo_line_request.offsets[0] = echo_pin_offset;
     
-    return_value = ioctl(_gpio_echo_pin_device_fd, GPIO_V2_GET_LINE_IOCTL, &echo_line_request);
-    ERR_FAIL_COND_MSG(return_value < 0, "Failed to get line handle from gpio device for the HC-SR04 echoing pin.");
-
-    // All OK so store the file descriptor.
-    _gpio_echo_pin_fd = echo_line_request.fd; 
-    /**/
     // Start th distance polling thread.
-    //_is_hcsr04_initialized = true;
     _end_processing = false;
     _distance_polling_thread = std::thread(trigger_echo_loop, this);
 }
 
 
-void GpioHcSr04::close_device() {
+void GpioHcSr04::_deinitialize_device() {
         
     {
         std::lock_guard<std::mutex> lock(_distance_polling_mutex);

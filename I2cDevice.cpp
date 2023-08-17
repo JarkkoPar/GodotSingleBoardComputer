@@ -23,11 +23,11 @@ I2cDevice::I2cDevice() {
 
 
 I2cDevice::~I2cDevice() {
-    close_device();
-    if( _i2c_device_fd >= 0 ) {
-        //close(_i2c_device_fd ); // Closed by the SBC.
-        _i2c_device_fd = -1;
-    }
+    //close_device();
+    //if( _i2c_device_fd >= 0 ) {
+    //    //close(_i2c_device_fd ); // Closed by the SBC.
+    //    _i2c_device_fd = -1;
+    //}
 }
 
 
@@ -51,8 +51,8 @@ void I2cDevice::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::INT, "i2c_device_address", PROPERTY_HINT_NONE, ""), "set_i2c_device_address", "get_i2c_device_address");
 
     // Read and write methods.
-    ClassDB::bind_method(D_METHOD("open_device"), &I2cDevice::open_device);
-    ClassDB::bind_method(D_METHOD("close_device"), &I2cDevice::close_device);
+    //ClassDB::bind_method(D_METHOD("open_device"), &I2cDevice::open_device);
+    //ClassDB::bind_method(D_METHOD("close_device"), &I2cDevice::close_device);
     ClassDB::bind_method(D_METHOD("read_bytes_from_device", "num_bytes"), &I2cDevice::read_bytes_from_device);
     ClassDB::bind_method(D_METHOD("write_bytes_to_device", "bytes_to_write"), &I2cDevice::write_bytes_to_device);
 }
@@ -73,8 +73,8 @@ void I2cDevice::_notification(int p_what) {
 
 }
 
-// Getters and setters.
 
+// Getters and setters.
 
 void I2cDevice::set_i2c_device_bus_number( int bus_number ) {
     // This gets called when starting up, and then we want to
@@ -109,6 +109,7 @@ void I2cDevice::set_i2c_device_bus_number( int bus_number ) {
 
 }
 
+
 int  I2cDevice::get_i2c_device_bus_number() const {
     return _i2c_device_bus_number;
 }
@@ -126,12 +127,14 @@ int  I2cDevice::get_i2c_device_index() const {
     return _i2c_device_index;
 }
 
+
 void I2cDevice::set_i2c_device_address( int address ) {
     // If the device is open, cannot change the address.
     ERR_FAIL_COND_MSG(_i2c_device_fd > -1, "Cannot change device address when the device file is open.");
 
     _i2c_device_address = address;
 }
+
 
 int  I2cDevice::get_i2c_device_address() const {
     return _i2c_device_address;
@@ -144,34 +147,21 @@ int  I2cDevice::get_i2c_device_address() const {
 void I2cDevice::_initialize_device() {
     // Set the i2c bus number now to set up the index.
     set_i2c_device_bus_number(_i2c_device_bus_number);
-    open_device();
+    _open_i2c_device();
+    _configure_i2c_device();
 }
 
 
 
-void I2cDevice::open_device() {
-    // If a device file descriptor exists, close the device
-    // before opening a new one. 
-    //if( _i2c_device_fd > -1 ) {
-    //    close_device();
-    //}
-
+void I2cDevice::_open_i2c_device() {
+    
     // Get the parent which should have the i2c bus array.
     SingleBoardComputer* sbc = Object::cast_to<SingleBoardComputer>(get_parent());
     ERR_FAIL_COND_MSG(sbc == nullptr, "This node needs to be a child of the SingleBoardComputer node.");
 
     ERR_FAIL_COND_MSG(_i2c_device_index < 0 || _i2c_device_index >= sbc->get_num_i2c_buses(), "Invalid index for I2C bus. Have you set the I2C device number?");
 
-
-    //I2CBus* selectedBus = sbc->get_i2c_bus(_i2c_device_id);
-    //ERR_FAIL_COND_MSG(selectedBus == nullptr, "The selected bus returned nullptr.");
-
-
     // Open the selected bus file.
-    //int dfi = selectedBus->get_i2c_device_file_index();
-    //char device_filename_buffer[64] = {0};
-    //sprintf(device_filename_buffer, "/dev/i2c-%i\0", dfi);   
-    //_i2c_device_fd = open(device_filename_buffer, O_RDWR);
     _i2c_device_fd = sbc->request_i2c_device_file(_i2c_device_index);
     ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "Failed to open the device file.");
 
@@ -182,11 +172,14 @@ void I2cDevice::open_device() {
 
 }
 
-void I2cDevice::close_device() {
-    //ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "Failed to close device, it is already closed.");
-    
-    //close(_i2c_device_fd);
-    _i2c_device_fd = -1; // just reset the file descriptor.
+void I2cDevice::_configure_i2c_device() {
+    // To be overridden by the actual i2c devices.
+}
+
+
+
+void I2cDevice::_deinitialize_device() {
+    _i2c_device_fd = -1; // just reset the file descriptor, as the SBC class will close it.
 }
 
 
@@ -195,10 +188,12 @@ void I2cDevice::_read_bytes_from_device(const int length) {
     ERR_FAIL_COND_MSG( read( _i2c_device_fd, _i2c_read_buffer, length ) != length, "Read failed.");
 }
 
+
 void I2cDevice::_write_bytes_to_device( const char* buffer, const int length) {
     ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "Write failed because the device file is not opened.");
     ERR_FAIL_COND_MSG( write( _i2c_device_fd, buffer, length ) != length, "Write failed.");
 }
+
 
 PackedByteArray I2cDevice::read_bytes_from_device( const int length ) {
     memset(_i2c_read_buffer, 0, sizeof(_i2c_read_buffer) );

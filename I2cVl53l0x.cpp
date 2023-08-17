@@ -120,15 +120,8 @@ void I2cVl53l0x::set_custom_vl53l0x_i2c_device_address( int new_i2c_device_addre
     
 // Device handling.
 
-void I2cVl53l0x::_initialize_device() {
-    // Only initialize once.
-    //if( _is_vl53l0x_initialized ) return;
-    if(Engine::get_singleton()->is_editor_hint()) return;
-    if( !_is_active ) return;
-    set_i2c_device_bus_number(_i2c_device_bus_number);
-    open_device();
-    ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "VL53L0X initialization failed because the device file is not opened.");
-    
+void I2cVl53l0x::_configure_i2c_device() {
+    ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "VL53L0X configuration failed because the device file is not opened.");
 
     write_byte_to_device_register( Vl53l0xRegisters::SYSRANGE_START, (uint8_t)_reading_mode );//Vl53l0xReadingMode::BACK_TO_BACK );
 
@@ -137,7 +130,5 @@ void I2cVl53l0x::_initialize_device() {
     //    WARN_PRINT_ONCE("The custom device address is set but it does not match the address on the device.");
     //}
     
-    //_is_vl53l0x_initialized = true;
-}   
     
-
+}

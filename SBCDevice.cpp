@@ -12,12 +12,13 @@ SBCDevice::SBCDevice() {
 
 
 SBCDevice::~SBCDevice() {
-    close_device();
+    deinitialize_device();
 }
 
 
 void SBCDevice::_bind_methods() {
     ClassDB::bind_method(D_METHOD("initialize_device"), &SBCDevice::initialize_device);
+    ClassDB::bind_method(D_METHOD("deinitialize_device"), &SBCDevice::deinitialize_device);
 
     ClassDB::bind_method(D_METHOD("set_is_active", "is_active"), &SBCDevice::set_is_active);
 	ClassDB::bind_method(D_METHOD("get_is_active"), &SBCDevice::get_is_active);
@@ -35,14 +36,19 @@ void SBCDevice::initialize_device() {
     _is_device_initialized = true;
 }
 
+void SBCDevice::deinitialize_device() {
+    _deinitialize_device();
+    _is_device_initialized = false;
+}
+
+
 
 void SBCDevice::_initialize_device() {
     
 }
 
-void SBCDevice::close_device() {
+void SBCDevice::_deinitialize_device() {
     
-
 }
 
 // Getters and setters.

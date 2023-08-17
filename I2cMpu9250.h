@@ -1,9 +1,9 @@
-#ifndef I2C_SDA1115_H_INCLUDED
-#define I2C_SDA1115_H_INCLUDED
+#ifndef I2C_MPU9250_H_INCLUDED
+#define I2C_MPU9250_H_INCLUDED
 
 #include "I2cDevice.h"
-#include <thread>
-#include <mutex>
+//#include <thread>
+//#include <mutex>
 
 namespace godot {
 
@@ -16,25 +16,19 @@ namespace godot {
 
 
 // This is a control node for the ADS1115 A/D Converter.
-class I2cAds1115 : public I2cDevice {
-    GDCLASS(I2cAds1115, I2cDevice)
+class I2cMpu9250 : public I2cDevice {
+    GDCLASS(I2cMpu9250, I2cDevice)
 
 private:
-    double _ads1115_update_frame_delay;
-    double _ads1115_update_wait_time;
+    double _mpu9520_update_frame_delay;
+    double _mpu9250_update_wait_time;
 
-    int _ain0_value;
-    int _ain1_value;
-    int _ain2_value;
-    int _ain3_value;
 
-    uint16_t _config;
     
 protected: 
-    
     static void _bind_methods();
-    virtual void _configure_i2c_device() override;
 
+    virtual void _configure_i2c_device() override;
 public:
 
 
@@ -124,10 +118,11 @@ public:
 
 
 
-    I2cAds1115();
-    ~I2cAds1115();
+    I2cMpu9250();
+    ~I2cMpu9250();
 
-     // Godot virtuals.
+    // Godot virtuals.
+    
     void _process(double delta);
     void _physics_process(double delta);
 
@@ -137,10 +132,8 @@ public:
     // Getters and setters.
 
     
-    
     // Device handling.
     
-
 };
 
 

@@ -11,16 +11,10 @@ using namespace godot;
 
 
 GpioDevice::GpioDevice() {
-    //_gpio_device_fd = -1; 
-    //_gpio_pin_fd = -1;
-    //_gpio_pin_offset = -1;
-}
+    }
 
 
 GpioDevice::~GpioDevice() {
-    //close_device();
-    //_gpio_device_fd = -1;
-    //_gpio_pin_offset = -1;
 }
 
 
@@ -57,41 +51,8 @@ void GpioDevice::_notification(int p_what) {
 
 // Getters and setters.
 
-/**
-void GpioDevice::set_gpio_pin_index( int pin_number ) {
-    // If just loading, simply set the value.
-    int pin_index = pin_number - 1;
-    if( is_inside_tree() == false ){
-        _gpio_pin_index = pin_index;
-        return; 
-    }
-
-    SingleBoardComputer* sbc = Object::cast_to<SingleBoardComputer>(get_parent());
-    ERR_FAIL_COND_MSG(sbc == nullptr, "This node needs to be a child of the SingleBoardComputer node.");
-
-    ERR_FAIL_COND_MSG(pin_index < 0 || pin_index >= sbc->get_num_gpio_pins(), "Pin number must be between 1 and num_pins. First valid pin number is 1.");
-
-    _gpio_pin_index = pin_index;
-}
-
-int GpioDevice::get_gpio_pin_index() const {
-    return _gpio_pin_index + 1;
-}
-/**/
-
-/**
-void GpioDevice::set_gpio_pin_type( int pin_type ) {
-    _gpio_pin_type = pin_type;
-}
-
-int  GpioDevice::get_gpio_pin_type() const {
-    return _gpio_pin_type;
-}
-/**/
 
 // Device handling
-
-
 
 int GpioDevice::request_pin_number( int pin_number, int pin_type, const char* consumer_name ) {
 
@@ -141,81 +102,18 @@ int GpioDevice::request_pin_number( int pin_number, int pin_type, const char* co
 
 
 void GpioDevice::_initialize_device() {
-    open_device();
+    _open_gpio_device();
+    _configure_gpio_device();
 }
 
 
 
-void GpioDevice::open_device() {
-    /**
-    // Get the parent which should have the gpio pin array.
-    SingleBoardComputer* sbc = Object::cast_to<SingleBoardComputer>(get_parent());
-    ERR_FAIL_COND_MSG(sbc == nullptr, "This node needs to be a child of the SingleBoardComputer node.");
+void GpioDevice::_open_gpio_device() {
 
-    //ERR_FAIL_COND_MSG(_gpio_pin_index < 0 || _gpio_pin_index >= sbc->get_num_gpio_pins(), "Invalid index for gpio pin (out of bounds).");
-    ERR_FAIL_INDEX_EDMSG(_gpio_pin_index, 40, "Invalid index for gpio pin (out of bounds).");
-
-    // Open the selected gpio file.
-    _gpio_device_fd = sbc->request_gpio_device_file(_gpio_pin_index);
-    ERR_FAIL_COND_MSG(_gpio_device_fd < 0, "Request gpio device file failed.");
-
-    // Get the pin offset.
-    int pin_offset = sbc->get_gpio_pin_offset(_gpio_pin_index);
-    /**
-    // Get the pin based on type.
-    struct gpiohandle_request request; 
-
-    request.lineoffsets[0] = pin_offset;
-
-    if( _gpio_pin_type == GPIO_TYPE_OUTPUT ) {
-        request.flags = GPIOHANDLE_REQUEST_OUTPUT;
-    }
-    else if( _gpio_pin_type == GPIO_TYPE_INPUT ) {
-        request.flags = GPIOHANDLE_REQUEST_INPUT;
-    }
-    
-    request.lines = 1;
-
-    int return_value = ioctl(_gpio_device_fd, GPIO_GET_LINEHANDLE_IOCTL, &request);
-    ERR_FAIL_COND_MSG(return_value < 0, "Failed to get line handle from gpio device.");
-
-    // All OK so store the file descriptor.
-    _gpio_pin_fd = request.fd; 
-    */
-    /**
-    struct gpio_v2_line_request line_request;
-    memset(&line_request, 0, sizeof(line_request));
-    
-    if( _gpio_pin_type == GPIO_TYPE_OUTPUT ) {
-        line_request.config.flags = GPIO_V2_LINE_FLAG_OUTPUT;
-    }
-    else if( _gpio_pin_type == GPIO_TYPE_INPUT ) {
-        line_request.config.flags = GPIO_V2_LINE_FLAG_INPUT;
-    }
-    
-    line_request.config.num_attrs = 0;
-    strcpy(line_request.consumer, "GodotEngine"); // TODO: Add user definable name
-    line_request.num_lines = 1;
-    line_request.offsets[0] = pin_offset;
-    
-    int return_value = ioctl(_gpio_device_fd, GPIO_V2_GET_LINE_IOCTL, &line_request);
-    ERR_FAIL_COND_MSG(return_value < 0, "Failed to get line handle from gpio device.");
-
-    // All OK so store the file descriptor.
-    _gpio_pin_fd = line_request.fd; 
-    /**/
 }
 
 
-void GpioDevice::close_device() {
-    // Close the pin file descriptor if it is still open.
-    /*
-    if( _gpio_pin_fd > -1 ) {
-        close( _gpio_pin_fd );
-        _gpio_pin_fd = -1;
-    }
-    _gpio_device_fd = -1; // just reset the main gpio file descriptor, as this will be closed by the SingleBoardComputer class.
-    */
+void GpioDevice::_deinitialize_device() {
 }
 
 

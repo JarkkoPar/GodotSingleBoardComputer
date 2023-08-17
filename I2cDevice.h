@@ -28,6 +28,12 @@ protected:
 
     static void _bind_methods();
 
+    virtual void _initialize_device() override;
+    virtual void _deinitialize_device() override;
+
+    virtual void _open_i2c_device();
+    virtual void _configure_i2c_device();
+
 public:
 
     I2cDevice();
@@ -50,10 +56,10 @@ public:
     int  get_i2c_device_address() const;
 
     // Device handling.
-    virtual void _initialize_device() override;
-
-    void open_device();
-    virtual void close_device() override;
+    
+    
+    //void open_device();
+    //virtual void close_device() override;
 
     void _read_bytes_from_device(const int length);
     void _write_bytes_to_device(const char* buffer, int length);
