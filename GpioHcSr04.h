@@ -17,6 +17,7 @@ private:
 protected: 
     static void _bind_methods();
 
+    //virtual void _initialize_device() override;
     virtual void _configure_gpio_device() override;
     virtual void _deinitialize_device() override;
 
@@ -71,7 +72,6 @@ public:
 
     // Device handling.
 
-    virtual void _initialize_device() override;
 
     //void trigger_echo_loop();
 

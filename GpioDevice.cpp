@@ -112,6 +112,10 @@ void GpioDevice::_open_gpio_device() {
 
 }
 
+void GpioDevice::_configure_gpio_device() {
+
+}
+
 
 void GpioDevice::_deinitialize_device() {
 }
