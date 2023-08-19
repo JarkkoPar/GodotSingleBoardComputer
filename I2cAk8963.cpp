@@ -33,6 +33,20 @@ void I2cAk8963::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_measurement_mode", "measurement_mode"), &I2cAk8963::set_measurement_mode);
 	ClassDB::bind_method(D_METHOD("get_measurement_mode"), &I2cAk8963::get_measurement_mode);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "measurement_mode", PROPERTY_HINT_ENUM, "8Hz:2,100Hz:6,SingleShot:1"), "set_measurement_mode", "get_measurement_mode");
+
+    // The measurement data.
+    ClassDB::bind_method(D_METHOD("set_magnetic_field_x", "x"), &I2cAk8963::set_magnetic_field_x);
+	ClassDB::bind_method(D_METHOD("get_magnetic_field_x"), &I2cAk8963::get_magnetic_field_x);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "magnetic_field_x", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_magnetic_field_x", "get_magnetic_field_x");
+
+    ClassDB::bind_method(D_METHOD("set_magnetic_field_y", "y"), &I2cAk8963::set_magnetic_field_y);
+	ClassDB::bind_method(D_METHOD("get_magnetic_field_y"), &I2cAk8963::get_magnetic_field_y);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "magnetic_field_y", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_magnetic_field_y", "get_magnetic_field_y");
+
+    ClassDB::bind_method(D_METHOD("set_magnetic_field_z", "z"), &I2cAk8963::set_magnetic_field_z);
+	ClassDB::bind_method(D_METHOD("get_magnetic_field_z"), &I2cAk8963::get_magnetic_field_z);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "magnetic_field_z", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_magnetic_field_z", "get_magnetic_field_z");
+
 }
 
 
@@ -128,13 +142,13 @@ void I2cAk8963::_read_sensor_data() {
     sensor_z = mz;
 
     if( _measurement_bits == AK8963Control1OutputBitSetting::OUTPUT_14_BIT ) {
-        magnetic_field_x = (float)sensor_x / 8190.0f;
-        magnetic_field_y = (float)sensor_y / 8190.0f;
-        magnetic_field_z = (float)sensor_z / 8190.0f;
+        magnetic_field_x = 4912.0f * (float)sensor_x / 8190.0f;
+        magnetic_field_y = 4912.0f * (float)sensor_y / 8190.0f;
+        magnetic_field_z = 4912.0f * (float)sensor_z / 8190.0f;
     } else { // 16 bit.
-        magnetic_field_x = (float)sensor_x / 32760.0f;
-        magnetic_field_y = (float)sensor_y / 32760.0f;
-        magnetic_field_z = (float)sensor_z / 32760.0f;
+        magnetic_field_x = 4912.0f * (float)sensor_x / 32760.0f;
+        magnetic_field_y = 4912.0f * (float)sensor_y / 32760.0f;
+        magnetic_field_z = 4912.0f * (float)sensor_z / 32760.0f;
     }
 }
 
@@ -157,5 +171,29 @@ int  I2cAk8963::get_measurement_mode() const {
     return _measurement_mode;
 }
 
+
+void  I2cAk8963::set_magnetic_field_x(float x ) {
+    magnetic_field_x = x;
+}
+
+float I2cAk8963::get_magnetic_field_x() const {
+    return magnetic_field_x;
+}
+ 
+void  I2cAk8963::set_magnetic_field_y(float y ) {
+    magnetic_field_y = y;
+}
+
+float I2cAk8963::get_magnetic_field_y() const {
+    return magnetic_field_y;
+}
+
+void  I2cAk8963::set_magnetic_field_z(float z ) {
+    magnetic_field_z = z;
+}
+
+float I2cAk8963::get_magnetic_field_z() const {
+    return magnetic_field_z;
+}
 
 

@@ -117,7 +117,17 @@ public:
 
     void set_measurement_mode( int measurement_mode );
     int  get_measurement_mode() const;
+
+    void  set_magnetic_field_x(float x );
+    float get_magnetic_field_x() const;
     
+    void  set_magnetic_field_y(float y );
+    float get_magnetic_field_y() const;
+    
+    void  set_magnetic_field_z(float z );
+    float get_magnetic_field_z() const;
+    
+
     // Device handling.
     
     void _self_test();
