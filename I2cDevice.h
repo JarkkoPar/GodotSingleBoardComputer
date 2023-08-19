@@ -60,16 +60,25 @@ public:
     
     //void open_device();
     //virtual void close_device() override;
+    bool _read_bytes_from_device( const uint8_t i2c_device_address, const uint8_t i2c_device_register, const uint8_t num_bytes, uint8_t* bytes );
+    bool _write_bytes_to_device( const uint8_t i2c_device_address, const uint8_t i2c_device_register, const uint8_t num_bytes_to_write, uint8_t* bytes );
 
-    void _read_bytes_from_device(const int length);
-    void _write_bytes_to_device(const char* buffer, int length);
+    uint8_t _read_byte_from_device(  const uint8_t i2c_device_address, const uint8_t i2c_device_register );
+    bool _write_byte_to_device( const uint8_t i2c_device_address, const uint8_t i2c_device_register, const uint8_t byte );
 
-    PackedByteArray read_bytes_from_device( const int length );
-    void write_bytes_to_device( PackedByteArray bytes );
+    //void _read_bytes_from_device(const int length);
+    //void _write_bytes_to_device(const char* buffer, int length);
+
+    //PackedByteArray read_bytes_from_device( const int length );
+    //void write_bytes_to_device( PackedByteArray bytes );
     
     uint8_t read_byte_from_device_register( uint8_t i2c_device_register );
     void    write_byte_to_device_register( uint8_t i2c_device_register, uint8_t value );
-    
+
+    uint8_t read_byte_from_device_register_at_device_address( uint8_t i2c_device_address, uint8_t i2c_device_register );
+    void    write_byte_to_device_register_at_device_address( uint8_t i2c_device_address, uint8_t i2c_device_register, uint8_t value );
+
+
     void  write_byte_array_to_device_register( int i2c_device_register, PackedByteArray bytes );
     void _write_byte_array_to_device_register( uint8_t i2c_device_register, const uint8_t* bytes );
 };

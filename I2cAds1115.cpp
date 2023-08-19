@@ -5,6 +5,8 @@ using namespace godot;
 
 
 I2cAds1115::I2cAds1115() {
+
+    _i2c_device_address = 0x48;
     _ain0_value = 0;
     _ain1_value = 0;
     _ain2_value = 0;

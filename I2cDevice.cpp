@@ -53,8 +53,8 @@ void I2cDevice::_bind_methods() {
     // Read and write methods.
     //ClassDB::bind_method(D_METHOD("open_device"), &I2cDevice::open_device);
     //ClassDB::bind_method(D_METHOD("close_device"), &I2cDevice::close_device);
-    ClassDB::bind_method(D_METHOD("read_bytes_from_device", "num_bytes"), &I2cDevice::read_bytes_from_device);
-    ClassDB::bind_method(D_METHOD("write_bytes_to_device", "bytes_to_write"), &I2cDevice::write_bytes_to_device);
+    //ClassDB::bind_method(D_METHOD("read_bytes_from_device", "num_bytes"), &I2cDevice::read_bytes_from_device);
+    //ClassDB::bind_method(D_METHOD("write_bytes_to_device", "bytes_to_write"), &I2cDevice::write_bytes_to_device);
 }
 
 
@@ -183,18 +183,88 @@ void I2cDevice::_deinitialize_device() {
 }
 
 
-void I2cDevice::_read_bytes_from_device(const int length) {
-    ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "Read failed because the device file is not opened.");
-    ERR_FAIL_COND_MSG( read( _i2c_device_fd, _i2c_read_buffer, length ) != length, "Read failed.");
+bool I2cDevice::_read_bytes_from_device( const uint8_t i2c_device_address, const uint8_t i2c_device_register, const uint8_t num_bytes_to_read, uint8_t* bytes ) {
+    ERR_FAIL_COND_V_MSG(_i2c_device_fd < 0, false, "Read failed because the device file is not opened.");
+    ERR_FAIL_COND_V_MSG(bytes == nullptr || num_bytes_to_read < 1, false, "Read failed because the return bytes pointer is NULL or num_bytes_to_read is 0.");
+    
+    uint8_t output_buffer[1] = {i2c_device_register};
+    struct i2c_msg messages[2];
+    struct i2c_rdwr_ioctl_data message_set[1];
+
+    // First send the register to read from.
+    messages[0].addr = i2c_device_address;
+    messages[0].flags = 0;
+    messages[0].len = 1; 
+    messages[0].buf = output_buffer;
+
+    // Then the number of bytes to read.
+    messages[1].addr = i2c_device_address;
+    messages[1].flags = I2C_M_RD | I2C_M_NOSTART;
+    messages[1].len = num_bytes_to_read;
+    messages[1].buf = bytes;
+
+    // Send the messages.
+    message_set[0].msgs = messages;
+    message_set[0].nmsgs = 2; 
+
+    ERR_FAIL_COND_V_MSG(ioctl(_i2c_device_fd, I2C_RDWR, &message_set) < 0, false ,"Read byte from i2c device register failed.");
+    return true;
+}
+
+bool I2cDevice::_write_bytes_to_device( uint8_t i2c_device_address, uint8_t i2c_device_register, uint8_t num_bytes_to_write, uint8_t* bytes ) {
+    ERR_FAIL_COND_V_MSG(_i2c_device_fd < 0, false, "Write device register failed because the device file is not opened. Did you forget to call open_device()?");
+    ERR_FAIL_COND_V_MSG(bytes == nullptr || num_bytes_to_write < 1, false, "Write device register failed because bytes are null or num_bytes_to_write is 0.");
+    
+    uint8_t message_length = 1+num_bytes_to_write;
+    uint8_t* output_buffer = new uint8_t[message_length];
+    ERR_FAIL_COND_V_MSG(output_buffer == nullptr, false, "Write device register failed because creation of the output_buffer failed.");
+    
+    output_buffer[0] = i2c_device_register;
+    memcpy(&output_buffer[1], bytes, num_bytes_to_write );
+    //uint8_t output_buffer[2] = {i2c_device_register, value};
+
+    struct i2c_msg messages[1];
+    struct i2c_rdwr_ioctl_data message_set[1];
+
+    messages[0].addr = i2c_device_address;
+    messages[0].flags = 0;
+    messages[0].len = message_length;
+    messages[0].buf = output_buffer;
+
+    message_set[0].msgs = messages;
+    message_set[0].nmsgs = 1;
+    int return_value = ioctl(_i2c_device_fd, I2C_RDWR, &message_set);
+    delete[] output_buffer;
+    output_buffer = nullptr;
+    ERR_FAIL_COND_V_MSG(return_value < 0, false, "Write bytes to i2c device register failed.");
+    return true;
+}
+
+uint8_t I2cDevice::_read_byte_from_device(  const uint8_t i2c_device_address, const uint8_t i2c_device_register ) {
+    uint8_t bytes[] = {0};
+    bool retval = _read_bytes_from_device( i2c_device_address, i2c_device_register, 1, bytes );
+    return bytes[0];
+}
+
+bool I2cDevice::_write_byte_to_device( const uint8_t i2c_device_address, const uint8_t i2c_device_register, const uint8_t byte ) {
+    uint8_t bytes[] = {byte};
+    return _write_bytes_to_device( i2c_device_address, i2c_device_register, 1, bytes );
 }
 
 
-void I2cDevice::_write_bytes_to_device( const char* buffer, const int length) {
-    ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "Write failed because the device file is not opened.");
-    ERR_FAIL_COND_MSG( write( _i2c_device_fd, buffer, length ) != length, "Write failed.");
-}
+//void I2cDevice::_read_bytes_from_device(const int length) {
+//    ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "Read failed because the device file is not opened.");
+    //ERR_FAIL_COND_MSG( read( _i2c_device_fd, _i2c_read_buffer, length ) != length, "Read failed.");
+//}
 
 
+//void I2cDevice::_write_bytes_to_device( const char* buffer, const int length) {
+//    ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "Write failed because the device file is not opened.");
+//    ERR_FAIL_COND_MSG( write( _i2c_device_fd, buffer, length ) != length, "Write failed.");
+//}
+
+
+/**
 PackedByteArray I2cDevice::read_bytes_from_device( const int length ) {
     memset(_i2c_read_buffer, 0, sizeof(_i2c_read_buffer) );
     _read_bytes_from_device(length);
@@ -208,6 +278,51 @@ PackedByteArray I2cDevice::read_bytes_from_device( const int length ) {
 void I2cDevice::write_bytes_to_device( PackedByteArray bytes ) {
     int data_length = bytes.size();
     _write_bytes_to_device((char *)bytes.ptr(), data_length);
+}
+/**/
+
+uint8_t I2cDevice::read_byte_from_device_register_at_device_address( uint8_t i2c_device_address, uint8_t i2c_device_register ) {
+    ERR_FAIL_COND_V_MSG(_i2c_device_fd < 0, 0, "Read device register at device address failed because the device file is not opened. Did you forget to call open_device()?");
+
+    uint8_t output_buffer[1] = {i2c_device_register}, input_buffer[1] = {0};
+    struct i2c_msg messages[2];
+    struct i2c_rdwr_ioctl_data message_set[1];
+
+    messages[0].addr = i2c_device_address;
+    messages[0].flags = 0;
+    messages[0].len = 1; 
+    messages[0].buf = output_buffer;
+
+    messages[1].addr = i2c_device_address;
+    messages[1].flags = I2C_M_RD | I2C_M_NOSTART;
+    messages[1].len = 1;
+    messages[1].buf = input_buffer;
+
+    message_set[0].msgs = messages;
+    message_set[0].nmsgs = 2; 
+
+    ERR_FAIL_COND_V_MSG(ioctl(_i2c_device_fd, I2C_RDWR, &message_set) < 0, 0,"Read byte from i2c device register failed.");
+    return input_buffer[0];
+}
+
+void I2cDevice::write_byte_to_device_register_at_device_address( uint8_t i2c_device_address, uint8_t i2c_device_register, uint8_t value ) {
+    ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "Write device register failed because the device file is not opened. Did you forget to call open_device()?");
+
+    uint8_t output_buffer[2] = {i2c_device_register, value};
+
+    struct i2c_msg messages[1];
+    struct i2c_rdwr_ioctl_data message_set[1];
+
+    messages[0].addr = i2c_device_address;
+    messages[0].flags = 0;
+    messages[0].len = 2;
+    messages[0].buf = output_buffer;
+
+    message_set[0].msgs = messages;
+    message_set[0].nmsgs = 1;
+    
+    ERR_FAIL_COND_MSG(ioctl(_i2c_device_fd, I2C_RDWR, &message_set) < 0, "Write byte to i2c device register failed.");
+
 }
 
 

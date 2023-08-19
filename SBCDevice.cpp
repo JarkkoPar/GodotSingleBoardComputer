@@ -24,6 +24,10 @@ void SBCDevice::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_is_active"), &SBCDevice::get_is_active);
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "is_active", PROPERTY_HINT_NONE ), "set_is_active", "get_is_active");
 
+    ClassDB::bind_method(D_METHOD("set_update_method"), &SBCDevice::set_update_method);
+    ClassDB::bind_method(D_METHOD("get_update_method"), &SBCDevice::get_update_method);
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "update_method", PROPERTY_HINT_ENUM, "Process:0,Physics process:1"), "set_update_method", "get_update_method");
+
 }
 
 
@@ -60,4 +64,21 @@ void SBCDevice::set_is_active( bool is_active ) {
 bool SBCDevice::get_is_active() const {
     return _is_active;
 }
+
+
+void SBCDevice::set_update_method( int method ) {
+    if( method == 0 ) {
+        _update_method = SBCDevice::PROCESS;
+        return;
+    }
+    _update_method = SBCDevice::PHYSICS_PROCESS;
+}
+
+int  SBCDevice::get_update_method() const {
+    if( _update_method == SBCDevice::PROCESS) {
+        return 0;
+    }
+    return 1;
+}
+
 

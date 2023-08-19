@@ -7,6 +7,7 @@
 using namespace godot;
 
 I2cPca9685::I2cPca9685() {
+    _i2c_device_address = 0x40;
     for( int i = 0; i < 16; ++i ) {
         servo_angles[i] = 90.0f;
         servo_min_angle_ms[i] = 1.0;

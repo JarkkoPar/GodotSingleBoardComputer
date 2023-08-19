@@ -7,6 +7,7 @@ using namespace godot;
 I2cVl53l0x::I2cVl53l0x() {
     //_is_active = true;
     //_is_vl53l0x_initialized = false;
+    _i2c_device_address = 0x29;
     _vl53l0x_update_frame_delay = 0.25;
     _vl53l0x_update_wait_time = 0.0;
     //_custom_vl53l0x_i2c_device_address = 0x28;
