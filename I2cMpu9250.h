@@ -24,7 +24,36 @@ private:
     double _mpu9250_update_wait_time;
     int    _magnetometer_i2c_address;
 
+    int    _factory_trim_gyro_x;
+    int    _factory_trim_gyro_y;
+    int    _factory_trim_gyro_z;
+
+    int    _factory_trim_accel_x;
+    int    _factory_trim_accel_y;
+    int    _factory_trim_accel_z;
+
+    int    _measurement_gyro_x;
+    int    _measurement_gyro_y;
+    int    _measurement_gyro_z;
+
+    int    _measurement_accel_x;
+    int    _measurement_accel_y;
+    int    _measurement_accel_z;
     
+    float  gyro_x;
+    float  gyro_y;
+    float  gyro_z;
+
+    float  acceleration_x;
+    float  acceleration_y;
+    float  acceleration_z;
+    
+    float  temperature_celsius;
+    float  _room_temperature_offset;
+    float  _temperature_sensitivity;
+    float  _one_over_temperature_sensitivity;
+
+
 protected: 
     static void _bind_methods();
 
@@ -165,6 +194,9 @@ public:
     
     // Device handling.
     
+    void _self_test();
+
+    void _read_sensor_data();
 };
 
 
