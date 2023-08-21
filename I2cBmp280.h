@@ -24,6 +24,9 @@ private:
     uint8_t   _filtering_coefficient;
     uint8_t   _power_mode;
     
+    int     _pressure_measurement;
+    int     _temperature_measurement;
+
 protected: 
     static void _bind_methods();
 
@@ -84,11 +87,11 @@ public:
         //                                    76543210
 
         TEMPERATURE_MEASUREMENT_SKIPPED   = 0b00000000,
-        TEMPERATURE_OVERSAMPLING_X01      = 0b00100000,
-        TEMPERATURE_OVERSAMPLING_X02      = 0b01000000,
-        TEMPERATURE_OVERSAMPLING_X04      = 0b01100000,
-        TEMPERATURE_OVERSAMPLING_X08      = 0b10000000,
-        TEMPERATURE_OVERSAMPLING_X16      = 0b10100000
+        TEMPERATURE_OVERSAMPLING_X01      = 0b00100000, // resolution 16 bit
+        TEMPERATURE_OVERSAMPLING_X02      = 0b01000000, // resolution 17 bit
+        TEMPERATURE_OVERSAMPLING_X04      = 0b01100000, // resolution 18 bit
+        TEMPERATURE_OVERSAMPLING_X08      = 0b10000000, // resolution 19 bit
+        TEMPERATURE_OVERSAMPLING_X16      = 0b10100000  // resolution 20 bit
     };
 
     enum BMP280PressureMeasurementSetting {
@@ -175,7 +178,7 @@ public:
 
     void set_preset_modes_setting( int preset_modes_setting );
     int  get_preset_modes_setting() const;
-    
+
 
     //void set_measurement_bits( int measurement_bits );
     //int  get_measurement_bits() const;

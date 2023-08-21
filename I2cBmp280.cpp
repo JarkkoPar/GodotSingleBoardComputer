@@ -12,6 +12,9 @@ I2cBmp280::I2cBmp280() {
     _pressure_measurement_oversampling = BMP280PressureMeasurementSetting::STANDARD_RESOLUTION;
     _filtering_coefficient = BMP280FilterSetting::FILTER_OFF;
     _power_mode = BMP280PowerMode::NORMAL_POWER_MODE;
+
+    _pressure_measurement = 0;
+    _temperature_measurement = 0;
 }
 
 I2cBmp280::~I2cBmp280() {
@@ -93,11 +96,76 @@ void I2cBmp280::_read_sensor_data() {
     uint8_t data[6] = {0};
     _read_bytes_from_device(_i2c_device_address, BMP280Registers::PRESS_MSB, 6, data );
 
-    // Todo: Get the measurement based on bits used.
-    //if( )
-    uint32_t pressure_measurement = (uint32_t)data[6];
-
-
+    uint32_t pressure_measurement = 0;
+    switch( _pressure_measurement_oversampling ) {
+        case BMP280PressureMeasurementSetting::ULTRA_LOW_POWER:
+        {   // 16 bit measurement.
+            pressure_measurement = ((uint32_t)data[5] << 8) + (uint32_t)data[4];
+        }
+        break;
+        case BMP280PressureMeasurementSetting::LOW_POWER:
+        {   // 17 bit measurement.
+            pressure_measurement = ((uint32_t)data[5] << 9) + ((uint32_t)data[4] << 1) + (uint32_t)(data[3] & 0b00000001);
+        }
+        break;
+        case BMP280PressureMeasurementSetting::STANDARD_RESOLUTION:
+        {   // 18 bit measurement.
+            pressure_measurement = ((uint32_t)data[5] << 10) + ((uint32_t)data[4] << 2) + (uint32_t)(data[3] & 0b00000011);
+        }
+        break;
+        case BMP280PressureMeasurementSetting::HIGH_RESOLUTION:
+        {   // 19 bit measurement.
+            pressure_measurement = ((uint32_t)data[5] << 11) + ((uint32_t)data[4] << 3) + (uint32_t)(data[3] & 0b00000111);
+        }
+        break;
+        case BMP280PressureMeasurementSetting::ULTRA_HIGH_RESOLUTION:
+        {   // 20 bit measurement.
+            pressure_measurement = ((uint32_t)data[5] << 12) + ((uint32_t)data[4] << 4) + (uint32_t)(data[3] & 0b00001111);
+        }
+        break;
+        default: //BMP280PressureMeasurementSetting::PRESSURE_MEASUREMENT_SKIPPED:
+        {
+            pressure_measurement = 0;
+        }
+        break;
+    }
+    _pressure_measurement = pressure_measurement;
+    
+    uint32_t temperature_measurement = 0;
+    switch( _temperature_measurement_oversampling ) {
+        case BMP280TemperatureMeasurementSetting::TEMPERATURE_OVERSAMPLING_X01:
+        {   // 16 bit measurement.
+            temperature_measurement = ((uint32_t)data[2] << 8) + (uint32_t)data[1];
+        }
+        break;
+        case BMP280TemperatureMeasurementSetting::TEMPERATURE_OVERSAMPLING_X02:
+        {   // 17 bit measurement.
+            temperature_measurement = ((uint32_t)data[2] << 9) + ((uint32_t)data[1] << 1) + (uint32_t)(data[0] & 0b00000001);
+        }
+        break;
+        case BMP280TemperatureMeasurementSetting::TEMPERATURE_OVERSAMPLING_X04:
+        {   // 18 bit measurement.
+            temperature_measurement = ((uint32_t)data[2] << 10) + ((uint32_t)data[1] << 2) + (uint32_t)(data[0] & 0b00000011);
+        }
+        break;
+        case BMP280TemperatureMeasurementSetting::TEMPERATURE_OVERSAMPLING_X08:
+        {   // 19 bit measurement.
+            temperature_measurement = ((uint32_t)data[2] << 11) + ((uint32_t)data[1] << 3) + (uint32_t)(data[0] & 0b00000111);
+        }
+        break;
+        case BMP280TemperatureMeasurementSetting::TEMPERATURE_OVERSAMPLING_X16:
+        {   // 20 bit measurement.
+            temperature_measurement = ((uint32_t)data[2] << 12) + ((uint32_t)data[1] << 4) + (uint32_t)(data[0] & 0b00001111);
+        }
+        break;
+        default: //BMP280TemperatureMeasurementSetting::TEMPERATURE_MEASUREMENT_SKIPPED:
+        {
+            temperature_measurement = 0;
+        }
+        break;
+    }
+    _temperature_measurement = temperature_measurement;
+    
 }
 
 
