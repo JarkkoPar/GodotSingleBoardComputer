@@ -17,6 +17,12 @@ private:
     
     int    _measurement_mode;
     int    _measurement_bits;
+
+    int       _preset_modes_setting;
+    uint8_t   _pressure_measurement_oversampling;
+    uint8_t   _temperature_measurement_oversampling;
+    uint8_t   _filtering_coefficient;
+    uint8_t   _power_mode;
     
 protected: 
     static void _bind_methods();
@@ -67,6 +73,7 @@ public:
     enum BMP280Status {
         //                                        |  |          
         //                                    76543210
+
         NORMAL                            = 0b00000000, // Measurements can be fetched
         MEASURING                         = 0b00000001, // Converting current measurement data
         NVM_DATA_IS_BEING_COPIED          = 0b00001000  // Copying over current measurement data
@@ -97,13 +104,11 @@ public:
     };
 
     enum BMP280ThreeWireSpiSetting {
-        
         //                                           |          
         //                                    76543210
 
         ENABLE_3_WIRE_SPI                 = 0b00000001,
         DISABLE_3_WIRE_SPI                = 0b00000000  
-
     };
 
     enum BMP280FilterSetting {
@@ -131,7 +136,7 @@ public:
         //                                         |||          
         //                                    76543210
 
-        STAND_BY_0_5_MS                   = 0b00000000,
+        STAND_BY_0_5_MS                   = 0b00000000, // Default
         STAND_BY_62_5_MS                  = 0b00000001,
         STAND_BY_125_MS                   = 0b00000010,
         STAND_BY_250_MS                   = 0b00000011,
@@ -156,20 +161,36 @@ public:
     
     // Getters and setters.
 
-    void set_measurement_bits( int measurement_bits );
-    int  get_measurement_bits() const;
+    void set_pressure_measurement_oversampling( int pressure_oversampling );
+    int  get_pressure_measurement_oversampling() const;
 
-    void set_measurement_mode( int measurement_mode );
-    int  get_measurement_mode() const;
+    void set_temperature_measurement_oversampling( int temperature_oversampling );
+    int  get_temperature_measurement_oversampling() const;
 
-    void  set_magnetic_field_x(float x );
-    float get_magnetic_field_x() const;
+    void set_filtering_coefficient( int filtering_coefficient );
+    int  get_filtering_coefficient() const;
+
+    void set_power_mode( int power_mode );
+    int  get_power_mode() const;
+
+    void set_preset_modes_setting( int preset_modes_setting );
+    int  get_preset_modes_setting() const;
     
-    void  set_magnetic_field_y(float y );
-    float get_magnetic_field_y() const;
+
+    //void set_measurement_bits( int measurement_bits );
+    //int  get_measurement_bits() const;
+
+    //void set_measurement_mode( int measurement_mode );
+    //int  get_measurement_mode() const;
+
+    //void  set_magnetic_field_x(float x );
+    //float get_magnetic_field_x() const;
     
-    void  set_magnetic_field_z(float z );
-    float get_magnetic_field_z() const;
+    //void  set_magnetic_field_y(float y );
+    //float get_magnetic_field_y() const;
+    
+    //void  set_magnetic_field_z(float z );
+    //float get_magnetic_field_z() const;
     
 
     // Device handling.

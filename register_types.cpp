@@ -8,6 +8,7 @@
 #include "I2cDevice.h"
 #include "I2cAds1115.h"
 #include "I2cAk8963.h"
+#include "I2cBmp280.h"
 #include "I2cMpu9250.h"
 #include "I2cPca9685.h"
 #include "I2cVl53l0x.h"
@@ -45,6 +46,7 @@ void initialize_singleboardcomputer_module(ModuleInitializationLevel p_level) {
     ClassDB::register_class<I2cDevice>(true);
     ClassDB::register_class<I2cAds1115>();
     ClassDB::register_class<I2cAk8963>();
+    ClassDB::register_class<I2cBmp280>();
     ClassDB::register_class<I2cMpu9250>();
     ClassDB::register_class<I2cPca9685>();
     ClassDB::register_class<I2cVl53l0x>();
