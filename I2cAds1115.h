@@ -33,7 +33,7 @@ private:
 protected: 
     
     static void _bind_methods();
-    virtual void _configure_i2c_device() override;
+    virtual bool _configure_i2c_device() override;
 
 public:
 

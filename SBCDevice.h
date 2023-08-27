@@ -42,7 +42,7 @@ protected:
 
 
     static void _bind_methods();
-    virtual void _initialize_device(); // This is the method all the inheriting devices should override if needed
+    virtual bool _initialize_device(); // This is the method all the inheriting devices should override if needed
     virtual void _deinitialize_device(); // This is the method all the inheriting devices should override if needed
 
 private:

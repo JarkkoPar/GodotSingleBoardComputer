@@ -144,36 +144,37 @@ int  I2cDevice::get_i2c_device_address() const {
 
 // Device handling
 
-void I2cDevice::_initialize_device() {
+bool I2cDevice::_initialize_device() {
     // Set the i2c bus number now to set up the index.
     set_i2c_device_bus_number(_i2c_device_bus_number);
-    _open_i2c_device();
-    _configure_i2c_device();
+    if( !_open_i2c_device() ) return false;
+    return _configure_i2c_device();
 }
 
 
 
-void I2cDevice::_open_i2c_device() {
+bool I2cDevice::_open_i2c_device() {
     
     // Get the parent which should have the i2c bus array.
     SingleBoardComputer* sbc = Object::cast_to<SingleBoardComputer>(get_parent());
-    ERR_FAIL_COND_MSG(sbc == nullptr, "This node needs to be a child of the SingleBoardComputer node.");
+    ERR_FAIL_COND_V_MSG(sbc == nullptr, false, "This node needs to be a child of the SingleBoardComputer node.");
 
-    ERR_FAIL_COND_MSG(_i2c_device_index < 0 || _i2c_device_index >= sbc->get_num_i2c_buses(), "Invalid index for I2C bus. Have you set the I2C device number?");
+    ERR_FAIL_COND_V_MSG(_i2c_device_index < 0 || _i2c_device_index >= sbc->get_num_i2c_buses(), false, "Invalid index for I2C bus. Have you set the I2C device number?");
 
     // Open the selected bus file.
     _i2c_device_fd = sbc->request_i2c_device_file(_i2c_device_index);
-    ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "Failed to open the device file.");
+    ERR_FAIL_COND_V_MSG(_i2c_device_fd < 0, false, "Failed to open the device file.");
 
 
     // Try to set the address for communications.  
     int ioctl_retval = ioctl(_i2c_device_fd, I2C_SLAVE, _i2c_device_address);
-    ERR_FAIL_COND_MSG(ioctl_retval < 0, "Failed to set the slave device address.");
+    ERR_FAIL_COND_V_MSG(ioctl_retval < 0, false, "Failed to set the slave device address.");
 
 }
 
-void I2cDevice::_configure_i2c_device() {
+bool I2cDevice::_configure_i2c_device() {
     // To be overridden by the actual i2c devices.
+    return false;
 }
 
 

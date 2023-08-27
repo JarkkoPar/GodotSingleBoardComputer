@@ -38,7 +38,7 @@ void I2cMpu9250::_notification(int p_what) {}
     
 // Device handling.
 
-void I2cMpu9250::_configure_i2c_device() {
+bool I2cMpu9250::_configure_i2c_device() {
     // Configure the Magnetometer, gyroscope and finally the accelerometer.
     uint8_t accel_config[] = {0x18};
     _write_bytes_to_device(_i2c_device_address, MPU9250Registers::ACCEL_CONFIG, 1, accel_config );
@@ -50,6 +50,7 @@ void I2cMpu9250::_configure_i2c_device() {
     //write_byte_to_device_register_at_device_address( _magnetometer_i2c_address, , uint8_t value );
     //_write_byte_array_to_device_register(MPU9250Registers::INT_PIN_CFG, magnetometer_config);
     
+    return true;
 }
 
 

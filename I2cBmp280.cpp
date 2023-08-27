@@ -76,13 +76,14 @@ void I2cBmp280::_notification(int p_what) {
     
 // Device handling.
 
-void I2cBmp280::_configure_i2c_device() {
+bool I2cBmp280::_configure_i2c_device() {
     //_write_byte_to_device(_i2c_device_address, BMP280Registers::CONFIG, BMP280StandByTime::STAND_BY_0_5_MS|BMP280FilterSetting::FILTER_COEFFICIENT_02|BMP280ThreeWireSpiSetting::DISABLE_3_WIRE_SPI);
     //_write_byte_to_device(_i2c_device_address, BMP280Registers::CTRL_MEAS, BMP280PressureMeasurementSetting::ULTRA_LOW_POWER|BMP280TemperatureMeasurementSetting::TEMPERATURE_OVERSAMPLING_X01|BMP280PowerMode::NORMAL_POWER_MODE);
 
     _write_byte_to_device(_i2c_device_address, BMP280Registers::CONFIG, BMP280StandByTime::STAND_BY_0_5_MS|_filtering_coefficient|BMP280ThreeWireSpiSetting::DISABLE_3_WIRE_SPI);
     _write_byte_to_device(_i2c_device_address, BMP280Registers::CTRL_MEAS, _pressure_measurement_oversampling|_temperature_measurement_oversampling|_power_mode);
 
+    return true;
 } 
 
 void I2cBmp280::_self_test() {

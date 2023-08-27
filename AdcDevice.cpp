@@ -99,33 +99,33 @@ int AdcDevice::get_adc_pin_value() const {
 
 // Device handling
 
-void AdcDevice::_initialize_device() {
-    _open_adc_device();
-    _configure_adc_device();
+bool AdcDevice::_initialize_device() {
+    if( !_open_adc_device() ) return false;
+    return _configure_adc_device();
 }
 
 
 
-void AdcDevice::_open_adc_device() {
+bool AdcDevice::_open_adc_device() {
 
     // Get the parent which should have the gpio pin array.
     SingleBoardComputer* sbc = Object::cast_to<SingleBoardComputer>(get_parent());
-    ERR_FAIL_COND_MSG(sbc == nullptr, "This node needs to be a child of the SingleBoardComputer node.");
+    ERR_FAIL_COND_V_MSG(sbc == nullptr, false, "This node needs to be a child of the SingleBoardComputer node.");
 
-    ERR_FAIL_COND_MSG(_adc_gpio_pin_index < 0 || _adc_gpio_pin_index >= sbc->get_num_gpio_pins(), "Invalid pin number for gpio pin (out of bounds).");
-    ERR_FAIL_COND_MSG(!sbc->get_gpio_pins()[_adc_gpio_pin_index].has_pin_function(GpioPin::GpioPinFunction::GPF_ADC_IN), "The selected pin does not have the ADC function.");
+    ERR_FAIL_COND_V_MSG(_adc_gpio_pin_index < 0 || _adc_gpio_pin_index >= sbc->get_num_gpio_pins(), false, "Invalid pin number for gpio pin (out of bounds).");
+    ERR_FAIL_COND_V_MSG(!sbc->get_gpio_pins()[_adc_gpio_pin_index].has_pin_function(GpioPin::GpioPinFunction::GPF_ADC_IN), false, "The selected pin does not have the ADC function.");
 
     // Get the raw file index
     _adc_device_raw_file_index = sbc->get_gpio_pins()[_adc_gpio_pin_index].get_adc_device_file_index();
     _adc_voltage_raw_file_index = sbc->get_gpio_pins()[_adc_gpio_pin_index].get_adc_voltage_file_index();
-    ERR_FAIL_COND_MSG(_adc_device_raw_file_index < 0 || _adc_voltage_raw_file_index < 0, "ADC raw file identification for the voltage reading failed.");
+    ERR_FAIL_COND_V_MSG(_adc_device_raw_file_index < 0 || _adc_voltage_raw_file_index < 0, false, "ADC raw file identification for the voltage reading failed.");
 
     _adc_pin_max_voltage = sbc->get_gpio_pins()[_adc_gpio_pin_index].get_adc_max_voltage();
 }
 
 
-void AdcDevice::_configure_adc_device() {
-    
+bool AdcDevice::_configure_adc_device() {
+    return true;
 }
 
 

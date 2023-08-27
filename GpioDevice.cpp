@@ -101,19 +101,19 @@ int GpioDevice::request_pin_number( int pin_number, int pin_type, const char* co
 
 
 
-void GpioDevice::_initialize_device() {
-    _open_gpio_device();
-    _configure_gpio_device();
+bool GpioDevice::_initialize_device() {
+    if( !_open_gpio_device() ) return false;
+    return _configure_gpio_device();
 }
 
 
 
-void GpioDevice::_open_gpio_device() {
-
+bool GpioDevice::_open_gpio_device() {
+    return true;
 }
 
-void GpioDevice::_configure_gpio_device() {
-
+bool GpioDevice::_configure_gpio_device() {
+    return true;
 }
 
 

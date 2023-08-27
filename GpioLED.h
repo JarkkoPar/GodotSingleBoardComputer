@@ -16,8 +16,8 @@ private:
 protected: 
 
     static void _bind_methods();
-    virtual void _open_gpio_device() override;
-    virtual void _configure_gpio_device();
+    virtual bool _open_gpio_device() override;
+    virtual bool _configure_gpio_device();
 
 public: 
     GpioLED();

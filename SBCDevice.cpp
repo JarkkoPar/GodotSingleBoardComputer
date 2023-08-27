@@ -32,12 +32,11 @@ void SBCDevice::_bind_methods() {
 
 
 void SBCDevice::initialize_device() {
+    if( !_is_active ) return;
     if( _is_device_initialized ) return;
     if(Engine::get_singleton()->is_editor_hint()) return;
-    if( !_is_active ) return;
-
-    _initialize_device();
-    _is_device_initialized = true;
+    
+    _is_device_initialized = _initialize_device();
 }
 
 void SBCDevice::deinitialize_device() {
@@ -47,8 +46,8 @@ void SBCDevice::deinitialize_device() {
 
 
 
-void SBCDevice::_initialize_device() {
-    
+bool SBCDevice::_initialize_device() {
+    return false;
 }
 
 void SBCDevice::_deinitialize_device() {

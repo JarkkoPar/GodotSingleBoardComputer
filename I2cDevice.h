@@ -28,11 +28,11 @@ protected:
 
     static void _bind_methods();
 
-    virtual void _initialize_device() override;
+    virtual bool _initialize_device() override;
     virtual void _deinitialize_device() override;
 
-    virtual void _open_i2c_device();
-    virtual void _configure_i2c_device();
+    virtual bool _open_i2c_device();
+    virtual bool _configure_i2c_device();
 
 public:
 

@@ -159,33 +159,35 @@ float GpioHcSr04::get_distance_inch() {
 
 // Device handling.
 
-void GpioHcSr04::_configure_gpio_device() {
+bool GpioHcSr04::_configure_gpio_device() {
 
     // Get the parent which should have the gpio pin array.
     SingleBoardComputer* sbc = Object::cast_to<SingleBoardComputer>(get_parent());
-    ERR_FAIL_COND_MSG(sbc == nullptr, "This node needs to be a child of the SingleBoardComputer node.");
+    ERR_FAIL_COND_V_MSG(sbc == nullptr, false, "This node needs to be a child of the SingleBoardComputer node.");
 
-    ERR_FAIL_INDEX_EDMSG(_gpio_trig_pin_index, 40, "Invalid index for gpio trigger pin (out of bounds).");
-    ERR_FAIL_INDEX_EDMSG(_gpio_echo_pin_index, 40, "Invalid index for gpio echo pin (out of bounds).");
+    ERR_FAIL_INDEX_V_EDMSG(_gpio_trig_pin_index, 40, false, "Invalid index for gpio trigger pin (out of bounds).");
+    ERR_FAIL_INDEX_V_EDMSG(_gpio_echo_pin_index, 40, false, "Invalid index for gpio echo pin (out of bounds).");
     
     // Open the selected gpio file.
     _gpio_trig_pin_device_fd = sbc->request_gpio_device_file(_gpio_trig_pin_index);
-    ERR_FAIL_COND_MSG(_gpio_trig_pin_device_fd < 0, "Request for gpio trigger pin device file failed.");
+    ERR_FAIL_COND_V_MSG(_gpio_trig_pin_device_fd < 0, false, "Request for gpio trigger pin device file failed.");
 
     _gpio_echo_pin_device_fd = sbc->request_gpio_device_file(_gpio_echo_pin_index);
-    ERR_FAIL_COND_MSG(_gpio_echo_pin_device_fd < 0, "Request for gpio echo pin device file failed.");    
+    ERR_FAIL_COND_V_MSG(_gpio_echo_pin_device_fd < 0, false, "Request for gpio echo pin device file failed.");    
 
     // Request the triggering pin.
     _gpio_trig_pin_fd = request_pin_number(_gpio_trig_pin_index + 1, GPIO_TYPE_OUTPUT, (char *)this->get_name().to_ascii_buffer().ptr() );
-    ERR_FAIL_COND_MSG(_gpio_trig_pin_fd < 0, "Failed to get line handle from gpio device for the HC-SR04 triggering pin.");
+    ERR_FAIL_COND_V_MSG(_gpio_trig_pin_fd < 0, false, "Failed to get line handle from gpio device for the HC-SR04 triggering pin.");
     
     // Request the echoing pin.
     _gpio_echo_pin_fd = request_pin_number(_gpio_echo_pin_index + 1, GPIO_TYPE_INPUT, (char *)this->get_name().to_ascii_buffer().ptr() );
-    ERR_FAIL_COND_MSG(_gpio_echo_pin_fd < 0, "Failed to get line handle from gpio device for the HC-SR04 echoing pin.");
+    ERR_FAIL_COND_V_MSG(_gpio_echo_pin_fd < 0, false, "Failed to get line handle from gpio device for the HC-SR04 echoing pin.");
     
     // Start th distance polling thread.
     _end_processing = false;
     _distance_polling_thread = std::thread(trigger_echo_loop, this);
+
+    return true;
 }
 
 

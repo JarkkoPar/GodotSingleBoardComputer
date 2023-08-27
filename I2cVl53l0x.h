@@ -22,7 +22,7 @@ private:
 protected: 
     static void _bind_methods();
 
-    virtual void _configure_i2c_device() override;
+    virtual bool _configure_i2c_device() override;
 
 public:
 //https://github.com/GrimbiXcode/VL53L0X-Register-Map
@@ -109,7 +109,7 @@ public:
     //void sleep_Vl53l0x();
     //void restart_Vl53l0x();
 
-
+    void _read_sensor_data();
 };
 
 

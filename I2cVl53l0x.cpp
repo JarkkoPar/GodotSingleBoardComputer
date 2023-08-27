@@ -5,8 +5,6 @@
 using namespace godot;
 
 I2cVl53l0x::I2cVl53l0x() {
-    //_is_active = true;
-    //_is_vl53l0x_initialized = false;
     _i2c_device_address = 0x29;
     _vl53l0x_update_frame_delay = 0.25;
     _vl53l0x_update_wait_time = 0.0;
@@ -45,6 +43,7 @@ void I2cVl53l0x::_bind_methods() {
 
 // Godot virtuals.
 void I2cVl53l0x::_process(double delta) {
+    if(_update_method != SBCDeviceUpdateMethod::PROCESS ) return;
     if(Engine::get_singleton()->is_editor_hint()) return;
     if(!_is_active) return;
     if(_reading_mode != (int)Vl53l0xReadingMode::BACK_TO_BACK) return;
@@ -53,18 +52,20 @@ void I2cVl53l0x::_process(double delta) {
     if( _vl53l0x_update_wait_time > 0.0 ) return;
     _vl53l0x_update_wait_time = _vl53l0x_update_frame_delay;
 
-    //ERR_FAIL_COND_MSG( !_is_vl53l0x_initialized, "VL53L0X is not yet initialized, cannot update the distance property in _process().");
-    ERR_FAIL_COND_MSG( !_is_device_initialized, "VL53L0X is not yet initialized, cannot update the distance property in _process().");
-    
-    uint8_t msb = read_byte_from_device_register((uint8_t)(Vl53l0xRegisters::MEASUREMENT_MOST_SIGNIFICANT_BIT));
-    uint8_t lsb = read_byte_from_device_register((uint8_t)(Vl53l0xRegisters::MEASUREMENT_LEAST_SIGNIFICANT_BIT));
-    
-    _distance_mm = (float)( (uint16_t)(msb << 8) | (uint16_t)(lsb) );
-    _distance_inch = _distance_mm * 0.03937007874f; // divide mm by 25.4f;
+    _read_sensor_data();
 }
 
 void I2cVl53l0x::_physics_process(double delta) {
+    if(_update_method != SBCDeviceUpdateMethod::PHYSICS_PROCESS ) return;
+    if(Engine::get_singleton()->is_editor_hint()) return;
+    if(!_is_active) return;
+    if(_reading_mode != (int)Vl53l0xReadingMode::BACK_TO_BACK) return;
 
+    _vl53l0x_update_wait_time -= delta;
+    if( _vl53l0x_update_wait_time > 0.0 ) return;
+    _vl53l0x_update_wait_time = _vl53l0x_update_frame_delay;
+
+    _read_sensor_data();
 }
 
 void I2cVl53l0x::_notification(int p_what) {
@@ -121,8 +122,8 @@ void I2cVl53l0x::set_custom_vl53l0x_i2c_device_address( int new_i2c_device_addre
     
 // Device handling.
 
-void I2cVl53l0x::_configure_i2c_device() {
-    ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "VL53L0X configuration failed because the device file is not opened.");
+bool I2cVl53l0x::_configure_i2c_device() {
+    ERR_FAIL_COND_V_MSG(_i2c_device_fd < 0, false, "VL53L0X configuration failed because the device file is not opened.");
 
     write_byte_to_device_register( Vl53l0xRegisters::SYSRANGE_START, (uint8_t)_reading_mode );//Vl53l0xReadingMode::BACK_TO_BACK );
 
@@ -131,5 +132,19 @@ void I2cVl53l0x::_configure_i2c_device() {
     //    WARN_PRINT_ONCE("The custom device address is set but it does not match the address on the device.");
     //}
     
+    return true;   
+}
+
+
+void I2cVl53l0x::_read_sensor_data() {
+    if( !_is_device_initialized ) {
+        _is_active = false; // If the device is not initialized, it cannot be active
+    }
+    ERR_FAIL_COND_MSG( !_is_device_initialized, "VL53L0X is not yet initialized, cannot update the distance property in _process().");
+
+    uint8_t msb = read_byte_from_device_register((uint8_t)(Vl53l0xRegisters::MEASUREMENT_MOST_SIGNIFICANT_BIT));
+    uint8_t lsb = read_byte_from_device_register((uint8_t)(Vl53l0xRegisters::MEASUREMENT_LEAST_SIGNIFICANT_BIT));
     
+    _distance_mm = (float)( (uint16_t)(msb << 8) | (uint16_t)(lsb) );
+    _distance_inch = _distance_mm * 0.03937007874f; // divide mm by 25.4f;
 }

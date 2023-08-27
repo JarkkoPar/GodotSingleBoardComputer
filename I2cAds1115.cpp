@@ -52,8 +52,9 @@ void I2cAds1115::_notification(int p_what) {
     
 // Device handling.
 
-void I2cAds1115::_configure_i2c_device() {
+bool I2cAds1115::_configure_i2c_device() {
 
     
+    return true;
 } 
 

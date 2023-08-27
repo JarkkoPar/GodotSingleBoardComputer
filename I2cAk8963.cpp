@@ -74,7 +74,7 @@ void I2cAk8963::_notification(int p_what) {
     
 // Device handling.
 
-void I2cAk8963::_configure_i2c_device() {
+bool I2cAk8963::_configure_i2c_device() {
     // Selftest.
     _self_test();
         
@@ -89,6 +89,7 @@ void I2cAk8963::_configure_i2c_device() {
     */
     OS::get_singleton()->delay_msec(50);
     
+    return true;
 } 
 
 void I2cAk8963::_self_test() {

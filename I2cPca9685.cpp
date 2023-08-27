@@ -434,8 +434,8 @@ int  I2cPca9685::get_pwm_frequency_hz() const {
 }
 
 
-void I2cPca9685::_configure_i2c_device() {
-    ERR_FAIL_COND_MSG(_i2c_device_fd < 0, "PCA9685 configuration failed because the device file is not opened.");
+bool I2cPca9685::_configure_i2c_device() {
+    ERR_FAIL_COND_V_MSG(_i2c_device_fd < 0, false, "PCA9685 configuration failed because the device file is not opened.");
     
     // Read the current MODE1 register value.
     //uint8_t current_state = read_byte_from_device_register(PCA9685Registers::MODE1);
@@ -447,6 +447,7 @@ void I2cPca9685::_configure_i2c_device() {
     
     set_pwm_frequency_hz(_pwm_frequency_hz);
 
+    return true;
 }
 
 
