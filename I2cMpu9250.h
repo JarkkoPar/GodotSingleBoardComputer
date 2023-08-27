@@ -191,7 +191,16 @@ public:
     
     // Getters and setters.
 
+    void set_measurement_gyro_x( int x );
+    int  get_measurement_gyro_x() const;
     
+    void set_measurement_gyro_y( int y );
+    int  get_measurement_gyro_y() const;
+
+    void set_measurement_gyro_z( int z );
+    int  get_measurement_gyro_z() const;
+
+
     // Device handling.
     
     void _self_test();

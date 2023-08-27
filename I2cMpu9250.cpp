@@ -8,6 +8,14 @@ using namespace godot;
 I2cMpu9250::I2cMpu9250() {
     _i2c_device_address = 0x68;
     _magnetometer_i2c_address = 0x0C;
+
+    _measurement_gyro_x = 0;
+    _measurement_gyro_y = 0;
+    _measurement_gyro_z = 0;
+
+    _measurement_accel_x = 0;
+    _measurement_accel_y = 0;
+    _measurement_accel_z = 0;
 }
 
 
@@ -18,6 +26,20 @@ I2cMpu9250::~I2cMpu9250() {
 
 
 void I2cMpu9250::_bind_methods() {
+
+
+    // The measurement data.
+    ClassDB::bind_method(D_METHOD("set_measurement_gyro_x", "x"), &I2cMpu9250::set_measurement_gyro_x);
+	ClassDB::bind_method(D_METHOD("get_measurement_gyro_x"), &I2cMpu9250::get_measurement_gyro_x);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "measurement_gyro_x", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_measurement_gyro_x", "get_measurement_gyro_x");
+
+    ClassDB::bind_method(D_METHOD("set_measurement_gyro_y", "y"), &I2cMpu9250::set_measurement_gyro_y);
+	ClassDB::bind_method(D_METHOD("get_measurement_gyro_y"), &I2cMpu9250::get_measurement_gyro_y);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "measurement_gyro_y", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_measurement_gyro_y", "get_measurement_gyro_y");
+
+    ClassDB::bind_method(D_METHOD("set_measurement_gyro_z", "z"), &I2cMpu9250::set_measurement_gyro_z);
+	ClassDB::bind_method(D_METHOD("get_measurement_gyro_z"), &I2cMpu9250::get_measurement_gyro_z);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "measurement_gyro_z", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_measurement_gyro_z", "get_measurement_gyro_z");
 
 }
 
@@ -34,8 +56,34 @@ void I2cMpu9250::_notification(int p_what) {}
 
     
 // Getters and setters.
-    
-    
+
+
+void I2cMpu9250::set_measurement_gyro_x( int x ) {
+    _measurement_gyro_x = x;
+}
+
+int I2cMpu9250::get_measurement_gyro_x() const {
+    return _measurement_gyro_x;
+}
+
+void I2cMpu9250::set_measurement_gyro_y( int y ) {
+    _measurement_gyro_x = y;
+}
+
+int I2cMpu9250::get_measurement_gyro_y() const {
+    return _measurement_gyro_y;
+}
+
+void I2cMpu9250::set_measurement_gyro_z( int z ) {
+    _measurement_gyro_z = z;
+}
+
+int I2cMpu9250::get_measurement_gyro_z() const {
+    return _measurement_gyro_z;
+}
+
+
+
 // Device handling.
 
 bool I2cMpu9250::_configure_i2c_device() {
