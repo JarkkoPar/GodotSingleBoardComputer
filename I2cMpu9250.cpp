@@ -31,15 +31,31 @@ void I2cMpu9250::_bind_methods() {
     // The measurement data.
     ClassDB::bind_method(D_METHOD("set_measurement_gyro_x", "x"), &I2cMpu9250::set_measurement_gyro_x);
 	ClassDB::bind_method(D_METHOD("get_measurement_gyro_x"), &I2cMpu9250::get_measurement_gyro_x);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "measurement_gyro_x", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_measurement_gyro_x", "get_measurement_gyro_x");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "measurement_gyro_x", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_measurement_gyro_x", "get_measurement_gyro_x");
 
     ClassDB::bind_method(D_METHOD("set_measurement_gyro_y", "y"), &I2cMpu9250::set_measurement_gyro_y);
 	ClassDB::bind_method(D_METHOD("get_measurement_gyro_y"), &I2cMpu9250::get_measurement_gyro_y);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "measurement_gyro_y", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_measurement_gyro_y", "get_measurement_gyro_y");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "measurement_gyro_y", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_measurement_gyro_y", "get_measurement_gyro_y");
 
     ClassDB::bind_method(D_METHOD("set_measurement_gyro_z", "z"), &I2cMpu9250::set_measurement_gyro_z);
 	ClassDB::bind_method(D_METHOD("get_measurement_gyro_z"), &I2cMpu9250::get_measurement_gyro_z);
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "measurement_gyro_z", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_measurement_gyro_z", "get_measurement_gyro_z");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "measurement_gyro_z", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_measurement_gyro_z", "get_measurement_gyro_z");
+
+    ClassDB::bind_method(D_METHOD("set_measurement_accel_x", "x"), &I2cMpu9250::set_measurement_accel_x);
+	ClassDB::bind_method(D_METHOD("get_measurement_accel_x"), &I2cMpu9250::get_measurement_accel_x);
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "measurement_accel_x", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_measurement_accel_x", "get_measurement_accel_x");
+
+    ClassDB::bind_method(D_METHOD("set_measurement_accel_y", "y"), &I2cMpu9250::set_measurement_accel_y);
+	ClassDB::bind_method(D_METHOD("get_measurement_accel_y"), &I2cMpu9250::get_measurement_accel_y);
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "measurement_accel_y", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_measurement_accel_y", "get_measurement_accel_y");
+
+    ClassDB::bind_method(D_METHOD("set_measurement_accel_z", "z"), &I2cMpu9250::set_measurement_accel_z);
+	ClassDB::bind_method(D_METHOD("get_measurement_accel_z"), &I2cMpu9250::get_measurement_accel_z);
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "measurement_accel_z", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_measurement_accel_z", "get_measurement_accel_z");
+
+    ClassDB::bind_method(D_METHOD("set_temperature_celsius", "celsius"), &I2cMpu9250::set_temperature_celsius);
+	ClassDB::bind_method(D_METHOD("get_temperature_celsius"), &I2cMpu9250::get_temperature_celsius);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "temperature_celsius", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_temperature_celsius", "get_temperature_celsius");
 
 }
 
@@ -82,6 +98,39 @@ int I2cMpu9250::get_measurement_gyro_z() const {
     return _measurement_gyro_z;
 }
 
+
+void I2cMpu9250::set_measurement_accel_x( int x ) {
+    _measurement_accel_x = x;
+}
+
+int I2cMpu9250::get_measurement_accel_x() const {
+    return _measurement_accel_x;
+}
+
+void I2cMpu9250::set_measurement_accel_y( int y ) {
+    _measurement_accel_x = y;
+}
+
+int I2cMpu9250::get_measurement_accel_y() const {
+    return _measurement_accel_y;
+}
+
+void I2cMpu9250::set_measurement_accel_z( int z ) {
+    _measurement_accel_z = z;
+}
+
+int I2cMpu9250::get_measurement_accel_z() const {
+    return _measurement_accel_z;
+}
+
+
+void I2cMpu9250::set_temperature_celsius( float celsius ) {
+    temperature_celsius = celsius;
+}
+
+float I2cMpu9250::get_temperature_celsius() const {
+    return temperature_celsius;
+}
 
 
 // Device handling.
@@ -135,6 +184,14 @@ void I2cMpu9250::_read_sensor_data() {
     int16_t ay = (int16_t)data[10] << 8 | ((int16_t)data[11]);
     int16_t az = (int16_t)data[12] << 8 | ((int16_t)data[13]);
 
+    _measurement_gyro_x = (int)gx;
+    _measurement_gyro_y = (int)gy;
+    _measurement_gyro_z = (int)gz;
+
+    _measurement_accel_x = (int)ax;
+    _measurement_accel_y = (int)ay;
+    _measurement_accel_z = (int)az;
+
     //GYRO_XOUT = Gyro_Sensitivity * X_angular_rate
     //Nominal
     //Conditions
@@ -145,6 +202,7 @@ void I2cMpu9250::_read_sensor_data() {
     //RoomTemp_Offset)/Temp_Sensitivity)
     //+ 21degC
     temperature_celsius = (((float)temp - _room_temperature_offset)*_one_over_temperature_sensitivity) + 21.0f;
+    // todo: add conversion to Kelvin and Fahrenheit.
 
     /*sensor_x = mx;
     sensor_y = my;

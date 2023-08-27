@@ -49,10 +49,13 @@ private:
     float  acceleration_z;
     
     float  temperature_celsius;
+    
     float  _room_temperature_offset;
     float  _temperature_sensitivity;
     float  _one_over_temperature_sensitivity;
 
+    float  temperature_kelvin; // Converted from Celsius.
+    float  temperature_fahrenheit; // Converted from Celsius.
 
 protected: 
     static void _bind_methods();
@@ -199,6 +202,18 @@ public:
 
     void set_measurement_gyro_z( int z );
     int  get_measurement_gyro_z() const;
+
+    void set_measurement_accel_x( int x );
+    int  get_measurement_accel_x() const;
+    
+    void set_measurement_accel_y( int y );
+    int  get_measurement_accel_y() const;
+
+    void set_measurement_accel_z( int z );
+    int  get_measurement_accel_z() const;
+
+    void  set_temperature_celsius( float celsius );
+    float get_temperature_celsius() const;
 
 
     // Device handling.
