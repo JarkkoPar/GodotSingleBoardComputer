@@ -168,17 +168,136 @@ public:
         ZA_OFFSET_L        = 0x7E
     };
 
-    
-    enum ADS1115ComparatorQueueAndDisable {
-        //                                           ||          
-        //                             FEDCBA9876543210
-        ASSERT_AFTER_1_CONVERSIONS = 0b0000000000000000,
-        ASSERT_AFTER_2_CONVERSIONS = 0b0000000000000001,
-        ASSERT_AFTER_3_CONVERSIONS = 0b0000000000000010,
-        DISABLE                    = 0b0000000000000011 // DEFAULT
+    enum MPU9250Configuration {
+        //                                  |||          
+        //                             76543210
+
+        FIFO_MODE                  = 0b01000000, // When set to 1, when the fifo is full, additional writes will not be written to FIFO. If 0, new writes will be written and old values will get replaced. 
+        EXT_SYNC_SET_1             = 0b00001000, // TEMP_OUT_L[0]
+        EXT_SYNC_SET_2             = 0b00010000, // GYRO_XOUT_L[0]
+        EXT_SYNC_SET_3             = 0b00011000, // GYRO_YOUT_L[0]
+        EXT_SYNC_SET_4             = 0b00100000, // GYRO_ZOUT_L[0]
+        EXT_SYNC_SET_5             = 0b00101000, // ACCEL_XOUT_L[0]
+        EXT_SYNC_SET_6             = 0b00110000, // ACCEL_YOUT_L[0]
+        EXT_SYNC_SET_7             = 0b00111000, // ACCEL_ZOUT_L[0]
+        DLPF_CFG                   = 0b00000011, // Use DLPF, 
+        CONFIGURATION_RESET        = 0b00000000
+    };
+
+    enum MPU9250GyroscopeConfiguration {
+        //                             ||||| ||          
+        //                             76543210
+
+        XGYRO_Cten                 = 0b10000000, 
+        YGYRO_Cten                 = 0b01000000, 
+        ZGYRO_Cten                 = 0b00100000,
+        //XGYRO_FS_SEL_250_DPS       = 0b00000000,  
+        XGYRO_FS_SEL_500_DPS       = 0b00001000,  
+        XGYRO_FS_SEL_1000_DPS      = 0b00010000,  
+        XGYRO_FS_SEL_2000_DPS      = 0b00011000,  
+        // Bit 2 is reserved
+        Fchoice_b                  = 0b00000001,  
+
+        GYROSCOPE_CONFIGURATION_RESET = 0b00000000
+    };
+
+    enum Mpu9250AccelerometerConfiguration {
+        //                             |||||          
+        //                             76543210
+
+        ax_st_en                   = 0b10000000, 
+        ay_st_en                   = 0b01000000, 
+        az_st_en                   = 0b00100000,
+        
+        // ACCEL_FS_SEL_2G is selected by default.
+        // ACCEL_FS_SEL_2G         = 0b00000000,
+        ACCEL_FS_SEL_4G            = 0b00001000,
+        ACCEL_FS_SEL_8G            = 0b00010000,
+        ACCEL_FS_SEL_16G           = 0b00011000,
+
+        ACCELEROMETER_CONFIGURATION_RESET = 0b00000000
+        
+    };
+
+    enum Mpu9250AccelerometerConfiguration2 {
+        //                               ||||||          
+        //                             76543210
+
+        accel_fchoice_b            = 0b00001000, 
+        
+        // A_DLPFCFG_0 is selected by default.
+        // A_DLPFCFG_0             = 0b00000000,
+        A_DLPFCFG_F_CHOICE         = 0b00000100,
+        A_DLPFCFG_1                = 0b00000001,
+        A_DLPFCFG_2                = 0b00000010,
+        A_DLPFCFG_3                = 0b00000011,
+        A_DLPFCFG_4                = 0b00000100,
+        A_DLPFCFG_5                = 0b00000101,
+        A_DLPFCFG_6                = 0b00000110,
+        A_DLPFCFG_7                = 0b000001111,
+        ACCELEROMETER_CONFIGURATION2_RESET = 0b00000000
+        
     };
 
 
+    enum MPU9250I2cMasterDelayControl {
+        //                                  |||          
+        //                             76543210
+
+        DELAY_ES_SHADOW            = 0b10000000, // Delays shadowing of external sensor data until all data is received
+        // bit 6 and 5 are reserved
+        I2C_LSV4_DLY_EN            = 0b00010000, // When enabled, slave 4 will only be accessed 1+I2C_MST_DLY samples as determined by SMPLRT_DIV_ and DLPF_CFG.
+        I2C_LSV3_DLY_EN            = 0b00001000, // When enabled, slave 3 will only be accessed 1+I2C_MST_DLY samples as determined by SMPLRT_DIV_ and DLPF_CFG.
+        I2C_LSV2_DLY_EN            = 0b00000100, // When enabled, slave 2 will only be accessed 1+I2C_MST_DLY samples as determined by SMPLRT_DIV_ and DLPF_CFG.
+        I2C_LSV1_DLY_EN            = 0b00000010, // When enabled, slave 1 will only be accessed 1+I2C_MST_DLY samples as determined by SMPLRT_DIV_ and DLPF_CFG.
+        I2C_LSV0_DLY_EN            = 0b00000001, // When enabled, slave 0 will only be accessed 1+I2C_MST_DLY samples as determined by SMPLRT_DIV_ and DLPF_CFG.
+        MASTER_DELAY_CONTROL_RESET = 0b00000000
+    };
+
+    
+    enum MPU9250SignalPathReset {
+        //                                  |||          
+        //                             76543210
+
+        GYRO_RST                   = 0b00000100, // Reset the gyros
+        ACCEL_RST                  = 0b00000010, // Reset the accelerometers
+        TEMP_RST                   = 0b00000001  // Reset the temperature sensor
+    };
+
+    enum MPU9250AccelIntelCtrl {
+        //                             ||          
+        //                             76543210
+
+        ACCEL_INTEL_EN             = 0b10000000, // Enables the Wake-on-Motion detection logic
+        ACCEL_INTEL_MODE           = 0b01000000, // This will define the mode to compare current sample with the previous sample
+        ACCEL_INTEL_RESET          = 0b00000000
+    };
+
+    enum MPU9250PowerManagement1 {
+        //                                  ||||||||          
+        //                                  76543210
+
+        POWER_MANAGEMENT_1_RESET        = 0b10000000, // Reset and clear all to default settings
+        POWER_MANAGEMENT_1_SLEEP        = 0b01000000,
+        POWER_MANAGEMENT_1_CYCLE        = 0b00100000,
+        POWER_MANAGEMENT_1_GYRO_STANDBY = 0b00010000,
+        POWER_MANAGEMENT_1_PD_PTAT      = 0b00001000,
+        POWER_MANAGEMENT_1_WAKE         = 0b00000000
+    };
+
+
+    enum PMU9250PowerManagement2 {
+        //                               ||||||          
+        //                             76543210
+
+        DISABLE_XA                 = 0b00100000, // X accelerometer is disabled
+        DISABLE_YA                 = 0b00010000, // Y accelerometer is disabled
+        DISABLE_ZA                 = 0b00001000, // Z accelerometer is disabled
+        DISABLE_XG                 = 0b00000100, // X gyro is disabled
+        DISABLE_YG                 = 0b00000010, // Y gyro is disabled
+        DISABLE_ZG                 = 0b00000001, // Z gyro is disabled
+        POWER_MANAGEMENT_2_RESET   = 0b00000000  // Reset sets all on (to bit 0).
+    };
 
 
     I2cMpu9250();

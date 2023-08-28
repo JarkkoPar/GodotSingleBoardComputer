@@ -1,5 +1,5 @@
 #include "I2cMpu9250.h"
-
+#include <godot_cpp/classes/os.hpp>
 
 using namespace godot;
 
@@ -136,6 +136,14 @@ float I2cMpu9250::get_temperature_celsius() const {
 // Device handling.
 
 bool I2cMpu9250::_configure_i2c_device() {
+    // Start by resetting the device and waking it up.
+    uint8_t reset[] = {MPU9250PowerManagement1::POWER_MANAGEMENT_1_RESET};
+    _write_bytes_to_device(_i2c_device_address, MPU9250Registers::PWR_MGMT_1, 1, reset );
+    OS::get_singleton()->delay_msec(100);
+    reset[0] = MPU9250PowerManagement1::POWER_MANAGEMENT_1_WAKE;
+    _write_bytes_to_device(_i2c_device_address, MPU9250Registers::PWR_MGMT_1, 1, reset );
+        
+
     // Configure the Magnetometer, gyroscope and finally the accelerometer.
     uint8_t accel_config[] = {0x18};
     _write_bytes_to_device(_i2c_device_address, MPU9250Registers::ACCEL_CONFIG, 1, accel_config );

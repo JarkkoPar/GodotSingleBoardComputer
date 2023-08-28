@@ -170,6 +170,7 @@ bool I2cDevice::_open_i2c_device() {
     int ioctl_retval = ioctl(_i2c_device_fd, I2C_SLAVE, _i2c_device_address);
     ERR_FAIL_COND_V_MSG(ioctl_retval < 0, false, "Failed to set the slave device address.");
 
+    return true;
 }
 
 bool I2cDevice::_configure_i2c_device() {

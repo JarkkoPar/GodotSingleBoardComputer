@@ -121,6 +121,8 @@ bool AdcDevice::_open_adc_device() {
     ERR_FAIL_COND_V_MSG(_adc_device_raw_file_index < 0 || _adc_voltage_raw_file_index < 0, false, "ADC raw file identification for the voltage reading failed.");
 
     _adc_pin_max_voltage = sbc->get_gpio_pins()[_adc_gpio_pin_index].get_adc_max_voltage();
+
+    return true;
 }
 
 
