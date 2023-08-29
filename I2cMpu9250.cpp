@@ -155,7 +155,7 @@ bool I2cMpu9250::_configure_i2c_device() {
     // Enable bypass to allow additional sensors to be 
     // controlled through the same i2c bus through Godot.
     _write_byte_to_device( _i2c_device_address, MPU9250Registers::INT_PIN_CFG, MPU9250IntPinCfgSettings::BYPASS_EN | MPU9250IntPinCfgSettings::INT_ANYRD_2CLEAR ); 
-    //_write_byte_to_device( _i2c_device_address, MPU9250Registers::INT_ENABLE, 0x01 );
+    _write_byte_to_device( _i2c_device_address, MPU9250Registers::INT_ENABLE, 0x01 );
     OS::get_singleton()->delay_msec(100);
 
     return true;
