@@ -18,6 +18,10 @@ private:
     int    _measurement_mode;
     int    _measurement_bits;
     
+    float  _calibration_x;
+    float  _calibration_y;
+    float  _calibration_z;
+
 protected: 
     static void _bind_methods();
 

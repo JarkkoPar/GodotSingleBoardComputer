@@ -188,15 +188,17 @@ public:
         //                             ||||| ||          
         //                             76543210
 
-        XGYRO_Cten                 = 0b10000000, 
-        YGYRO_Cten                 = 0b01000000, 
-        ZGYRO_Cten                 = 0b00100000,
+        XGYRO_Cten                 = 0b10000000, // X Gyro self-test
+        YGYRO_Cten                 = 0b01000000, // Y Gyro self-test
+        ZGYRO_Cten                 = 0b00100000, // Z Gyro self-test
         //XGYRO_FS_SEL_250_DPS       = 0b00000000,  
-        XGYRO_FS_SEL_500_DPS       = 0b00001000,  
+        XGYRO_FS_SEL_500_DPS       = 0b00001000, // Gyro full-scale select 
         XGYRO_FS_SEL_1000_DPS      = 0b00010000,  
         XGYRO_FS_SEL_2000_DPS      = 0b00011000,  
         // Bit 2 is reserved
-        Fchoice_b                  = 0b00000001,  
+        Fchoice_b_GYRO_8800_HZ_TEMPERATURE_4000_HZ = 0b00000011, // Used to bypass DLPF 
+        Fchoice_b_GYRO_3600_HZ_TEMPERATURE_4000_HZ = 0b00000010, // Used to bypass DLPF 
+        Fchoice_b_GYRO_USE_DLPF_CFG = 0b00000000, // Used to bypass DLPF 
 
         GYROSCOPE_CONFIGURATION_RESET = 0b00000000
     };
@@ -234,7 +236,7 @@ public:
         A_DLPFCFG_4                = 0b00000100,
         A_DLPFCFG_5                = 0b00000101,
         A_DLPFCFG_6                = 0b00000110,
-        A_DLPFCFG_7                = 0b000001111,
+        A_DLPFCFG_7                = 0b00000111,
         ACCELEROMETER_CONFIGURATION2_RESET = 0b00000000
         
     };
@@ -274,15 +276,18 @@ public:
     };
 
     enum MPU9250PowerManagement1 {
-        //                                  ||||||||          
-        //                                  76543210
+        //                                           ||||||||          
+        //                                           76543210
 
-        POWER_MANAGEMENT_1_RESET        = 0b10000000, // Reset and clear all to default settings
-        POWER_MANAGEMENT_1_SLEEP        = 0b01000000,
-        POWER_MANAGEMENT_1_CYCLE        = 0b00100000,
-        POWER_MANAGEMENT_1_GYRO_STANDBY = 0b00010000,
-        POWER_MANAGEMENT_1_PD_PTAT      = 0b00001000,
-        POWER_MANAGEMENT_1_WAKE         = 0b00000000
+        POWER_MANAGEMENT_1_RESET                 = 0b10000000, // Reset and clear all to default settings
+        POWER_MANAGEMENT_1_SLEEP                 = 0b01000000,
+        POWER_MANAGEMENT_1_CYCLE                 = 0b00100000,
+        POWER_MANAGEMENT_1_GYRO_STANDBY          = 0b00010000,
+        POWER_MANAGEMENT_1_PD_PTAT               = 0b00001000,
+        POWER_MANAGEMENT_1_CLKSEL_AUTO           = 0b00000001, // Auto-select the best available clock source, PLL if ready, else use the internal oscillator
+        POWER_MANAGEMENT_1_CLKSEL_INTERNAL_20MHZ = 0b00000110, // The internal 20 Mhz oscillator
+        POWER_MANAGEMENT_1_CLKSEL_STOP_AND_KEEP_RESET = 0b00000111, // Stops the clock and keeps timing generator in reset
+        POWER_MANAGEMENT_1_WAKE                  = 0b00000000  // Defaults to the internal 20 Mhz oscillator
     };
 
 

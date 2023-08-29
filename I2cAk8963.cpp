@@ -15,6 +15,10 @@ I2cAk8963::I2cAk8963() {
     magnetic_field_x = 0.0f; 
     magnetic_field_y = 0.0f;
     magnetic_field_z = 0.0f;
+
+    _calibration_x = 0.0f;
+    _calibration_y = 0.0f;
+    _calibration_z = 0.0f;
 }
 
 
@@ -75,19 +79,28 @@ void I2cAk8963::_notification(int p_what) {
 // Device handling.
 
 bool I2cAk8963::_configure_i2c_device() {
-    // Selftest.
+    // Power down the magnetometer.
+    _write_byte_to_device( _i2c_device_address, AK8963Registers::CNTL1, AK8963Control1Mode::POWER_DOWN_MODE );
+    OS::get_singleton()->delay_msec(20);
+
+    // Go to Fuse ROM access mode.
+    _write_byte_to_device( _i2c_device_address, AK8963Registers::CNTL1, (uint8_t)_measurement_bits|AK8963Control1Mode::FUSE_ROM_ACCESS_MODE);
+    OS::get_singleton()->delay_msec(20);
+
+    // Get the calibration values.
+    uint8_t data[3] = {0};
+    _read_bytes_from_device( _i2c_device_address, AK8963Registers::ASAX, 3, data );
+
+    _calibration_x = (float)(data[0] - 128)/256.0f + 1.0f;
+    _calibration_y = (float)(data[1] - 128)/256.0f + 1.0f;
+    _calibration_z = (float)(data[2] - 128)/256.0f + 1.0f;
+
+    // Selftest and power down again.
     _self_test();
         
-    // Set the measurement mode.
+    // Set the measurement mode as chosen in the settings.
     _write_byte_to_device( _i2c_device_address, AK8963Registers::CNTL1, (uint8_t)_measurement_bits | (uint8_t)_measurement_mode);
-    /*if( _measurement_mode == 2 ) {
-        _write_byte_to_device( _i2c_device_address, AK8963Registers::CNTL1, AK8963Control1Mode::SINGLE_MEASUREMENT_MODE);    
-    }else if( _measurement_mode == 0 ) {
-        _write_byte_to_device( _i2c_device_address, AK8963Registers::CNTL1, AK8963Control1Mode::CONTINUOUS_MEASUREMENT_MODE_1);  
-    }else{
-        }
-    */
-    OS::get_singleton()->delay_msec(50);
+    OS::get_singleton()->delay_msec(20);
     
     return true;
 } 
@@ -96,8 +109,7 @@ void I2cAk8963::_self_test() {
     
     // Power down.
     _write_byte_to_device( _i2c_device_address, AK8963Registers::CNTL1, (uint8_t)_measurement_bits|AK8963Control1Mode::POWER_DOWN_MODE);
-    OS::get_singleton()->delay_msec(100);
-    // Set the bits to selected value.
+    OS::get_singleton()->delay_msec(20);
 
     // Set the self test bit on.
     _write_byte_to_device( _i2c_device_address, AK8963Registers::ASTC, AK8963SelfTestControl::GENERATE_MAGNETIC_FIELD_FOR_SELF_TEST);
@@ -117,9 +129,10 @@ void I2cAk8963::_self_test() {
 
     _read_sensor_data();
 
+    // End self-test and power down.
     _write_byte_to_device( _i2c_device_address, AK8963Registers::ASTC, AK8963SelfTestControl::NORMAL_NO_SELF_TEST);
     _write_byte_to_device( _i2c_device_address, AK8963Registers::CNTL1, (uint8_t)_measurement_bits|AK8963Control1Mode::POWER_DOWN_MODE);
-    OS::get_singleton()->delay_msec(100);
+    OS::get_singleton()->delay_msec(20);
     
 }
 

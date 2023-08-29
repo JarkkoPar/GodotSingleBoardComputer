@@ -136,26 +136,28 @@ float I2cMpu9250::get_temperature_celsius() const {
 // Device handling.
 
 bool I2cMpu9250::_configure_i2c_device() {
-    // Start by resetting the device and waking it up.
-    //uint8_t reset[] = {MPU9250PowerManagement1::POWER_MANAGEMENT_1_RESET};
-    //_write_bytes_to_device(_i2c_device_address, MPU9250Registers::PWR_MGMT_1, 1, reset );
-    _write_byte_to_device(_i2c_device_address, MPU9250Registers::PWR_MGMT_1, MPU9250PowerManagement1::POWER_MANAGEMENT_1_RESET );
+    // Start by resetting the device to get it to defaults and waking it up.
+    _write_byte_to_device( _i2c_device_address, MPU9250Registers::PWR_MGMT_1, MPU9250PowerManagement1::POWER_MANAGEMENT_1_RESET );
     OS::get_singleton()->delay_msec(100);
-    //reset[0] = MPU9250PowerManagement1::POWER_MANAGEMENT_1_WAKE;
-    //_write_bytes_to_device(_i2c_device_address, MPU9250Registers::PWR_MGMT_1, 1, reset );
-    _write_byte_to_device(_i2c_device_address, MPU9250Registers::PWR_MGMT_1, MPU9250PowerManagement1::POWER_MANAGEMENT_1_WAKE );  
+    _write_byte_to_device( _i2c_device_address, MPU9250Registers::PWR_MGMT_1, MPU9250PowerManagement1::POWER_MANAGEMENT_1_CLKSEL_AUTO );  
+    OS::get_singleton()->delay_msec(200);
+
+    //_write_byte_to_device( _i2c_device_address, MPU9250Registers::)
+    _write_byte_to_device( _i2c_device_address, MPU9250Registers::GYRO_CONFIG, MPU9250GyroscopeConfiguration::Fchoice_b_GYRO_USE_DLPF_CFG );
+    _write_byte_to_device( _i2c_device_address, MPU9250Registers::CONFIG, 0x03 );
+    _write_byte_to_device( _i2c_device_address, MPU9250Registers::SMPLRT_DIV, 0x03 );
+
 
     // Configure the Magnetometer, gyroscope and finally the accelerometer.
-    uint8_t accel_config[] = {0x18};
-    _write_bytes_to_device(_i2c_device_address, MPU9250Registers::ACCEL_CONFIG, 1, accel_config );
-    _write_bytes_to_device(_i2c_device_address, MPU9250Registers::ACCEL_CONFIG, 1, accel_config);
-    uint8_t gyro_config[] = {0x18};
-    _write_bytes_to_device( _i2c_device_address, MPU9250Registers::GYRO_CONFIG, 1, gyro_config);
-    uint8_t magnetometer_config[] = {0x02};
-    _write_byte_to_device(_i2c_device_address, MPU9250Registers::INT_PIN_CFG, magnetometer_config[0]);
-    //write_byte_to_device_register_at_device_address( _magnetometer_i2c_address, , uint8_t value );
-    //_write_byte_array_to_device_register(MPU9250Registers::INT_PIN_CFG, magnetometer_config);
-    
+    _write_byte_to_device( _i2c_device_address, MPU9250Registers::ACCEL_CONFIG, Mpu9250AccelerometerConfiguration::ACCEL_FS_SEL_16G  );
+    _write_byte_to_device( _i2c_device_address, MPU9250Registers::GYRO_CONFIG, MPU9250GyroscopeConfiguration::XGYRO_FS_SEL_1000_DPS );    
+
+    // Enable bypass to allow additional sensors to be 
+    // controlled through the same i2c bus through Godot.
+    _write_byte_to_device( _i2c_device_address, MPU9250Registers::INT_PIN_CFG, 0x12 ); 
+    _write_byte_to_device( _i2c_device_address, MPU9250Registers::INT_ENABLE, 0x01 );
+    OS::get_singleton()->delay_msec(100);
+
     return true;
 }
 
