@@ -291,7 +291,7 @@ public:
     };
 
 
-    enum PMU9250PowerManagement2 {
+    enum MPU9250PowerManagement2 {
         //                               ||||||          
         //                             76543210
 
@@ -302,6 +302,20 @@ public:
         DISABLE_YG                 = 0b00000010, // Y gyro is disabled
         DISABLE_ZG                 = 0b00000001, // Z gyro is disabled
         POWER_MANAGEMENT_2_RESET   = 0b00000000  // Reset sets all on (to bit 0).
+    };
+
+    enum MPU9250IntPinCfgSettings {
+        //                             |||||||          
+        //                             76543210
+
+        BYPASS_EN                  = 0b00000010, // When asserted, the i2c_master interface pins (ES_CL and ES_DA) will go into "bypass mode" when the i2c master interface is disabled. The pins will float high due to the internal pull-up if not enabled and the i2c master interface is disabled
+        FSYNC_INT_MODE_EN          = 0b00000100, // If 1, enables the FSYNC pin to be used as an interrupt. If 0, the pin is disabled from causing an interrupt.
+        ACTL_FSYNC                 = 0b00001000, // If 1, the logic level for the FSUNC pin as an interrupt is active low. If 1, it'll be active high.
+        INT_ANYRD_2CLEAR           = 0b00010000, // If 1, then interrupt status is cleared if any read operation is performed. If 0, then interrupt status is cleared only by readin the INT_STATUS register
+        LATCH_INT_EN               = 0b00100000, // If 1, then INT pin level is held until interrupt status is cleared. If 0, INT pin indicates interrupt pulse's width is 50us
+        OPEN                       = 0b01000000, // If 1, the INT pin is configured as open drain. If 0, then as push-pull
+        ACTL                       = 0b10000000  // The logic level for INT pin is active low (if this bit is 0 then active high)
+
     };
 
 
