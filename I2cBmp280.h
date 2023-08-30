@@ -164,6 +164,13 @@ public:
     
     // Getters and setters.
 
+    void set_pressure_measurement( int pressure );
+    int  get_pressure_measurement() const;
+
+    void set_temperature_measurement( int temperature );
+    int  get_temperature_measurement() const;
+
+
     void set_pressure_measurement_oversampling( int pressure_oversampling );
     int  get_pressure_measurement_oversampling() const;
 

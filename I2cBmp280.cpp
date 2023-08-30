@@ -30,12 +30,12 @@ void I2cBmp280::_bind_methods() {
 
 
     // Pressure measurement oversampling.
-    ClassDB::bind_method(D_METHOD("set_pressure_measurement_oversampling", "pressure_oversamplig"), &I2cBmp280::set_pressure_measurement_oversampling);
+    ClassDB::bind_method(D_METHOD("set_pressure_measurement_oversampling", "pressure_oversampling"), &I2cBmp280::set_pressure_measurement_oversampling);
 	ClassDB::bind_method(D_METHOD("get_pressure_measurement_oversampling"), &I2cBmp280::get_pressure_measurement_oversampling);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "pressure_measurement_oversampling", PROPERTY_HINT_ENUM, "Measurement_Skipped:0,Ultra_Low_Power:4,Low_Power:8,Standard_Resolution:12,High_Resolution:16,Ultra_High_Resolution:20"), "set_pressure_measurement_oversampling", "get_pressure_measurement_oversampling");
 
     // Temperature measurement oversampling.
-    ClassDB::bind_method(D_METHOD("set_temperature_measurement_oversampling", "temperature_oversamplig"), &I2cBmp280::set_temperature_measurement_oversampling);
+    ClassDB::bind_method(D_METHOD("set_temperature_measurement_oversampling", "temperature_oversampling"), &I2cBmp280::set_temperature_measurement_oversampling);
 	ClassDB::bind_method(D_METHOD("get_temperature_measurement_oversampling"), &I2cBmp280::get_temperature_measurement_oversampling);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "temperature_measurement_oversampling", PROPERTY_HINT_ENUM, "Measurement_Skipped:0,Oversampling_X1:32,Oversampling_X2:64,Oversampling_X4:96,Oversampling_X8:128,Oversampling_X16:160"), "set_temperature_measurement_oversampling", "get_temperature_measurement_oversampling");
 
@@ -49,6 +49,15 @@ void I2cBmp280::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_power_mode"), &I2cBmp280::get_power_mode);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "power_mode", PROPERTY_HINT_ENUM, "Sleep:0,Forced:1,Normal:3"), "set_power_mode", "get_power_mode");
 
+    // Pressure measurement.
+    ClassDB::bind_method(D_METHOD("set_pressure_measurement", "pressure"), &I2cBmp280::set_pressure_measurement);
+	ClassDB::bind_method(D_METHOD("get_pressure_measurement"), &I2cBmp280::get_pressure_measurement);
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "pressure_measurement", PROPERTY_HINT_NONE), "set_pressure_measurement", "get_pressure_measurement");
+
+    // Temperature measurement.
+    ClassDB::bind_method(D_METHOD("set_temperature_measurement", "temperature"), &I2cBmp280::set_temperature_measurement);
+	ClassDB::bind_method(D_METHOD("get_temperature_measurement"), &I2cBmp280::get_temperature_measurement);
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "temperature_measurement", PROPERTY_HINT_NONE), "set_temperature_measurement", "get_temperature_measurement");
 
 }
 
@@ -171,6 +180,25 @@ void I2cBmp280::_read_sensor_data() {
 
 
 // Getters and setters.
+
+
+void I2cBmp280::set_pressure_measurement( int pressure ) {
+    _pressure_measurement = pressure;
+}
+
+int  I2cBmp280::get_pressure_measurement() const {
+   return  _pressure_measurement;
+}
+
+void I2cBmp280::set_temperature_measurement( int temperature ) {
+    _temperature_measurement = temperature;
+}
+
+int  I2cBmp280::get_temperature_measurement() const {
+   return  _temperature_measurement;
+}
+
+
 
 void I2cBmp280::set_pressure_measurement_oversampling( int pressure_oversampling ) {
     _pressure_measurement_oversampling = (uint8_t)pressure_oversampling;
