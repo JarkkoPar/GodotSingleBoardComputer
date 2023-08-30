@@ -122,6 +122,7 @@ void I2cAk8963::_self_test() {
     while( (st1 & AK8963Status1::DATA_IS_READY) == 0 && max_counter > 0 ){
         OS::get_singleton()->delay_msec(20);
         --max_counter;
+        st1 = _read_byte_from_device( _i2c_device_address, AK8963Registers::ST1 );
     }
     if( max_counter <= 0 ) {
         WARN_PRINT("_self_test() failed for AK8963 node " + get_name() + ".");
