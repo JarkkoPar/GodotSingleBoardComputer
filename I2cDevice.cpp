@@ -1,6 +1,7 @@
 #include "I2cDevice.h"
 #include "I2cBus.h"
 #include "SingleBoardComputer.h"
+#include "I2cMultitapPullPin.h"
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -154,15 +155,31 @@ bool I2cDevice::_initialize_device() {
 
 
 bool I2cDevice::_open_i2c_device() {
-    
-    // Get the parent which should have the i2c bus array.
-    SingleBoardComputer* sbc = Object::cast_to<SingleBoardComputer>(get_parent());
-    ERR_FAIL_COND_V_MSG(sbc == nullptr, false, "This node needs to be a child of the SingleBoardComputer node.");
+    int num_i2c_buses = 0;
 
-    ERR_FAIL_COND_V_MSG(_i2c_device_index < 0 || _i2c_device_index >= sbc->get_num_i2c_buses(), false, "Invalid index for I2C bus. Have you set the I2C device number?");
+    // Get the parent which should have the i2c bus array. It can be either
+    // the SingleBoardComputer or a Multitap, so check for both.
+    I2cMultitapPullPin* multitap = nullptr;
+    SingleBoardComputer* sbc = Object::cast_to<SingleBoardComputer>(get_parent());
+    if( sbc == nullptr ) {
+        // Try using the multitap-option.
+        multitap = Object::cast_to<I2cMultitapPullPin>(get_parent());
+        ERR_FAIL_COND_V_MSG(multitap == nullptr, false, "This node needs to be a child of the SingleBoardComputer node or a I2cMultiTap node.");
+
+        num_i2c_buses = multitap->get_num_i2c_buses();
+    } else {
+        num_i2c_buses = sbc->get_num_i2c_buses();
+    }
+
+    ERR_FAIL_COND_V_MSG(_i2c_device_index < 0 || _i2c_device_index >= num_i2c_buses, false, "Invalid index for I2C bus. Have you set the I2C device number?");
 
     // Open the selected bus file.
-    _i2c_device_fd = sbc->request_i2c_device_file(_i2c_device_index);
+    if( sbc != nullptr ) {
+        _i2c_device_fd = sbc->request_i2c_device_file(_i2c_device_index);
+    
+    } else {
+        _i2c_device_fd = multitap->request_i2c_device_file(_i2c_device_index);
+    }
     ERR_FAIL_COND_V_MSG(_i2c_device_fd < 0, false, "Failed to open the device file.");
 
 
