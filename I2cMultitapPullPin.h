@@ -46,10 +46,10 @@ public:
 
     // Godot virtuals.
     
-    void _process(double delta);
-    void _physics_process(double delta);
+    void _process(double delta){}
+    void _physics_process(double delta){}
 
-    void _notification(int p_what);
+    void _notification(int p_what){}
 
     
     // Getters and setters.

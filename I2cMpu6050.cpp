@@ -1,5 +1,6 @@
 #include "I2cMpu6050.h"
 #include <godot_cpp/classes/os.hpp>
+#include <godot_cpp/classes/engine.hpp>
 
 using namespace godot;
 
@@ -73,9 +74,19 @@ void I2cMpu6050::_bind_methods() {
 
 // Godot virtuals.
     
-void I2cMpu6050::_process(double delta) {}
+void I2cMpu6050::_process(double delta) {
+    if( _update_method != SBCDeviceUpdateMethod::PROCESS ) return;
+    if( !_is_device_initialized ) return;
+    if(Engine::get_singleton()->is_editor_hint()) return;
+    _read_sensor_data();
+}
 
-void I2cMpu6050::_physics_process(double delta) {}
+void I2cMpu6050::_physics_process(double delta) {
+    if( _update_method != SBCDeviceUpdateMethod::PHYSICS_PROCESS ) return;
+    if( !_is_device_initialized ) return;
+    if(Engine::get_singleton()->is_editor_hint()) return;
+    _read_sensor_data();
+}
 
 void I2cMpu6050::_notification(int p_what) {}
 
@@ -143,11 +154,13 @@ float I2cMpu6050::get_temperature_celsius() const {
 */
 
 
+
+
 // Device handling.
 
 bool I2cMpu6050::_configure_i2c_device() {
     // Start by resetting the device to get it to defaults and waking it up.
-    _write_byte_to_device( _i2c_device_address, MPU6050Registers::PWR_MGMT_1, MPU6050PowerManagement1::POWER_MANAGEMENT_1_RESET );
+    /*_write_byte_to_device( _i2c_device_address, MPU6050Registers::PWR_MGMT_1, MPU6050PowerManagement1::POWER_MANAGEMENT_1_RESET );
     OS::get_singleton()->delay_msec(100);
     _write_byte_to_device( _i2c_device_address, MPU6050Registers::PWR_MGMT_1, MPU6050PowerManagement1::POWER_MANAGEMENT_1_CLKSEL_AUTO );  
     OS::get_singleton()->delay_msec(200);
@@ -157,15 +170,18 @@ bool I2cMpu6050::_configure_i2c_device() {
     _write_byte_to_device( _i2c_device_address, MPU6050Registers::CONFIG, 0x03 ); // 44 Hz accelerometer bandwidth and 42 Hz gyro bandwith
     _write_byte_to_device( _i2c_device_address, MPU6050Registers::SMPLRT_DIV, 0x04 ); // 200 Hz
 
+    */
+   _self_test();
+   _reset_device();
 
-    // Configure the Magnetometer, gyroscope and finally the accelerometer.
+    // Configure the accelerometer and the gyroscope.
     _write_byte_to_device( _i2c_device_address, MPU6050Registers::ACCEL_CONFIG, MPU6050AccelerometerConfiguration::ACCEL_FS_SEL_16G  );
     _write_byte_to_device( _i2c_device_address, MPU6050Registers::GYRO_CONFIG, MPU6050GyroscopeConfiguration::XGYRO_FS_SEL_1000_DPS );    
 
     // Enable bypass to allow additional sensors to be 
     // controlled through the same i2c bus through Godot.
-    _write_byte_to_device( _i2c_device_address, MPU6050Registers::INT_PIN_CFG, MPU6050IntPinCfgSettings::BYPASS_EN | MPU6050IntPinCfgSettings::INT_ANYRD_2CLEAR ); 
-    _write_byte_to_device( _i2c_device_address, MPU6050Registers::INT_ENABLE, 0x01 );
+    //_write_byte_to_device( _i2c_device_address, MPU6050Registers::INT_PIN_CFG, MPU6050IntPinCfgSettings::BYPASS_EN | MPU6050IntPinCfgSettings::INT_ANYRD_2CLEAR ); 
+    //_write_byte_to_device( _i2c_device_address, MPU6050Registers::INT_ENABLE, 0x01 );
     //OS::get_singleton()->delay_msec(100);
 
     return true;

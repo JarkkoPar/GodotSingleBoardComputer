@@ -1,5 +1,7 @@
 #include "I2cMpu9250.h"
 #include <godot_cpp/classes/os.hpp>
+#include <godot_cpp/classes/engine.hpp>
+
 
 using namespace godot;
 
@@ -64,9 +66,19 @@ void I2cMpu9250::_bind_methods() {
 
 // Godot virtuals.
     
-void I2cMpu9250::_process(double delta) {}
+void I2cMpu9250::_process(double delta) {
+    if( _update_method != SBCDeviceUpdateMethod::PROCESS ) return;
+    if( !_is_device_initialized ) return;
+    if(Engine::get_singleton()->is_editor_hint()) return;
+    _read_sensor_data();
+}
 
-void I2cMpu9250::_physics_process(double delta) {}
+void I2cMpu9250::_physics_process(double delta) {
+    if( _update_method != SBCDeviceUpdateMethod::PHYSICS_PROCESS ) return;
+    if( !_is_device_initialized ) return;
+    if(Engine::get_singleton()->is_editor_hint()) return;
+    _read_sensor_data();
+}
 
 void I2cMpu9250::_notification(int p_what) {}
 
