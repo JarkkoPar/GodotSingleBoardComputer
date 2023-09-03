@@ -15,9 +15,9 @@ I2cMpu9250::I2cMpu9250() {
     _measurement_gyro_y = 0;
     _measurement_gyro_z = 0;
 
-    _measurement_accel_x = 0;
-    _measurement_accel_y = 0;
-    _measurement_accel_z = 0;
+    _measurement_acceleration_x = 0;
+    _measurement_acceleration_y = 0;
+    _measurement_acceleration_z = 0;
 }
 
 
@@ -43,17 +43,17 @@ void I2cMpu9250::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_measurement_gyro_z"), &I2cMpu9250::get_measurement_gyro_z);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "measurement_gyro_z", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_measurement_gyro_z", "get_measurement_gyro_z");
 
-    ClassDB::bind_method(D_METHOD("set_measurement_accel_x", "x"), &I2cMpu9250::set_measurement_accel_x);
-	ClassDB::bind_method(D_METHOD("get_measurement_accel_x"), &I2cMpu9250::get_measurement_accel_x);
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "measurement_accel_x", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_measurement_accel_x", "get_measurement_accel_x");
+    ClassDB::bind_method(D_METHOD("set_measurement_acceleration_x", "x"), &I2cMpu9250::set_measurement_acceleration_x);
+	ClassDB::bind_method(D_METHOD("get_measurement_acceleration_x"), &I2cMpu9250::get_measurement_acceleration_x);
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "measurement_acceleration_x", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_measurement_acceleration_x", "get_measurement_acceleration_x");
 
-    ClassDB::bind_method(D_METHOD("set_measurement_accel_y", "y"), &I2cMpu9250::set_measurement_accel_y);
-	ClassDB::bind_method(D_METHOD("get_measurement_accel_y"), &I2cMpu9250::get_measurement_accel_y);
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "measurement_accel_y", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_measurement_accel_y", "get_measurement_accel_y");
+    ClassDB::bind_method(D_METHOD("set_measurement_acceleration_y", "y"), &I2cMpu9250::set_measurement_acceleration_y);
+	ClassDB::bind_method(D_METHOD("get_measurement_acceleration_y"), &I2cMpu9250::get_measurement_acceleration_y);
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "measurement_acceleration_y", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_measurement_acceleration_y", "get_measurement_acceleration_y");
 
-    ClassDB::bind_method(D_METHOD("set_measurement_accel_z", "z"), &I2cMpu9250::set_measurement_accel_z);
-	ClassDB::bind_method(D_METHOD("get_measurement_accel_z"), &I2cMpu9250::get_measurement_accel_z);
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "measurement_accel_z", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_measurement_accel_z", "get_measurement_accel_z");
+    ClassDB::bind_method(D_METHOD("set_measurement_acceleration_z", "z"), &I2cMpu9250::set_measurement_acceleration_z);
+	ClassDB::bind_method(D_METHOD("get_measurement_acceleration_z"), &I2cMpu9250::get_measurement_acceleration_z);
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "measurement_acceleration_z", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_measurement_acceleration_z", "get_measurement_acceleration_z");
 
     ClassDB::bind_method(D_METHOD("set_temperature_celsius", "celsius"), &I2cMpu9250::set_temperature_celsius);
 	ClassDB::bind_method(D_METHOD("get_temperature_celsius"), &I2cMpu9250::get_temperature_celsius);
@@ -111,38 +111,55 @@ int I2cMpu9250::get_measurement_gyro_z() const {
 }
 
 
-void I2cMpu9250::set_measurement_accel_x( int x ) {
-    _measurement_accel_x = x;
+void I2cMpu9250::set_measurement_acceleration_x( int x ) {
+    _measurement_acceleration_x = x;
 }
 
-int I2cMpu9250::get_measurement_accel_x() const {
-    return _measurement_accel_x;
+int I2cMpu9250::get_measurement_acceleration_x() const {
+    return _measurement_acceleration_x;
 }
 
-void I2cMpu9250::set_measurement_accel_y( int y ) {
-    _measurement_accel_x = y;
+void I2cMpu9250::set_measurement_acceleration_y( int y ) {
+    _measurement_acceleration_x = y;
 }
 
-int I2cMpu9250::get_measurement_accel_y() const {
-    return _measurement_accel_y;
+int I2cMpu9250::get_measurement_acceleration_y() const {
+    return _measurement_acceleration_y;
 }
 
-void I2cMpu9250::set_measurement_accel_z( int z ) {
-    _measurement_accel_z = z;
+void I2cMpu9250::set_measurement_acceleration_z( int z ) {
+    _measurement_acceleration_z = z;
 }
 
-int I2cMpu9250::get_measurement_accel_z() const {
-    return _measurement_accel_z;
+int I2cMpu9250::get_measurement_acceleration_z() const {
+    return _measurement_acceleration_z;
 }
 
 
 void I2cMpu9250::set_temperature_celsius( float celsius ) {
-    temperature_celsius = celsius;
+    _temperature_celsius = celsius;
 }
 
 float I2cMpu9250::get_temperature_celsius() const {
-    return temperature_celsius;
+    return _temperature_celsius;
 }
+
+void I2cMpu9250::set_temperature_kelvin( float kelvin ) {
+    _temperature_kelvin = kelvin;
+}
+
+float I2cMpu9250::get_temperature_kelvin() const {
+    return _temperature_kelvin;
+}
+
+void I2cMpu9250::set_temperature_fahrenheit( float fahrenheit ) {
+    _temperature_fahrenheit = fahrenheit;
+}
+
+float I2cMpu9250::get_temperature_fahrenheit() const {
+    return _temperature_fahrenheit;
+}
+
 
 
 // Device handling.
@@ -211,9 +228,9 @@ void I2cMpu9250::_read_sensor_data() {
     _measurement_gyro_y = (int)gy;
     _measurement_gyro_z = (int)gz;
 
-    _measurement_accel_x = (int)ax;
-    _measurement_accel_y = (int)ay;
-    _measurement_accel_z = (int)az;
+    _measurement_acceleration_x = (int)ax;
+    _measurement_acceleration_y = (int)ay;
+    _measurement_acceleration_z = (int)az;
 
     //GYRO_XOUT = Gyro_Sensitivity * X_angular_rate
     //Nominal
@@ -224,9 +241,10 @@ void I2cMpu9250::_read_sensor_data() {
     //TEMP_degC = ((TEMP_OUT –
     //RoomTemp_Offset)/Temp_Sensitivity)
     //+ 21degC
-    temperature_celsius = (((float)temp - _room_temperature_offset)*_one_over_temperature_sensitivity) + 21.0f;
-    // todo: add conversion to Kelvin and Fahrenheit.
-
+    _temperature_celsius = (((float)temp - _room_temperature_offset)*_one_over_temperature_sensitivity) + 21.0f;
+    _temperature_kelvin     = _temperature_celsius + 273.15f;
+    _temperature_fahrenheit = _temperature_celsius * 1.8f + 32.0f;
+    
     /*sensor_x = mx;
     sensor_y = my;
     sensor_z = mz;

@@ -51,30 +51,33 @@ private:
     int    _measurement_gyro_y;
     int    _measurement_gyro_z;
 
-    int    _measurement_accel_x;
-    int    _measurement_accel_y;
-    int    _measurement_accel_z;
-    
-    float  gyro_x;
-    float  gyro_y;
-    float  gyro_z;
+    int    _measurement_acceleration_x;
+    int    _measurement_acceleration_y;
+    int    _measurement_acceleration_z;
 
-    float  acceleration_x;
-    float  acceleration_y;
-    float  acceleration_z;
+    uint8_t _acceleration_scale_setting;
+    uint8_t _gyro_dps_setting;
+    
+    float  _gyro_x;
+    float  _gyro_y;
+    float  _gyro_z;
+
+    float  _acceleration_x;
+    float  _acceleration_y;
+    float  _acceleration_z;
     
     bool    _is_dlpf_enabled;
 
-    /*
-    float  temperature_celsius;
+    
+    float  _temperature_celsius;
     
     float  _room_temperature_offset;
     float  _temperature_sensitivity;
     float  _one_over_temperature_sensitivity;
 
-    float  temperature_kelvin; // Converted from Celsius.
-    float  temperature_fahrenheit; // Converted from Celsius.
-    */
+    float  _temperature_kelvin; // Converted from Celsius.
+    float  _temperature_fahrenheit; // Converted from Celsius.
+    
 protected: 
     static void _bind_methods();
 
@@ -354,17 +357,24 @@ public:
     void set_measurement_gyro_z( int z );
     int  get_measurement_gyro_z() const;
 
-    void set_measurement_accel_x( int x );
-    int  get_measurement_accel_x() const;
+    void set_measurement_acceleration_x( int x );
+    int  get_measurement_acceleration_x() const;
     
-    void set_measurement_accel_y( int y );
-    int  get_measurement_accel_y() const;
+    void set_measurement_acceleration_y( int y );
+    int  get_measurement_acceleration_y() const;
 
-    void set_measurement_accel_z( int z );
-    int  get_measurement_accel_z() const;
+    void set_measurement_acceleration_z( int z );
+    int  get_measurement_acceleration_z() const;
 
     void  set_temperature_celsius( float celsius );
     float get_temperature_celsius() const;
+
+    void  set_temperature_kelvin( float kelvin );
+    float get_temperature_kelvin() const;
+
+    void  set_temperature_fahrenheit( float fahrenheit );
+    float get_temperature_fahrenheit() const;
+
 
 
     // Device handling.
