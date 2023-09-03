@@ -39,13 +39,13 @@ private:
     int    _selftest_acceleration_y;
     int    _selftest_acceleration_z;
 
-    int    _factory_trim_gyro_x;
-    int    _factory_trim_gyro_y;
-    int    _factory_trim_gyro_z;
+    float  _factory_trim_gyro_x;
+    float  _factory_trim_gyro_y;
+    float  _factory_trim_gyro_z;
 
-    int    _factory_trim_accel_x;
-    int    _factory_trim_accel_y;
-    int    _factory_trim_accel_z;
+    float  _factory_trim_accel_x;
+    float  _factory_trim_accel_y;
+    float  _factory_trim_accel_z;
 
     int    _measurement_gyro_x;
     int    _measurement_gyro_y;

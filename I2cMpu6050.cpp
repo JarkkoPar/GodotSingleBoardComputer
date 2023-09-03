@@ -17,6 +17,14 @@ I2cMpu6050::I2cMpu6050() {
     _measurement_accel_y = 0;
     _measurement_accel_z = 0;
 
+    _factory_trim_accel_x = 0.0f;
+    _factory_trim_accel_y = 0.0f;
+    _factory_trim_accel_z = 0.0f;
+
+    _factory_trim_gyro_x  = 0.0f;
+    _factory_trim_gyro_y  = 0.0f;
+    _factory_trim_gyro_z  = 0.0f;
+
     _is_dlpf_enabled = false;
 }
 
@@ -28,7 +36,6 @@ I2cMpu6050::~I2cMpu6050() {
 
 
 void I2cMpu6050::_bind_methods() {
-
 
     // The measurement data.
     ClassDB::bind_method(D_METHOD("set_measurement_gyro_x", "x"), &I2cMpu6050::set_measurement_gyro_x);
@@ -222,10 +229,13 @@ void I2cMpu6050::_self_test_gyro() {
     _selftest_acceleration_z = _selftest_measurement_acceleration_z - _measurement_accel_z;
 
     // Calculate the factory trims.
-    // gyrox 25 * 131 * 1.046^(XG_TEST-1)
-    // gyroy -25 * 131 * 1.046^(YG_TEST-1)
-    // gyroz 25 * 131 * 1.046^(ZG_TEST-1)
+    _factory_trim_gyro_x =  25.0f * 131.0f * (float)pow(1.046, (double)(_selftest_gyro_x - 1) ); 
+    _factory_trim_gyro_y = -25.0f * 131.0f * (float)pow(1.046, (double)(_selftest_gyro_y - 1) );
+    _factory_trim_gyro_z =  25.0f * 131.0f * (float)pow(1.046, (double)(_selftest_gyro_z - 1) );
 
+    _factory_trim_accel_x = 4096.0f * 0.34f * (float)pow(2.70588235, (double)( (_selftest_acceleration_x - 1) / 30.0 ));
+    _factory_trim_accel_y = 4096.0f * 0.34f * (float)pow(2.70588235, (double)( (_selftest_acceleration_y - 1) / 30.0 ));
+    _factory_trim_accel_z = 4096.0f * 0.34f * (float)pow(2.70588235, (double)( (_selftest_acceleration_z - 1) / 30.0 ));
 
     /**
     _write_byte_to_device( _i2c_device_address, MPU6050Registers::PWR_MGMT_1, MPU6050PowerManagement1::POWER_MANAGEMENT_1_RESET );
