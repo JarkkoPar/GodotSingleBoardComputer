@@ -351,14 +351,14 @@ public:
     void set_measurement_gyro_z( int z );
     int  get_measurement_gyro_z() const;
 
-    void set_gyro_x( int x );
-    int  get_gyro_x() const;
+    void set_gyro_x( float x );
+    float get_gyro_x() const;
     
-    void set_gyro_y( int y );
-    int  get_gyro_y() const;
+    void set_gyro_y( float y );
+    float get_gyro_y() const;
 
-    void set_gyro_z( int z );
-    int  get_gyro_z() const;
+    void set_gyro_z( float z );
+    float get_gyro_z() const;
 
     void set_measurement_acceleration_x( int x );
     int  get_measurement_acceleration_x() const;
@@ -369,20 +369,27 @@ public:
     void set_measurement_acceleration_z( int z );
     int  get_measurement_acceleration_z() const;
 
-    void set_acceleration_x( int x );
-    int  get_acceleration_x() const;
+    void set_acceleration_x( float x );
+    float get_acceleration_x() const;
     
-    void set_acceleration_y( int y );
-    int  get_acceleration_y() const;
+    void set_acceleration_y( float y );
+    float get_acceleration_y() const;
 
-    void set_acceleration_z( int z );
-    int  get_acceleration_z() const;
+    void set_acceleration_z( float z );
+    float get_acceleration_z() const;
 
     void set_roll_angle_radians( float roll_angle_radians );
     float get_roll_angle_radians() const;
 
     void set_roll_angle_degrees( float roll_angle_degrees );
     float get_roll_angle_degrees() const;
+
+    void set_pitch_angle_radians( float pitch_angle_radians );
+    float get_pitch_angle_radians() const;
+
+    void set_pitch_angle_degrees( float pitch_angle_degrees );
+    float get_pitch_angle_degrees() const;
+
 
     void  set_temperature_celsius( float celsius );
     float get_temperature_celsius() const;

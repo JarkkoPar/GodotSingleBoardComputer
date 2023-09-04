@@ -100,6 +100,14 @@ void I2cMpu9250::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_roll_angle_degrees"), &I2cMpu9250::get_roll_angle_degrees);
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "roll_angle_degrees", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_roll_angle_degrees", "get_roll_angle_degrees");
 
+    ClassDB::bind_method(D_METHOD("set_pitch_angle_radians", "pitch_angle_radians"), &I2cMpu9250::set_pitch_angle_radians);
+	ClassDB::bind_method(D_METHOD("get_pitch_angle_radians"), &I2cMpu9250::get_pitch_angle_radians);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "pitch_angle_radians", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_pitch_angle_radians", "get_pitch_angle_radians");
+
+    ClassDB::bind_method(D_METHOD("set_pitch_angle_degrees", "pitch_angle_degrees"), &I2cMpu9250::set_pitch_angle_degrees);
+	ClassDB::bind_method(D_METHOD("get_pitch_angle_degrees"), &I2cMpu9250::get_pitch_angle_degrees);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "pitch_angle_degrees", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_pitch_angle_degrees", "get_pitch_angle_degrees");
+
     ClassDB::bind_method(D_METHOD("set_temperature_celsius", "celsius"), &I2cMpu9250::set_temperature_celsius);
 	ClassDB::bind_method(D_METHOD("get_temperature_celsius"), &I2cMpu9250::get_temperature_celsius);
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "temperature_celsius", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_temperature_celsius", "get_temperature_celsius");
@@ -163,27 +171,27 @@ int I2cMpu9250::get_measurement_gyro_z() const {
     return _measurement_gyro_z;
 }
 
-void I2cMpu9250::set_gyro_x( int x ) {
+void I2cMpu9250::set_gyro_x( float x ) {
     _gyro_x = x;
 }
 
-int I2cMpu9250::get_gyro_x() const {
+float I2cMpu9250::get_gyro_x() const {
     return _gyro_x;
 }
 
-void I2cMpu9250::set_gyro_y( int y ) {
+void I2cMpu9250::set_gyro_y( float y ) {
     _gyro_x = y;
 }
 
-int I2cMpu9250::get_gyro_y() const {
+float I2cMpu9250::get_gyro_y() const {
     return _gyro_y;
 }
 
-void I2cMpu9250::set_gyro_z( int z ) {
+void I2cMpu9250::set_gyro_z( float z ) {
     _gyro_z = z;
 }
 
-int I2cMpu9250::get_gyro_z() const {
+float I2cMpu9250::get_gyro_z() const {
     return _gyro_z;
 }
 
@@ -211,27 +219,27 @@ int I2cMpu9250::get_measurement_acceleration_z() const {
     return _measurement_acceleration_z;
 }
 
-void I2cMpu9250::set_acceleration_x( int x ) {
+void I2cMpu9250::set_acceleration_x( float x ) {
     _acceleration_x = x;
 }
 
-int I2cMpu9250::get_acceleration_x() const {
+float I2cMpu9250::get_acceleration_x() const {
     return _acceleration_x;
 }
 
-void I2cMpu9250::set_acceleration_y( int y ) {
+void I2cMpu9250::set_acceleration_y( float y ) {
     _acceleration_x = y;
 }
 
-int I2cMpu9250::get_acceleration_y() const {
+float I2cMpu9250::get_acceleration_y() const {
     return _acceleration_y;
 }
 
-void I2cMpu9250::set_acceleration_z( int z ) {
+void I2cMpu9250::set_acceleration_z( float z ) {
     _acceleration_z = z;
 }
 
-int I2cMpu9250::get_acceleration_z() const {
+float I2cMpu9250::get_acceleration_z() const {
     return _acceleration_z;
 }
 
@@ -249,6 +257,22 @@ void I2cMpu9250::set_roll_angle_degrees( float roll_angle_degrees ){
 
 float I2cMpu9250::get_roll_angle_degrees() const{
     return _roll_degrees;
+}
+
+void I2cMpu9250::set_pitch_angle_radians( float pitch_angle_radians ){
+    _pitch_radians = pitch_angle_radians;
+}
+
+float I2cMpu9250::get_pitch_angle_radians() const{
+    return _pitch_radians;
+}
+
+void I2cMpu9250::set_pitch_angle_degrees( float pitch_angle_degrees ){
+    _pitch_degrees = pitch_angle_degrees;
+}
+
+float I2cMpu9250::get_pitch_angle_degrees() const{
+    return _pitch_degrees;
 }
 
 

@@ -8,6 +8,7 @@ using namespace godot;
 SBCDevice::SBCDevice() {
     _is_active = true;
     _is_device_initialized = false;
+    _update_method = SBCDevice::PHYSICS_PROCESS;
 }
 
 
