@@ -23,6 +23,12 @@ I2cMpu9250::I2cMpu9250() {
     _gyro_dps_setting == MPU9250GyroscopeConfiguration::GYROSCOPE_CONFIGURATION_RESET; // 250 DPS
 
     _is_dlpf_enabled = false;
+
+    _pitch_degrees = 0.0f;
+    _pitch_radians = 0.0f;
+
+    _roll_degrees = 0.0f;
+    _roll_radians = 0.0f;
 }
 
 
@@ -86,6 +92,13 @@ void I2cMpu9250::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_acceleration_z"), &I2cMpu9250::get_acceleration_z);
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "acceleration_z", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_acceleration_z", "get_acceleration_z");
 
+    ClassDB::bind_method(D_METHOD("set_roll_angle_radians", "roll_angle_radians"), &I2cMpu9250::set_roll_angle_radians);
+	ClassDB::bind_method(D_METHOD("get_roll_angle_radians"), &I2cMpu9250::get_roll_angle_radians);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "roll_angle_radians", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_roll_angle_radians", "get_roll_angle_radians");
+
+    ClassDB::bind_method(D_METHOD("set_roll_angle_degrees", "roll_angle_degrees"), &I2cMpu9250::set_roll_angle_degrees);
+	ClassDB::bind_method(D_METHOD("get_roll_angle_degrees"), &I2cMpu9250::get_roll_angle_degrees);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "roll_angle_degrees", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_roll_angle_degrees", "get_roll_angle_degrees");
 
     ClassDB::bind_method(D_METHOD("set_temperature_celsius", "celsius"), &I2cMpu9250::set_temperature_celsius);
 	ClassDB::bind_method(D_METHOD("get_temperature_celsius"), &I2cMpu9250::get_temperature_celsius);
@@ -222,6 +235,23 @@ int I2cMpu9250::get_acceleration_z() const {
     return _acceleration_z;
 }
 
+void I2cMpu9250::set_roll_angle_radians( float roll_angle_radians ){
+    _roll_radians = roll_angle_radians;
+}
+
+float I2cMpu9250::get_roll_angle_radians() const{
+    return _roll_radians;
+}
+
+void I2cMpu9250::set_roll_angle_degrees( float roll_angle_degrees ){
+    _roll_degrees = roll_angle_degrees;
+}
+
+float I2cMpu9250::get_roll_angle_degrees() const{
+    return _roll_degrees;
+}
+
+
 void I2cMpu9250::set_temperature_celsius( float celsius ) {
     _temperature_celsius = celsius;
 }
@@ -349,6 +379,31 @@ void I2cMpu9250::_read_sensor_data() {
     _acceleration_y = _measurement_acceleration_y * a_scale;
     _acceleration_z = _measurement_acceleration_z * a_scale;
 
+    // Calculate the roll and pitch.
+
+    _roll_radians = 0.0f;
+    _roll_degrees = 0.0f;
+    _pitch_radians = 0.0f;
+    _pitch_degrees = 0.0f; 
+    float acc_x_pow_2 = _acceleration_x * _acceleration_x;
+    float acc_y_pow_2 = _acceleration_y * _acceleration_y;
+    float acc_z_pow_2 = _acceleration_z * _acceleration_z;
+    float acc_x_pow_2_plus_acc_z_pow_2 = acc_x_pow_2 + acc_z_pow_2;
+    float acc_y_pow_2_plus_acc_z_pow_2 = acc_y_pow_2 + acc_z_pow_2;
+    
+    if( acc_x_pow_2_plus_acc_z_pow_2 != 0.0f ) 
+    {
+        _roll_radians = Math::atan( _acceleration_y / Math::sqrt(acc_x_pow_2_plus_acc_z_pow_2) );
+        _roll_degrees = Math::rad_to_deg(_roll_radians);
+    }
+    
+    if( acc_y_pow_2_plus_acc_z_pow_2 != 0.0f ) 
+    {
+        _pitch_radians = Math::atan( _acceleration_x / Math::sqrt(acc_y_pow_2_plus_acc_z_pow_2) );
+        _pitch_degrees = Math::rad_to_deg(_pitch_radians);
+    }
+    
+    
     //GYRO_XOUT = Gyro_Sensitivity * X_angular_rate
     //Nominal
     //Conditions

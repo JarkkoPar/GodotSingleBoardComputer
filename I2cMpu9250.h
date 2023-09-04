@@ -48,6 +48,12 @@ private:
     float  _acceleration_y;
     float  _acceleration_z;
 
+    float  _pitch_radians;
+    float  _roll_radians;
+
+    float  _pitch_degrees;
+    float  _roll_degrees;
+
     uint8_t _acceleration_scale_setting;
     uint8_t _gyro_dps_setting;
     bool    _is_dlpf_enabled;
@@ -372,6 +378,11 @@ public:
     void set_acceleration_z( int z );
     int  get_acceleration_z() const;
 
+    void set_roll_angle_radians( float roll_angle_radians );
+    float get_roll_angle_radians() const;
+
+    void set_roll_angle_degrees( float roll_angle_degrees );
+    float get_roll_angle_degrees() const;
 
     void  set_temperature_celsius( float celsius );
     float get_temperature_celsius() const;
