@@ -47,6 +47,10 @@ private:
     float  _acceleration_x;
     float  _acceleration_y;
     float  _acceleration_z;
+
+    uint8_t _acceleration_scale_setting;
+    uint8_t _gyro_dps_setting;
+    bool    _is_dlpf_enabled;
     
     float  _temperature_celsius;
     
@@ -203,7 +207,7 @@ public:
         GYROSCOPE_CONFIGURATION_RESET = 0b00000000
     };
 
-    enum Mpu9250AccelerometerConfiguration {
+    enum MPU9250AccelerometerConfiguration {
         //                             |||||          
         //                             76543210
 
@@ -221,7 +225,7 @@ public:
         
     };
 
-    enum Mpu9250AccelerometerConfiguration2 {
+    enum MPU9250AccelerometerConfiguration2 {
         //                               ||||||          
         //                             76543210
 
@@ -341,6 +345,15 @@ public:
     void set_measurement_gyro_z( int z );
     int  get_measurement_gyro_z() const;
 
+    void set_gyro_x( int x );
+    int  get_gyro_x() const;
+    
+    void set_gyro_y( int y );
+    int  get_gyro_y() const;
+
+    void set_gyro_z( int z );
+    int  get_gyro_z() const;
+
     void set_measurement_acceleration_x( int x );
     int  get_measurement_acceleration_x() const;
     
@@ -349,6 +362,16 @@ public:
 
     void set_measurement_acceleration_z( int z );
     int  get_measurement_acceleration_z() const;
+
+    void set_acceleration_x( int x );
+    int  get_acceleration_x() const;
+    
+    void set_acceleration_y( int y );
+    int  get_acceleration_y() const;
+
+    void set_acceleration_z( int z );
+    int  get_acceleration_z() const;
+
 
     void  set_temperature_celsius( float celsius );
     float get_temperature_celsius() const;

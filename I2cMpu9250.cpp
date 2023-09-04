@@ -18,6 +18,11 @@ I2cMpu9250::I2cMpu9250() {
     _measurement_acceleration_x = 0;
     _measurement_acceleration_y = 0;
     _measurement_acceleration_z = 0;
+
+    _acceleration_scale_setting = MPU9250AccelerometerConfiguration::ACCELEROMETER_CONFIGURATION_RESET; // 2G scale
+    _gyro_dps_setting == MPU9250GyroscopeConfiguration::GYROSCOPE_CONFIGURATION_RESET; // 250 DPS
+
+    _is_dlpf_enabled = false;
 }
 
 
@@ -31,6 +36,7 @@ void I2cMpu9250::_bind_methods() {
 
 
     // The measurement data.
+
     ClassDB::bind_method(D_METHOD("set_measurement_gyro_x", "x"), &I2cMpu9250::set_measurement_gyro_x);
 	ClassDB::bind_method(D_METHOD("get_measurement_gyro_x"), &I2cMpu9250::get_measurement_gyro_x);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "measurement_gyro_x", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_measurement_gyro_x", "get_measurement_gyro_x");
@@ -42,6 +48,19 @@ void I2cMpu9250::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_measurement_gyro_z", "z"), &I2cMpu9250::set_measurement_gyro_z);
 	ClassDB::bind_method(D_METHOD("get_measurement_gyro_z"), &I2cMpu9250::get_measurement_gyro_z);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "measurement_gyro_z", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_measurement_gyro_z", "get_measurement_gyro_z");
+
+    ClassDB::bind_method(D_METHOD("set_gyro_x", "x"), &I2cMpu9250::set_gyro_x);
+	ClassDB::bind_method(D_METHOD("get_gyro_x"), &I2cMpu9250::get_gyro_x);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "gyro_x", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_gyro_x", "get_gyro_x");
+
+    ClassDB::bind_method(D_METHOD("set_gyro_y", "y"), &I2cMpu9250::set_gyro_y);
+	ClassDB::bind_method(D_METHOD("get_gyro_y"), &I2cMpu9250::get_gyro_y);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "gyro_y", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_gyro_y", "get_gyro_y");
+
+    ClassDB::bind_method(D_METHOD("set_gyro_z", "z"), &I2cMpu9250::set_gyro_z);
+	ClassDB::bind_method(D_METHOD("get_gyro_z"), &I2cMpu9250::get_gyro_z);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "gyro_z", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_gyro_z", "get_gyro_z");
+
 
     ClassDB::bind_method(D_METHOD("set_measurement_acceleration_x", "x"), &I2cMpu9250::set_measurement_acceleration_x);
 	ClassDB::bind_method(D_METHOD("get_measurement_acceleration_x"), &I2cMpu9250::get_measurement_acceleration_x);
@@ -55,9 +74,30 @@ void I2cMpu9250::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_measurement_acceleration_z"), &I2cMpu9250::get_measurement_acceleration_z);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "measurement_acceleration_z", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_measurement_acceleration_z", "get_measurement_acceleration_z");
 
+    ClassDB::bind_method(D_METHOD("set_acceleration_x", "x"), &I2cMpu9250::set_acceleration_x);
+	ClassDB::bind_method(D_METHOD("get_acceleration_x"), &I2cMpu9250::get_acceleration_x);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "acceleration_x", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_acceleration_x", "get_acceleration_x");
+
+    ClassDB::bind_method(D_METHOD("set_acceleration_y", "y"), &I2cMpu9250::set_acceleration_y);
+	ClassDB::bind_method(D_METHOD("get_acceleration_y"), &I2cMpu9250::get_acceleration_y);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "acceleration_y", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_acceleration_y", "get_acceleration_y");
+
+    ClassDB::bind_method(D_METHOD("set_acceleration_z", "z"), &I2cMpu9250::set_acceleration_z);
+	ClassDB::bind_method(D_METHOD("get_acceleration_z"), &I2cMpu9250::get_acceleration_z);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "acceleration_z", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_acceleration_z", "get_acceleration_z");
+
+
     ClassDB::bind_method(D_METHOD("set_temperature_celsius", "celsius"), &I2cMpu9250::set_temperature_celsius);
 	ClassDB::bind_method(D_METHOD("get_temperature_celsius"), &I2cMpu9250::get_temperature_celsius);
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "temperature_celsius", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_temperature_celsius", "get_temperature_celsius");
+
+    ClassDB::bind_method(D_METHOD("set_temperature_kelvin", "kelvin"), &I2cMpu9250::set_temperature_kelvin);
+	ClassDB::bind_method(D_METHOD("get_temperature_kelvin"), &I2cMpu9250::get_temperature_kelvin);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "temperature_kelvin", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_temperature_kelvin", "get_temperature_kelvin");
+
+    ClassDB::bind_method(D_METHOD("set_temperature_fahrenheit", "fahrenheit"), &I2cMpu9250::set_temperature_fahrenheit);
+	ClassDB::bind_method(D_METHOD("get_temperature_fahrenheit"), &I2cMpu9250::get_temperature_fahrenheit);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "temperature_fahrenheit", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY), "set_temperature_fahrenheit", "get_temperature_fahrenheit");
 
 }
 
@@ -110,6 +150,29 @@ int I2cMpu9250::get_measurement_gyro_z() const {
     return _measurement_gyro_z;
 }
 
+void I2cMpu9250::set_gyro_x( int x ) {
+    _gyro_x = x;
+}
+
+int I2cMpu9250::get_gyro_x() const {
+    return _gyro_x;
+}
+
+void I2cMpu9250::set_gyro_y( int y ) {
+    _gyro_x = y;
+}
+
+int I2cMpu9250::get_gyro_y() const {
+    return _gyro_y;
+}
+
+void I2cMpu9250::set_gyro_z( int z ) {
+    _gyro_z = z;
+}
+
+int I2cMpu9250::get_gyro_z() const {
+    return _gyro_z;
+}
 
 void I2cMpu9250::set_measurement_acceleration_x( int x ) {
     _measurement_acceleration_x = x;
@@ -135,6 +198,29 @@ int I2cMpu9250::get_measurement_acceleration_z() const {
     return _measurement_acceleration_z;
 }
 
+void I2cMpu9250::set_acceleration_x( int x ) {
+    _acceleration_x = x;
+}
+
+int I2cMpu9250::get_acceleration_x() const {
+    return _acceleration_x;
+}
+
+void I2cMpu9250::set_acceleration_y( int y ) {
+    _acceleration_x = y;
+}
+
+int I2cMpu9250::get_acceleration_y() const {
+    return _acceleration_y;
+}
+
+void I2cMpu9250::set_acceleration_z( int z ) {
+    _acceleration_z = z;
+}
+
+int I2cMpu9250::get_acceleration_z() const {
+    return _acceleration_z;
+}
 
 void I2cMpu9250::set_temperature_celsius( float celsius ) {
     _temperature_celsius = celsius;
@@ -177,8 +263,8 @@ bool I2cMpu9250::_configure_i2c_device() {
     _write_byte_to_device( _i2c_device_address, MPU9250Registers::SMPLRT_DIV, 0x03 );
 
 
-    // Configure the Magnetometer, gyroscope and finally the accelerometer.
-    _write_byte_to_device( _i2c_device_address, MPU9250Registers::ACCEL_CONFIG, Mpu9250AccelerometerConfiguration::ACCEL_FS_SEL_16G  );
+    // Configure the accelerometer, gyroscope and the magnetometer (to do).
+    _write_byte_to_device( _i2c_device_address, MPU9250Registers::ACCEL_CONFIG, MPU9250AccelerometerConfiguration::ACCEL_FS_SEL_16G  );
     _write_byte_to_device( _i2c_device_address, MPU9250Registers::GYRO_CONFIG, MPU9250GyroscopeConfiguration::XGYRO_FS_SEL_1000_DPS );    
 
     // Enable bypass to allow additional sensors to be 
@@ -231,6 +317,37 @@ void I2cMpu9250::_read_sensor_data() {
     _measurement_acceleration_x = (int)ax;
     _measurement_acceleration_y = (int)ay;
     _measurement_acceleration_z = (int)az;
+
+    // Calculate the actual values based on resolution settings.
+    float g_resolution = 0.0f;
+    if( _gyro_dps_setting == MPU9250GyroscopeConfiguration::GYROSCOPE_CONFIGURATION_RESET ) {
+        g_resolution = 250.0f / 32768.0f;
+    } else if( _gyro_dps_setting == MPU9250GyroscopeConfiguration::XGYRO_FS_SEL_500_DPS ) {
+        g_resolution = 500.0f / 32768.0f;
+    } else if( _gyro_dps_setting == MPU9250GyroscopeConfiguration::XGYRO_FS_SEL_1000_DPS ) {
+        g_resolution = 1000.0f / 32768.0f;
+    } else {
+        g_resolution = 2000.0f / 32768.0f;
+    }
+    _gyro_x = _measurement_gyro_x * g_resolution;
+    _gyro_y = _measurement_gyro_y * g_resolution;
+    _gyro_z = _measurement_gyro_z * g_resolution;
+
+
+    float a_scale = 0.0f;
+    if( _acceleration_scale_setting == MPU9250AccelerometerConfiguration::ACCELEROMETER_CONFIGURATION_RESET ) {
+        a_scale = 2.0f / 32768.0f;
+    } else if( _acceleration_scale_setting == MPU9250AccelerometerConfiguration::ACCEL_FS_SEL_4G ) {
+        a_scale = 4.0f / 32768.0f;
+    } else if( _acceleration_scale_setting == MPU9250AccelerometerConfiguration::ACCEL_FS_SEL_8G ) {
+        a_scale = 8.0f / 32768.0f;
+    } else {
+        a_scale = 16.0f / 32768.0f;
+    }
+
+    _acceleration_x = _measurement_acceleration_x * a_scale;
+    _acceleration_y = _measurement_acceleration_y * a_scale;
+    _acceleration_z = _measurement_acceleration_z * a_scale;
 
     //GYRO_XOUT = Gyro_Sensitivity * X_angular_rate
     //Nominal
