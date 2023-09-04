@@ -312,14 +312,14 @@ bool I2cMpu9250::_configure_i2c_device() {
     OS::get_singleton()->delay_msec(200);
 
     //_write_byte_to_device( _i2c_device_address, MPU9250Registers::)
-    _write_byte_to_device( _i2c_device_address, MPU9250Registers::GYRO_CONFIG, MPU9250GyroscopeConfiguration::Fchoice_b_GYRO_USE_DLPF_CFG );
-    _write_byte_to_device( _i2c_device_address, MPU9250Registers::CONFIG, 0x03 );
-    _write_byte_to_device( _i2c_device_address, MPU9250Registers::SMPLRT_DIV, 0x03 );
+    //_write_byte_to_device( _i2c_device_address, MPU9250Registers::GYRO_CONFIG, MPU9250GyroscopeConfiguration::Fchoice_b_GYRO_USE_DLPF_CFG );
+    //_write_byte_to_device( _i2c_device_address, MPU9250Registers::CONFIG, 0x03 );
+    //_write_byte_to_device( _i2c_device_address, MPU9250Registers::SMPLRT_DIV, 0x03 );
 
 
     // Configure the accelerometer, gyroscope and the magnetometer (to do).
-    _write_byte_to_device( _i2c_device_address, MPU9250Registers::ACCEL_CONFIG, MPU9250AccelerometerConfiguration::ACCEL_FS_SEL_16G  );
-    _write_byte_to_device( _i2c_device_address, MPU9250Registers::GYRO_CONFIG, MPU9250GyroscopeConfiguration::XGYRO_FS_SEL_1000_DPS );    
+    _write_byte_to_device( _i2c_device_address, MPU9250Registers::ACCEL_CONFIG, _acceleration_scale_setting ); // MPU9250AccelerometerConfiguration::ACCEL_FS_SEL_16G  );
+    _write_byte_to_device( _i2c_device_address, MPU9250Registers::GYRO_CONFIG, _gyro_dps_setting ); // MPU9250GyroscopeConfiguration::XGYRO_FS_SEL_1000_DPS );    
 
     // Enable bypass to allow additional sensors to be 
     // controlled through the same i2c bus through Godot.
