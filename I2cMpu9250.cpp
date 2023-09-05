@@ -345,6 +345,9 @@ bool I2cMpu9250::_configure_i2c_device() {
     // Configure the accelerometer, gyroscope and the magnetometer (to do).
     _write_byte_to_device( _i2c_device_address, MPU9250Registers::ACCEL_CONFIG, _acceleration_scale_setting ); // MPU9250AccelerometerConfiguration::ACCEL_FS_SEL_16G  );
     _write_byte_to_device( _i2c_device_address, MPU9250Registers::GYRO_CONFIG, _gyro_dps_setting ); // MPU9250GyroscopeConfiguration::XGYRO_FS_SEL_1000_DPS );    
+    
+    // Set the digital low pass filter to 20 Hz.
+    _write_byte_to_device( _i2c_device_address, MPU9250Registers::CONFIG, MPU9250Configuration::DLPF_CFG_G020HZ_T020HZ );
 
     // Enable bypass to allow additional sensors to be 
     // controlled through the same i2c bus through Godot.

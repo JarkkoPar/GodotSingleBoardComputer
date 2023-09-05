@@ -190,7 +190,15 @@ public:
         EXT_SYNC_SET_5             = 0b00101000, // ACCEL_XOUT_L[0]
         EXT_SYNC_SET_6             = 0b00110000, // ACCEL_YOUT_L[0]
         EXT_SYNC_SET_7             = 0b00111000, // ACCEL_ZOUT_L[0]
-        DLPF_CFG                   = 0b00000011, // Use DLPF, 
+        DLPF_CFG                   = 0b00000011, // Use DLPF,
+        DLPF_CFG_G250HZ_T4000HZ    = 0b00000000, // Gyro 250 Hz Temp 4000 Hz
+        DLPF_CFG_G184HZ_T188HZ     = 0b00000001, // Gyro 184 Hz Temp 188 Hz
+        DLPF_CFG_G092HZ_T098HZ     = 0b00000010, // Gyro 92 Hz Temp 98 Hz
+        DLPF_CFG_G041HZ_T042HZ     = 0b00000011, // Gyro 41 Hz Temp 42 Hz
+        DLPF_CFG_G020HZ_T020HZ     = 0b00000100, // Gyro 20 Hz Temp 20 Hz
+        DLPF_CFG_G010HZ_T010HZ     = 0b00000101, // Gyro 10 Hz Temp 10 Hz
+        DLPF_CFG_G005HZ_T005HZ     = 0b00000110, // Gyro 5 Hz Temp 5 Hz
+        DLPF_CFG_G3600HZ_T4000HZ   = 0b00000111, // Gyro 3600 Hz Temp 4000 Hz
         CONFIGURATION_RESET        = 0b00000000
     };
 
@@ -239,7 +247,7 @@ public:
         
         // A_DLPFCFG_0 is selected by default.
         // A_DLPFCFG_0             = 0b00000000,
-        A_DLPFCFG_F_CHOICE         = 0b00000100,
+        A_DLPFCFG_F_CHOICE         = 0b00001000,
         A_DLPFCFG_1                = 0b00000001,
         A_DLPFCFG_2                = 0b00000010,
         A_DLPFCFG_3                = 0b00000011,
