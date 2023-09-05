@@ -40,6 +40,16 @@ I2cMpu9250::~I2cMpu9250() {
 
 void I2cMpu9250::_bind_methods() {
 
+    // Settings.
+
+    ClassDB::bind_method(D_METHOD("set_gyro_dps_setting", "gyro_dps_setting"), &I2cMpu9250::set_gyro_dps_setting);
+	ClassDB::bind_method(D_METHOD("get_gyro_dps_setting"), &I2cMpu9250::get_gyro_dps_setting);
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "gyro_dps_setting", PROPERTY_HINT_ENUM, "250 DPS:0,500 DPS:8,1000 DPS:16,2000 DPS:24"), "set_gyro_dps_setting", "get_gyro_dps_setting");
+
+    ClassDB::bind_method(D_METHOD("set_accelerometer_scale_setting", "accelerometer_scale_setting"), &I2cMpu9250::set_accelerometer_scale_setting);
+	ClassDB::bind_method(D_METHOD("get_accelerometer_scale_setting"), &I2cMpu9250::get_accelerometer_scale_setting);
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "accelerometer_scale_setting", PROPERTY_HINT_ENUM, "2g:0,4g:8,8g:16,16g:24"), "set_accelerometer_scale_setting", "get_accelerometer_scale_setting");
+
 
     // The measurement data.
 
@@ -146,6 +156,21 @@ void I2cMpu9250::_notification(int p_what) {}
     
 // Getters and setters.
 
+void I2cMpu9250::set_gyro_dps_setting( int gyro_dps_setting ) {
+    _gyro_dps_setting = gyro_dps_setting;
+}
+
+int  I2cMpu9250::get_gyro_dps_setting() const {
+    return _gyro_dps_setting;
+}
+
+void I2cMpu9250::set_accelerometer_scale_setting( int accelerometer_scale_setting ) {
+    _acceleration_scale_setting = accelerometer_scale_setting;
+}
+
+int  I2cMpu9250::get_accelerometer_scale_setting() const{
+    return _acceleration_scale_setting;
+}
 
 void I2cMpu9250::set_measurement_gyro_x( int x ) {
     _measurement_gyro_x = x;

@@ -342,6 +342,13 @@ public:
     
     // Getters and setters.
 
+    void set_gyro_dps_setting( int gyro_dps_setting );
+    int  get_gyro_dps_setting() const;
+
+    void set_accelerometer_scale_setting( int accelerometer_scale_setting );
+    int  get_accelerometer_scale_setting() const;
+
+
     void set_measurement_gyro_x( int x );
     int  get_measurement_gyro_x() const;
     
