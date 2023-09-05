@@ -20,7 +20,7 @@ I2cMpu9250::I2cMpu9250() {
     _measurement_acceleration_z = 0;
 
     _acceleration_scale_setting = MPU9250AccelerometerConfiguration::ACCELEROMETER_CONFIGURATION_RESET; // 2G scale
-    _gyro_dps_setting == MPU9250GyroscopeConfiguration::GYROSCOPE_CONFIGURATION_RESET; // 250 DPS
+    _gyro_dps_setting = MPU9250GyroscopeConfiguration::GYROSCOPE_CONFIGURATION_RESET; // 250 DPS
 
     _is_dlpf_enabled = false;
 
