@@ -67,6 +67,17 @@ private:
     float  _temperature_kelvin; // Converted from Celsius.
     float  _temperature_fahrenheit; // Converted from Celsius.
 
+    int    _node_filtering_setting; // The extra filtering done by the node.
+    
+    int    _history_index;
+    int    _history_measurement_gyro_x[5];
+    int    _history_measurement_gyro_y[5];
+    int    _history_measurement_gyro_z[5];
+
+    int    _history_measurement_acceleration_x[5];
+    int    _history_measurement_acceleration_y[5];
+    int    _history_measurement_acceleration_z[5];
+    
 protected: 
     static void _bind_methods();
 
@@ -334,6 +345,14 @@ public:
         OPEN                       = 0b01000000, // If 1, the INT pin is configured as open drain. If 0, then as push-pull
         ACTL                       = 0b10000000  // The logic level for INT pin is active low (if this bit is 0 then active high)
 
+    };
+
+
+    // Node filter, not related to hardware.
+    enum MPU9250NodeFilteringSelection {
+        NONE          = 0,
+        MEDIAN_FILTER = 1,
+        KALMAN_FILTER = 2
     };
 
 

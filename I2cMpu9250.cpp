@@ -6,6 +6,64 @@
 using namespace godot;
 
 
+// Helper function to find the median. Assumes array size of 5 elements
+
+int find_median( int* array ) {
+    int highest_index = 0;
+    int lowest_index = 0;
+    int middle_index = 1;
+
+    for( int i = 0; i < 5; ++i ) {
+        int acc_x = array[i];
+        int maxacc_x = array[highest_index];
+        int minacc_x = array[lowest_index];
+
+        if( acc_x > maxacc_x ) {
+            highest_index = i;
+        }
+        if( acc_x < minacc_x ) {
+            lowest_index = i;
+        }
+    }
+    if( lowest_index == highest_index ) {
+        // The values are all equal.
+        return array[0];
+    }
+    int new_array[3];
+    int slot = 0;
+    for( int i = 0; i < 5; ++i ) {
+        if( i != lowest_index && i != highest_index ) {
+            new_array[slot] = array[i];
+            ++slot;
+        }
+    }
+    lowest_index = 0; 
+    highest_index = 0;
+    for( int i = 0; i < 3; ++i ) {
+        int acc_x = new_array[i];
+        int maxacc_x = new_array[highest_index];
+        int minacc_x = new_array[lowest_index];
+
+        if( acc_x > maxacc_x ) {
+            highest_index = i;
+        }
+        if( acc_x < minacc_x ) {
+            lowest_index = i;
+        }
+    }
+    if( highest_index == lowest_index) {
+        // The values are all equal.
+        return new_array[0];
+    }
+    for( int i = 0; i < 3; ++i ) {
+        if( i != lowest_index && i != highest_index ){
+            return new_array[i];
+        }
+    }
+
+    return 0;
+}
+
 
 I2cMpu9250::I2cMpu9250() {
     _i2c_device_address = 0x68;
@@ -29,6 +87,18 @@ I2cMpu9250::I2cMpu9250() {
 
     _roll_degrees = 0.0f;
     _roll_radians = 0.0f;
+
+    _node_filtering_setting = MPU9250NodeFilteringSelection::MEDIAN_FILTER;
+    _history_index = 0;
+    for( int i = 0; i < 5; ++i ) {
+        _history_measurement_acceleration_x[i] = 0;
+        _history_measurement_acceleration_y[i] = 0;
+        _history_measurement_acceleration_z[i] = 0;
+
+        _history_measurement_gyro_x[i] = 0;
+        _history_measurement_gyro_y[i] = 0;
+        _history_measurement_gyro_z[i] = 0;
+    }
 }
 
 
@@ -365,21 +435,9 @@ void I2cMpu9250::_self_test() {
 
 
 void I2cMpu9250::_read_sensor_data() {
-        // Use the normal read sequence:
-    //  1. Check Data Ready is set
-    //  2. Read measurement data
-    //  3. Read ST2 register for overflows
-
-    //uint8_t st1 = _read_byte_from_device( _i2c_device_address, AK8963Registers::ST1 );
-    //if( (st1 & AK8963Status1::DATA_IS_READY) == 0 ) return;
 
     uint8_t data[14] = {0};
     _read_bytes_from_device( _i2c_device_address, MPU9250Registers::ACCEL_XOUT_H, 14, data );
-
-    //uint8_t st2 = _read_byte_from_device( _i2c_device_address, AK8963Registers::ST2 );
-    //if( st2 & AK8963Status1::DATA_OVERRUN ) {
-        // todo: send a signal
-    //}
 
     // Set the measurement values.
     int16_t gx = (int16_t)data[0] << 8 | ((int16_t)data[1]);
@@ -399,6 +457,35 @@ void I2cMpu9250::_read_sensor_data() {
     _measurement_acceleration_x = (int)ax;
     _measurement_acceleration_y = (int)ay;
     _measurement_acceleration_z = (int)az;
+
+    if( _node_filtering_setting == MPU9250NodeFilteringSelection::MEDIAN_FILTER ){
+        // Store the measurement for the filtering.
+        _history_measurement_gyro_x[_history_index] = _measurement_gyro_x;
+        _history_measurement_gyro_y[_history_index] = _measurement_gyro_y;
+        _history_measurement_gyro_z[_history_index] = _measurement_gyro_z;
+        _history_measurement_acceleration_x[_history_index] = _measurement_acceleration_x;
+        _history_measurement_acceleration_y[_history_index] = _measurement_acceleration_y;
+        _history_measurement_acceleration_z[_history_index] = _measurement_acceleration_z;
+        ++_history_index;
+        if( _history_index > 4 ) _history_index = 0;
+
+        /**
+        // Get the median value and use that for the measurement value.
+        int _median_acc_x[5];// = {_history_measurement_acceleration_x[0], 0,0,0,0};
+        int _median_acc_y[5];// = {_history_measurement_acceleration_y[0], 0,0,0,0};
+        int _median_acc_z[5];// = {_history_measurement_acceleration_z[0], 0,0,0,0};
+        int _median_gyro_x[5];// = {_history_measurement_gyro_x[0], 0,0,0,0};
+        int _median_gyro_y[5];// = {_history_measurement_gyro_y[0], 0,0,0,0};
+        int _median_gyro_z[5];// = {_history_measurement_gyro_z[0], 0,0,0,0};
+        memcpy( _median_acc_x, _history_measurement_acceleration_x, 5 );
+        **/
+        _measurement_acceleration_x = find_median(_history_measurement_acceleration_x);
+        _measurement_acceleration_y = find_median(_history_measurement_acceleration_y);
+        _measurement_acceleration_z = find_median(_history_measurement_acceleration_z);
+        _measurement_gyro_x = find_median(_history_measurement_gyro_x);
+        _measurement_gyro_y = find_median(_history_measurement_gyro_y);
+        _measurement_gyro_z = find_median(_history_measurement_gyro_z);
+    }
 
     // Calculate the actual values based on resolution settings.
     float g_resolution = 0.0f;
@@ -456,32 +543,9 @@ void I2cMpu9250::_read_sensor_data() {
     }
     
     
-    //GYRO_XOUT = Gyro_Sensitivity * X_angular_rate
-    //Nominal
-    //Conditions
-    //FS_SEL = 0
-    //Gyro_Sensitivity = 131 LSB/( º/s )    
-
-    //TEMP_degC = ((TEMP_OUT –
-    //RoomTemp_Offset)/Temp_Sensitivity)
-    //+ 21degC
     _temperature_celsius = (((float)temp - _room_temperature_offset)*_one_over_temperature_sensitivity) + 21.0f;
     _temperature_kelvin     = _temperature_celsius + 273.15f;
     _temperature_fahrenheit = _temperature_celsius * 1.8f + 32.0f;
     
-    /*sensor_x = mx;
-    sensor_y = my;
-    sensor_z = mz;
-
-    if( _measurement_bits == AK8963Control1OutputBitSetting::OUTPUT_14_BIT ) {
-        magnetic_field_x = 4912.0f * (float)sensor_x / 8190.0f;
-        magnetic_field_y = 4912.0f * (float)sensor_y / 8190.0f;
-        magnetic_field_z = 4912.0f * (float)sensor_z / 8190.0f;
-    } else { // 16 bit.
-        magnetic_field_x = 4912.0f * (float)sensor_x / 32760.0f;
-        magnetic_field_y = 4912.0f * (float)sensor_y / 32760.0f;
-        magnetic_field_z = 4912.0f * (float)sensor_z / 32760.0f;
-    }
-    /**/
 }
 

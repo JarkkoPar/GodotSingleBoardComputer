@@ -27,6 +27,10 @@ private:
     int     _pressure_measurement;
     int     _temperature_measurement;
 
+    float   _temperature_celsius;
+    float   _temperature_kelvin;
+    float   _temperature_fahrenheit;
+
 protected: 
     static void _bind_methods();
 
